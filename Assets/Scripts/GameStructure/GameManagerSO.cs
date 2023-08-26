@@ -92,13 +92,14 @@ public class GameManagerSO : ScriptableObject
         SceneManager.LoadSceneAsync(menus[(int)Type.Main_Menu].SceneName);
     }
 
+
     // Load Pause Menu additively on top of level scene
     public void LoadPauseMenu()
     {
         SceneManager.LoadSceneAsync(menus[(int)Type.Pause_Menu].SceneName, LoadSceneMode.Additive);
     }
 
-    // Unload Pause Menu when click 'Go Back' button
+    // Unload Pause Menu when click 'Back' button
     public void UnloadPauseMenu()
     {
         SceneManager.UnloadSceneAsync(menus[(int)Type.Pause_Menu].SceneName);
@@ -112,6 +113,23 @@ public class GameManagerSO : ScriptableObject
     {
         SceneManager.UnloadSceneAsync(menus[(int)Type.Pause_Menu].SceneName);
     }
+
+
+    // Load Settings Menu additively on top of menu scene
+    public void LoadSettingsMenu()
+    {
+        SceneManager.LoadSceneAsync(menus[(int)Type.Settings_Menu].SceneName, LoadSceneMode.Additive);
+    }
+
+    // Unload Settings Menu when click 'Back' button
+    public void UnloadSettingsMenu()
+    {
+        SceneManager.UnloadSceneAsync(menus[(int)Type.Settings_Menu].SceneName);
+
+        // Raise event to InputManager to update controls state
+        //OnUnloadSettingsScene.Raise();
+    }
+
 
     #endregion MENUS
 }

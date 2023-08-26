@@ -17,5 +17,6 @@ MonoBehaviour:
   menus:
   - {fileID: 11400000, guid: d470808ed3a8f154898ede215c17f5ad, type: 2}
   - {fileID: 11400000, guid: 8462c4c121e53b04ea49398e2334b589, type: 2}
+  - {fileID: 11400000, guid: 78f4b047930440f4da79807d03a8c3b1, type: 2}
   CurrentLevelIndex: 0
   OnUnloadPauseScene: {fileID: 11400000, guid: d88088fbf2adc3f4981508011891d1de, type: 2}

@@ -5,13 +5,28 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
-    path: Assets/Scenes/MainMenu180.unity
+  - enabled: 0
+    path: Assets/Scenes/Menus/MainMenu180.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
-    path: Assets/Scenes/PauseMenu.unity
-    guid: 4e0057cd34775ff459078364973d11ae
+    path: Assets/Scenes/Menus/MainMenu192.unity
+    guid: f5f12f3efb7144244b3fcf9c9a84eb6a
+  - enabled: 0
+    path: Assets/Scenes/Menus/MainMenu240.unity
+    guid: a6b0dfa782de23c469fae90ce015cd7b
   - enabled: 1
-    path: Assets/Scenes/Level1_180.unity
+    path: Assets/Scenes/Menus/SettingsMenu.unity
+    guid: 44c7911825b9d9a42a226a5a8a79470f
+  - enabled: 1
+    path: Assets/Scenes/Menus/PauseMenu.unity
+    guid: 4e0057cd34775ff459078364973d11ae
+  - enabled: 0
+    path: Assets/Scenes/Levels/Level1_180.unity
     guid: 97dd495c2f98ff44da99f9bd1f37fa91
+  - enabled: 1
+    path: Assets/Scenes/Levels/Level1_192.unity
+    guid: b684a1f93ba4bc54b8e3045d743363e0
+  - enabled: 0
+    path: Assets/Scenes/Levels/Level1_240.unity
+    guid: 4bfd401feb81f8a42a578a568d1b7ffe
   m_configObjects: {}

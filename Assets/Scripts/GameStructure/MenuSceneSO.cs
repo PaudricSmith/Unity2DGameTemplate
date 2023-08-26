@@ -13,6 +13,7 @@ public class MenuSceneSO : GameSceneSO
 public enum Type
 {
     Main_Menu,
-    Pause_Menu
+    Pause_Menu,
+    Settings_Menu
     // Add more menus here
 }
