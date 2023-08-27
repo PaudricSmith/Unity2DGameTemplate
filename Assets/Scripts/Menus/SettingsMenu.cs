@@ -68,10 +68,4 @@ public class SettingsMenu : MonoBehaviour
         // Apply resolution and fullscreen state
         Screen.SetResolution(resolution.width, resolution.height, fullscreenToggle.isOn);
     }
-
-
-    public void Back()
-    {
-        // Code to return to the previous menu or main menu
-    }
 }

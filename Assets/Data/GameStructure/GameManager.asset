@@ -20,3 +20,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 78f4b047930440f4da79807d03a8c3b1, type: 2}
   CurrentLevelIndex: 0
   OnUnloadPauseScene: {fileID: 11400000, guid: d88088fbf2adc3f4981508011891d1de, type: 2}
+  OnUnloadSettingsScene: {fileID: 11400000, guid: 9661b46a9b736124d8879bef1dfdd18e, type: 2}

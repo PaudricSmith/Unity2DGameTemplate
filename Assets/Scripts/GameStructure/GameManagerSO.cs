@@ -15,15 +15,16 @@ public class GameManagerSO : ScriptableObject
 
     [Header("               Events")]
     [SerializeField] private GameEventSO OnUnloadPauseScene;
+    [SerializeField] private GameEventSO OnUnloadSettingsScene;
 
-    public LevelSO GetCurrentLevel()
-    {
-        //Debug.Log(CurrentLevelIndex);
-        return levels[CurrentLevelIndex - 1];
-    }
 
 
     #region LEVELS
+
+    public LevelSO GetCurrentLevel()
+    {
+        return levels[CurrentLevelIndex - 1];
+    }
 
     // Load a scene with a given index   
     public void LoadLevelWithIndex(int index)
@@ -84,15 +85,17 @@ public class GameManagerSO : ScriptableObject
 
     #endregion LEVELS
 
-    #region MENUS
 
+    #region MAIN MENU
     // Load Main Menu
     public void LoadMainMenu()
     {
         SceneManager.LoadSceneAsync(menus[(int)Type.Main_Menu].SceneName);
     }
+    #endregion MAIN MENU
 
 
+    #region PAUSE MENU
     // Load Pause Menu additively on top of level scene
     public void LoadPauseMenu()
     {
@@ -113,8 +116,10 @@ public class GameManagerSO : ScriptableObject
     {
         SceneManager.UnloadSceneAsync(menus[(int)Type.Pause_Menu].SceneName);
     }
+    #endregion PAUSE MENU
 
 
+    #region SETTINGS MENU
     // Load Settings Menu additively on top of menu scene
     public void LoadSettingsMenu()
     {
@@ -126,10 +131,8 @@ public class GameManagerSO : ScriptableObject
     {
         SceneManager.UnloadSceneAsync(menus[(int)Type.Settings_Menu].SceneName);
 
-        // Raise event to InputManager to update controls state
-        //OnUnloadSettingsScene.Raise();
+        // Raise event to Main Menu to disable menu button blocker panel
+        OnUnloadSettingsScene.Raise();
     }
-
-
-    #endregion MENUS
+    #endregion SETTINGS MENU
 }

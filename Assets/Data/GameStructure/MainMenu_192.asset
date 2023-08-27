@@ -10,12 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c83cfc9f523ff8f42899ca4bb42f0e0b, type: 3}
-  m_Name: MainMenu
+  m_Name: MainMenu_192
   m_EditorClassIdentifier: 
-  sceneName: MainMenu
+  sceneName: MainMenu_192
   shortDescription: First Menu to show when game starts.
-  musicClip: {fileID: 0}
-  ambientSound: {fileID: 0}
-  musicVolume: 0
-  ambientVolume: 0
   type: 0
