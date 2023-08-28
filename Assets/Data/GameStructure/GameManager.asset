@@ -12,12 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01b665eb66ced414d8d31f53cd0e1829, type: 3}
   m_Name: GameManager
   m_EditorClassIdentifier: 
-  levels:
-  - {fileID: 11400000, guid: 456011254a6eec240a849e6cfeaa8da7, type: 2}
-  menus:
-  - {fileID: 11400000, guid: d470808ed3a8f154898ede215c17f5ad, type: 2}
-  - {fileID: 11400000, guid: 8462c4c121e53b04ea49398e2334b589, type: 2}
-  - {fileID: 11400000, guid: 78f4b047930440f4da79807d03a8c3b1, type: 2}
-  CurrentLevelIndex: 0
-  OnUnloadPauseScene: {fileID: 11400000, guid: d88088fbf2adc3f4981508011891d1de, type: 2}
-  OnUnloadSettingsScene: {fileID: 11400000, guid: 9661b46a9b736124d8879bef1dfdd18e, type: 2}
+  sceneManager: {fileID: 11400000, guid: 1af9f4966d1e61b418d0ecc7d79e3c73, type: 2}
+  eventManager: {fileID: 11400000, guid: 253af9d47449cce4fb68d7c94cfc2311, type: 2}

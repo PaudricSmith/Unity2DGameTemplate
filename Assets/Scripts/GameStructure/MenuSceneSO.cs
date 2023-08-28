@@ -6,14 +6,15 @@ public class MenuSceneSO : GameSceneSO
 {
     // Choose which type of menu from the editor
     [Header("Menu specific")]
-    [SerializeField] private Type type;
+    [SerializeField] private MenuType type;
 }
 
 
-public enum Type
+public enum MenuType
 {
     Main_Menu,
-    Pause_Menu,
-    Settings_Menu
+    Settings_Menu,
+    Pause_Menu
+    
     // Add more menus here
 }

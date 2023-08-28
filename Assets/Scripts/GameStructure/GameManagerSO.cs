@@ -1,138 +1,117 @@
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 
 [CreateAssetMenu(fileName = "NewGameManager", menuName = "Scriptable Objects/Game Data/Game Manager")]
 public class GameManagerSO : ScriptableObject
 {
-    [SerializeField] private List<LevelSO> levels = new List<LevelSO>();
-    [SerializeField] private List<MenuSceneSO> menus = new List<MenuSceneSO>();
 
-    [Header("               Current Level")]
-    [SerializeField] private int CurrentLevelIndex = 1;
-
-    [Header("               Events")]
-    [SerializeField] private GameEventSO OnUnloadPauseScene;
-    [SerializeField] private GameEventSO OnUnloadSettingsScene;
+    [Header("Manager References")]
+    [SerializeField] private SceneManagerSO sceneManager;
+    [SerializeField] private EventManagerSO eventManager;
 
 
 
     #region LEVELS
 
-    public LevelSO GetCurrentLevel()
-    {
-        return levels[CurrentLevelIndex - 1];
-    }
-
-    // Load a scene with a given index   
-    public void LoadLevelWithIndex(int index)
-    {
-        if (index <= levels.Count)
-        {
-            //Load the level
-            if (index == 1)
-            {
-                SceneManager.LoadSceneAsync(levels[CurrentLevelIndex - 1].SceneName);
-            }
-        }
-        //reset the index if we have no more levels or overflows during testing
-        else
-        {
-            CurrentLevelIndex = 1;
-        }
-    }
-
-    // Main Menu = 0, New game = 1, so load level 1
     public void NewGame()
     {
-        CurrentLevelIndex = 1;
-        LoadLevelWithIndex(CurrentLevelIndex);
+        sceneManager.NewGame();
     }
 
-    // Start next level
-    public void NextLevel()
+    public void LoadNextLevel()
     {
-        CurrentLevelIndex++;
-        LoadLevelWithIndex(CurrentLevelIndex);
+        sceneManager.NextLevel();
     }
 
-    // Start previous level
-    public void PreviousLevel()
+    public void LoadPreviousLevel()
     {
-        CurrentLevelIndex--;
-        LoadLevelWithIndex(CurrentLevelIndex);
+        sceneManager.PreviousLevel();
     }
 
-    // Restart current level
     public void RestartLevel()
     {
-        LoadLevelWithIndex(CurrentLevelIndex);
+        sceneManager.RestartLevel();
     }
 
-    // Quit game
     public void QuitGame()
     {
-        // Set index to Main menu index '0'
-        CurrentLevelIndex = 0;
-
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#endif
-        Application.Quit();
+        sceneManager.QuitGame();
     }
 
     #endregion LEVELS
 
 
     #region MAIN MENU
-    // Load Main Menu
+
     public void LoadMainMenu()
     {
-        SceneManager.LoadSceneAsync(menus[(int)Type.Main_Menu].SceneName);
+        sceneManager.LoadMainMenu();
     }
+
     #endregion MAIN MENU
 
 
     #region PAUSE MENU
-    // Load Pause Menu additively on top of level scene
+
     public void LoadPauseMenu()
     {
-        SceneManager.LoadSceneAsync(menus[(int)Type.Pause_Menu].SceneName, LoadSceneMode.Additive);
+        sceneManager.LoadPauseMenu();
     }
 
-    // Unload Pause Menu when click 'Back' button
     public void UnloadPauseMenu()
     {
-        SceneManager.UnloadSceneAsync(menus[(int)Type.Pause_Menu].SceneName);
-
-        // Raise event to InputManager to update controls state
-        OnUnloadPauseScene.Raise();
+        sceneManager.UnloadPauseMenu();
     }
 
-    // Unload Pause Menu when Pause key or gamepad button is pressed
     public void UnloadPauseMenuWithKey()
     {
-        SceneManager.UnloadSceneAsync(menus[(int)Type.Pause_Menu].SceneName);
+        sceneManager.UnloadPauseMenuWithKey();
     }
+
     #endregion PAUSE MENU
 
 
     #region SETTINGS MENU
-    // Load Settings Menu additively on top of menu scene
+
     public void LoadSettingsMenu()
     {
-        SceneManager.LoadSceneAsync(menus[(int)Type.Settings_Menu].SceneName, LoadSceneMode.Additive);
+        sceneManager.LoadSettingsMenu();
     }
 
-    // Unload Settings Menu when click 'Back' button
     public void UnloadSettingsMenu()
     {
-        SceneManager.UnloadSceneAsync(menus[(int)Type.Settings_Menu].SceneName);
+        sceneManager.UnloadSettingsMenu();
 
-        // Raise event to Main Menu to disable menu button blocker panel
-        OnUnloadSettingsScene.Raise();
+        eventManager.RaiseUnloadSettingsSceneEvent();
     }
+
     #endregion SETTINGS MENU
+
+
+    public void PauseGame()
+    {
+        // Pause game logic here
+        // ...
+
+        // Raise the OnGamePause event
+        //eventManager.RaiseEvent(OnGamePause);
+    }
+
+    public void ResumeGame()
+    {
+        // Resume game logic here
+        // ...
+
+        // Raise the OnGameResume event
+        //eventManager.RaiseEvent(OnGameResume);
+    }
+
+    public void EndGame()
+    {
+        // End game logic here
+        // ...
+
+        // Raise the OnGameEnd event
+        //eventManager.RaiseEvent(OnGameEnd);
+    }
 }
