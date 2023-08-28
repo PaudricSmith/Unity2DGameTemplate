@@ -2,34 +2,42 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+/// <summary>
+/// Represents a custom game event.
+/// </summary>
 [CreateAssetMenu(fileName = "GameEvent", menuName = "Scriptable Objects/Custom Events/Game Event")]
 public class GameEventSO : ScriptableObject
 {
-    [SerializeField]
-    [ContextMenuItem("Reset Name", "ResetName")]
-    private string Name;
-
-    private List<GameEventListenerSO> listeners = new List<GameEventListenerSO>();
+    // Stores unique listeners
+    private HashSet<GameEventListenerSO> listeners = new HashSet<GameEventListenerSO>();
 
 
-    [ContextMenu("Raise Event")]
-    public virtual void Raise()
+    /// <summary>
+    /// Raises the game event.
+    /// </summary>
+    public void Raise()
     {
-        for (int i = listeners.Count - 1; i >= 0; i--)
+        foreach (var listener in listeners)
         {
-            listeners[i].OnGameEventRaised();
+            listener.OnGameEventRaised();
         }
     }
 
-    public virtual void RegisterListener(GameEventListenerSO gameEventListener)
+    /// <summary>
+    /// Registers a new listener.
+    /// </summary>
+    /// <param name="gameEventListener">The listener to register.</param>
+    public void RegisterListener(GameEventListenerSO gameEventListener)
     {
-        if (!listeners.Contains(gameEventListener))
-            listeners.Add(gameEventListener);
+        listeners.Add(gameEventListener);
     }
 
-    public virtual void UnregisterListener(GameEventListenerSO gameEventListener)
+    /// <summary>
+    /// Unregisters an existing listener.
+    /// </summary>
+    /// <param name="gameEventListener">The listener to unregister.</param>
+    public void UnregisterListener(GameEventListenerSO gameEventListener)
     {
-        if (listeners.Contains(gameEventListener))
-            listeners.Remove(gameEventListener);
+        listeners.Remove(gameEventListener);
     }
 }

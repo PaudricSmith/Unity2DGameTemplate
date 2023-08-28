@@ -1,18 +1,52 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-
 public class GameEventListenerSO : MonoBehaviour
 {
-    [SerializeField] private string description;
-    [Tooltip("Specify the game event (scriptable object) which will raise the event")]
-    [SerializeField] private GameEventSO Event;
-    [SerializeField] private UnityEvent Response;
+    [SerializeField, Tooltip("Description of this listener.")]
+    private string description;
 
+    [SerializeField, Tooltip("Specify the game event (scriptable object) which will raise the event.")]
+    private GameEventSO Event;
 
-    private void OnEnable() => Event.RegisterListener(this);
+    [SerializeField, Tooltip("Response to invoke when the event is raised.")]
+    private UnityEvent Response;
 
-    private void OnDisable() => Event.UnregisterListener(this);
+    /// <summary>
+    /// Registers this instance as a listener to the specified game event.
+    /// </summary>
+    private void OnEnable()
+    {
+        if (Event != null)
+        {
+            Event.RegisterListener(this);
+        }
+        else
+        {
+            Debug.LogWarning("Event is null. Listener not registered.");
+        }
+    }
 
-    public virtual void OnGameEventRaised() => Response?.Invoke();
+    /// <summary>
+    /// Unregisters this instance from the specified game event.
+    /// </summary>
+    private void OnDisable()
+    {
+        if (Event != null)
+        {
+            Event.UnregisterListener(this);
+        }
+        else
+        {
+            Debug.LogWarning("Event is null. Listener not unregistered.");
+        }
+    }
+
+    /// <summary>
+    /// Invokes the response when the game event is raised.
+    /// </summary>
+    public virtual void OnGameEventRaised()
+    {
+        Response?.Invoke();
+    }
 }
