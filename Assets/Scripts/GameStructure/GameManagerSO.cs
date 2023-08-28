@@ -16,6 +16,8 @@ public class GameManagerSO : ScriptableObject
     public void NewGame()
     {
         sceneManager.NewGame();
+
+        DAM.One.PlayMusic(DAM.GameMusic.Level1Track1);
     }
 
     public void LoadNextLevel()

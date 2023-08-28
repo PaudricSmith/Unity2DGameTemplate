@@ -114,8 +114,6 @@ public class SceneManagerSO : ScriptableObject
     // Load Settings Menu additively on top of menu scene
     public void LoadSettingsMenu()
     {
-        // int temp = (int)Type.Settings_Menu;
-        Debug.Log("Scene index = " + CurrentLevelIndex + " , " + (int)MenuType.Settings_Menu);
         SceneManager.LoadSceneAsync(menus[(int)MenuType.Settings_Menu].SceneName, LoadSceneMode.Additive);
     }
 

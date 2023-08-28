@@ -6,7 +6,7 @@ using UnityEngine;
 // DynamicAudioManager
 public class DAM : MonoBehaviour
 {
-    public static DAM Instance;
+    public static DAM One;
 
     [SerializeField] private AudioClipsSO audioClipsSO;
 
@@ -16,12 +16,12 @@ public class DAM : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
+        if (One == null)
         {
-            Instance = this;
+            One = this;
             DontDestroyOnLoad(gameObject);
         }
-        else if (Instance != this)
+        else if (One != this)
         {
             Destroy(gameObject);
             return;

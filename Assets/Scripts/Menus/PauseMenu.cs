@@ -22,13 +22,13 @@ public class PauseMenu : MonoBehaviour
 
     private void AdjustMusicVolume(float volume)
     {
-        DAM.Instance.SetMusicVolume(volume);
+        DAM.One.SetMusicVolume(volume);
     }
 
 
     private void AdjustSFXVolume(float volume)
     {
-        DAM.Instance.SetSFXVolume(volume);
+        DAM.One.SetSFXVolume(volume);
     }
 
 
@@ -59,8 +59,8 @@ public class PauseMenu : MonoBehaviour
         isPaused = true;
 
         // Initialize volume sliders to reflect current volume
-        musicVolumeSlider.value = DAM.Instance.GetMusicVolume();
-        sfxVolumeSlider.value = DAM.Instance.GetSFXVolume();
+        musicVolumeSlider.value = DAM.One.GetMusicVolume();
+        sfxVolumeSlider.value = DAM.One.GetSFXVolume();
     }
 
 

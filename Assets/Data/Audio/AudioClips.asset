@@ -15,7 +15,9 @@ MonoBehaviour:
   menuTracks:
     tracks: []
   gameTracks:
-    tracks: []
+    tracks:
+    - track: 2
+      clip: {fileID: 8300000, guid: 818526121664ce04c9ef5073b951bbea, type: 3}
   ambienceTracks:
     tracks: []
   uiTracks:
