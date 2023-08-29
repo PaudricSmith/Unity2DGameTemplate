@@ -1,10 +1,17 @@
+using System.Collections.Generic;
 using UnityEngine;
-using static DAM;
 
 
+/// <summary>
+/// Scriptable object that manages audio clips for different categories of music and sound effects.
+/// </summary>
 [CreateAssetMenu(fileName = "AudioManager", menuName = "Scriptable Objects/Audio/Audio Clips")]
 public class AudioClipsSO : ScriptableObject
 {
+    /// <summary>
+    /// Represents an audio track with a type and associated AudioClip.
+    /// </summary>
+    /// <typeparam name="T">The type of the audio track.</typeparam>
     [System.Serializable]
     public class AudioTrack<T>
     {
@@ -15,37 +22,37 @@ public class AudioClipsSO : ScriptableObject
     [System.Serializable]
     public class MenuMusicCategory
     {
-        public AudioTrack<MenuMusic>[] tracks;
+        public AudioTrack<DAM.MenuMusic>[] tracks;
     }
 
     [System.Serializable]
     public class GameMusicCategory
     {
-        public AudioTrack<GameMusic>[] tracks;
+        public AudioTrack<DAM.GameMusic>[] tracks;
     }
 
     [System.Serializable]
     public class AmbienceMusicCategory
     {
-        public AudioTrack<AmbienceMusic>[] tracks;
+        public AudioTrack<DAM.AmbienceMusic>[] tracks;
     }
 
     [System.Serializable]
     public class UiSfxCategory
     {
-        public AudioTrack<UISFX>[] tracks;
+        public AudioTrack<DAM.UISFX>[] tracks;
     }
 
     [System.Serializable]
     public class PlayerSfxCategory
     {
-        public AudioTrack<PlayerSFX>[] tracks;
+        public AudioTrack<DAM.PlayerSFX>[] tracks;
     }
 
     [System.Serializable]
     public class EnemySfxCategory
     {
-        public AudioTrack<EnemySFX>[] tracks;
+        public AudioTrack<DAM.EnemySFX>[] tracks;
     }
 
 
@@ -60,48 +67,84 @@ public class AudioClipsSO : ScriptableObject
     public EnemySfxCategory enemyTracks;
 
 
-    public AudioClip GetMusicClip(MenuMusic track)
-    {
-        return GetClipFromCategory(menuTracks.tracks, track);
-    }
+    /// <summary>
+    /// Dictionary to map MenuMusic types to their audio clips.
+    /// </summary>
+    private Dictionary<DAM.MenuMusic, AudioClip> menuMusicDict;
+    private Dictionary<DAM.GameMusic, AudioClip> gameMusicDict;
+    private Dictionary<DAM.AmbienceMusic, AudioClip> ambienceMusicDict;
+    private Dictionary<DAM.UISFX, AudioClip> uiSfxDict;
+    private Dictionary<DAM.PlayerSFX, AudioClip> playerSfxDict;
+    private Dictionary<DAM.EnemySFX, AudioClip> enemySfxDict;
 
-    public AudioClip GetMusicClip(GameMusic track)
-    {
-        return GetClipFromCategory(gameTracks.tracks, track);
-    }
 
-    public AudioClip GetMusicClip(AmbienceMusic track)
+    /// <summary>
+    /// Initializes dictionaries for each category of audio tracks.
+    /// </summary>
+    private void OnEnable()
     {
-        return GetClipFromCategory(ambienceTracks.tracks, track);
-    }
-
-    public AudioClip GetSfxClip(UISFX track)
-    {
-        return GetClipFromCategory(uiTracks.tracks, track);
-    }
-
-    public AudioClip GetSfxClip(PlayerSFX track)
-    {
-        return GetClipFromCategory(playerTracks.tracks, track);
-    }
-
-    public AudioClip GetSfxClip(EnemySFX track)
-    {
-        return GetClipFromCategory(enemyTracks.tracks, track);
+        menuMusicDict = CreateDictionary(menuTracks.tracks);
+        gameMusicDict = CreateDictionary(gameTracks.tracks);
+        ambienceMusicDict = CreateDictionary(ambienceTracks.tracks);
+        uiSfxDict = CreateDictionary(uiTracks.tracks);
+        playerSfxDict = CreateDictionary(playerTracks.tracks);
+        enemySfxDict = CreateDictionary(enemyTracks.tracks);
     }
 
 
-    private AudioClip GetClipFromCategory<T>(AudioTrack<T>[] category, T track)
+    /// <summary>
+    /// Creates a dictionary to map audio track types to their clips.
+    /// </summary>
+    /// <typeparam name="T">The type of the audio track.</typeparam>
+    /// <param name="tracks">Array of audio tracks.</param>
+    /// <returns>A dictionary mapping audio track types to clips.</returns>
+    private Dictionary<T, AudioClip> CreateDictionary<T>(AudioTrack<T>[] tracks)
     {
-        foreach (var mt in category)
+        Dictionary<T, AudioClip> dict = new Dictionary<T, AudioClip>();
+        foreach (var track in tracks)
         {
-            if (mt.track.Equals(track))
-            {
-                return mt.clip;
-            }
+            dict[track.track] = track.clip;
         }
-        Debug.LogWarning($"No audio clip found for the given track: {track}");
-        return null;
+        return dict;
     }
 
+
+    /// <summary>
+    /// Retrieves the AudioClip associated with a given audio track type.
+    /// </summary>
+    /// <typeparam name="T">The type of the audio track.</typeparam>
+    /// <param name="track">The audio track type.</param>
+    /// <returns>The associated AudioClip, or null if not found.</returns>
+    public AudioClip GetClip<T>(T track)
+    {
+        if (track is DAM.MenuMusic)
+        {
+            return menuMusicDict[(DAM.MenuMusic)(object)track];
+        }
+        else if (track is DAM.GameMusic)
+        {
+            return gameMusicDict[(DAM.GameMusic)(object)track];
+        }
+        else if (track is DAM.AmbienceMusic)
+        {
+            return ambienceMusicDict[(DAM.AmbienceMusic)(object)track];
+        }
+        else if (track is DAM.UISFX)
+        {
+            return uiSfxDict[(DAM.UISFX)(object)track];
+        }
+        else if (track is DAM.PlayerSFX)
+        {
+            return playerSfxDict[(DAM.PlayerSFX)(object)track];
+        }
+        else if (track is DAM.EnemySFX)
+        {
+            return enemySfxDict[(DAM.EnemySFX)(object)track];
+        }
+        else
+        {
+            Debug.LogWarning($"No audio clip found for the given track: {track}");
+            return null;
+        }
+    }
 }

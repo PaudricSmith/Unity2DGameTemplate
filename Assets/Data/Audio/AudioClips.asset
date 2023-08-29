@@ -21,7 +21,9 @@ MonoBehaviour:
   ambienceTracks:
     tracks: []
   uiTracks:
-    tracks: []
+    tracks:
+    - track: 1
+      clip: {fileID: 8300000, guid: 567333f625d523a4fb6d734c239e4156, type: 3}
   playerTracks:
     tracks: []
   enemyTracks:

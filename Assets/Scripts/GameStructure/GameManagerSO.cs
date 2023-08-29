@@ -17,7 +17,9 @@ public class GameManagerSO : ScriptableObject
     {
         sceneManager.NewGame();
 
-        DAM.One.PlayMusic(DAM.GameMusic.Level1Track1);
+        //DAM.One.PlayMusic(DAM.GameMusic.Level1Track1);
+
+        DAM.One.FadeInMusic(DAM.GameMusic.Level1Track1, 10f);
     }
 
     public void LoadNextLevel()

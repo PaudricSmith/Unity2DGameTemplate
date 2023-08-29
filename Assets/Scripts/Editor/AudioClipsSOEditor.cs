@@ -1,74 +1,105 @@
 using UnityEditor;
 using UnityEngine;
 
+
+/// <summary>
+/// Custom editor for the AudioClipsSO ScriptableObject.
+/// </summary>
 [CustomEditor(typeof(AudioClipsSO))]
 public class AudioClipsSOEditor : Editor
 {
-    // Music categories
-    private SerializedProperty menuMusicTracksProperty;
-    private SerializedProperty gameMusicTracksProperty;
-    private SerializedProperty ambienceMusicTracksProperty;
+    // Serialized properties for music and SFX categories
+    private SerializedProperty[] musicCategories;
+    private SerializedProperty[] sfxCategories;
 
-    // SFX categories
-    private SerializedProperty uiSFXTracksProperty;
-    private SerializedProperty playerSFXTracksProperty;
-    private SerializedProperty enemySFXTracksProperty;
+    // Foldout flags for each category
+    private bool[] musicFoldouts;
+    private bool[] sfxFoldouts;
 
-    // Foldouts for categories
-    private bool showMenuMusicTracks = true;
-    private bool showGameMusicTracks = true;
-    private bool showAmbienceMusicTracks = true;
-    private bool showUISFXTracks = true;
-    private bool showPlayerSFXTracks = true;
-    private bool showEnemySFXTracks = true;
 
+    /// <summary>
+    /// Called when the editor is enabled.
+    /// Initializes serialized properties and foldout flags.
+    /// </summary>
     private void OnEnable()
     {
-        menuMusicTracksProperty = serializedObject.FindProperty("menuTracks").FindPropertyRelative("tracks");
-        gameMusicTracksProperty = serializedObject.FindProperty("gameTracks").FindPropertyRelative("tracks");
-        ambienceMusicTracksProperty = serializedObject.FindProperty("ambienceTracks").FindPropertyRelative("tracks");
+        // Initialize serialized properties
+        musicCategories = new SerializedProperty[]
+        {
+            serializedObject.FindProperty("menuTracks").FindPropertyRelative("tracks"),
+            serializedObject.FindProperty("gameTracks").FindPropertyRelative("tracks"),
+            serializedObject.FindProperty("ambienceTracks").FindPropertyRelative("tracks")
+        };
 
-        uiSFXTracksProperty = serializedObject.FindProperty("uiTracks").FindPropertyRelative("tracks");
-        playerSFXTracksProperty = serializedObject.FindProperty("playerTracks").FindPropertyRelative("tracks");
-        enemySFXTracksProperty = serializedObject.FindProperty("enemyTracks").FindPropertyRelative("tracks");
+        sfxCategories = new SerializedProperty[]
+        {
+            serializedObject.FindProperty("uiTracks").FindPropertyRelative("tracks"),
+            serializedObject.FindProperty("playerTracks").FindPropertyRelative("tracks"),
+            serializedObject.FindProperty("enemyTracks").FindPropertyRelative("tracks")
+        };
+
+        // Initialize foldout flags
+        musicFoldouts = new bool[musicCategories.Length];
+        sfxFoldouts = new bool[sfxCategories.Length];
     }
 
+
+    /// <summary>
+    /// Overrides the Inspector GUI.
+    /// </summary>
     public override void OnInspectorGUI()
     {
-        GUIStyle centeredLabelStyle = new GUIStyle(EditorStyles.label);
-        centeredLabelStyle.alignment = TextAnchor.MiddleCenter;
-
         serializedObject.Update();
 
-        // Music Tracks
-        EditorGUILayout.LabelField("Music Tracks", centeredLabelStyle);
-
-        ShowCategory(ref showMenuMusicTracks, menuMusicTracksProperty, typeof(DAM.MenuMusic), "Menu Music");
-        ShowCategory(ref showGameMusicTracks, gameMusicTracksProperty, typeof(DAM.GameMusic), "Game Music");
-        ShowCategory(ref showAmbienceMusicTracks, ambienceMusicTracksProperty, typeof(DAM.AmbienceMusic), "Ambience");
-
-        EditorGUILayout.Space();
-        EditorGUILayout.Space();
-
-        // SFX Tracks
-        EditorGUILayout.LabelField("SFX Tracks", centeredLabelStyle);
-
-        ShowCategory(ref showUISFXTracks, uiSFXTracksProperty, typeof(DAM.UISFX), "UI SFX");
-        ShowCategory(ref showPlayerSFXTracks, playerSFXTracksProperty, typeof(DAM.PlayerSFX), "Player SFX");
-        ShowCategory(ref showEnemySFXTracks, enemySFXTracksProperty, typeof(DAM.EnemySFX), "Enemy SFX");
+        DrawCategories("Music Tracks", musicCategories, musicFoldouts, 
+            new System.Type[] { typeof(DAM.MenuMusic), typeof(DAM.GameMusic), typeof(DAM.AmbienceMusic) });
+        DrawCategories("SFX Tracks", sfxCategories, sfxFoldouts, 
+            new System.Type[] { typeof(DAM.UISFX), typeof(DAM.PlayerSFX), typeof(DAM.EnemySFX) });
 
         serializedObject.ApplyModifiedProperties();
     }
 
-    private void ShowCategory(ref bool foldout, SerializedProperty tracksProperty, System.Type enumType, string categoryName)
+    /// <summary>
+    /// Draws categories of audio tracks.
+    /// </summary>
+    /// <param name="label">The label for the category section.</param>
+    /// <param name="categories">The serialized properties for the categories.</param>
+    /// <param name="foldouts">The foldout flags for the categories.</param>
+    /// <param name="enumTypes">The enum types for the categories.</param>
+
+    private void DrawCategories(string label, SerializedProperty[] categories, bool[] foldouts, System.Type[] enumTypes)
     {
-        foldout = EditorGUILayout.BeginFoldoutHeaderGroup(foldout, categoryName + " (" + tracksProperty.arraySize + ")");
+        GUIStyle centeredLabelStyle = new GUIStyle(EditorStyles.label) { alignment = TextAnchor.MiddleCenter };
+        EditorGUILayout.LabelField(label, centeredLabelStyle);
+
+        for (int i = 0; i < categories.Length; i++)
+        {
+            ShowCategory(ref foldouts[i], categories[i], enumTypes[i]);
+        }
+    }
+
+    /// <summary>
+    /// Shows a single category of audio tracks.
+    /// </summary>
+    /// <param name="foldout">The foldout flag for the category.</param>
+    /// <param name="tracksProperty">The serialized property for the category.</param>
+    /// <param name="enumType">The enum type for the category.</param>
+
+    private void ShowCategory(ref bool foldout, SerializedProperty tracksProperty, System.Type enumType)
+    {
+        foldout = EditorGUILayout.BeginFoldoutHeaderGroup(foldout, enumType.Name + " (" + tracksProperty.arraySize + ")");
         if (foldout)
         {
             DrawTracks(tracksProperty, enumType);
         }
         EditorGUILayout.EndFoldoutHeaderGroup();
     }
+
+    /// <summary>
+    /// Draws the tracks for a single category.
+    /// </summary>
+    /// <param name="tracksProperty">The serialized property for the tracks.</param>
+    /// <param name="enumType">The enum type for the tracks.</param>
 
     private void DrawTracks(SerializedProperty tracksProperty, System.Type enumType)
     {

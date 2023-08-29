@@ -3,17 +3,23 @@ using System.Collections;
 using UnityEngine;
 
 
-// DynamicAudioManager
+/// <summary>
+/// DynamicAudioManager (DAM) is responsible for managing all audio-related functionalities.
+/// </summary>
 public class DAM : MonoBehaviour
 {
+    /// <summary>
+    /// Singleton instance of DynamicAudioManager.
+    /// </summary>
     public static DAM One;
 
     [SerializeField] private AudioClipsSO audioClipsSO;
-
     [SerializeField] private AudioSource musicAudioSource;
     [SerializeField] private AudioSource sfxAudioSource;
 
-
+    /// <summary>
+    /// Initializes the singleton instance.
+    /// </summary>
     private void Awake()
     {
         if (One == null)
@@ -28,29 +34,17 @@ public class DAM : MonoBehaviour
         }
     }
 
-    public void PlayMusic(MenuMusic track)
+
+    #region Playback Control
+
+    /// <summary>
+    /// Plays music based on the provided track type.
+    /// </summary>
+    /// <typeparam name="T">Type of the track.</typeparam>
+    /// <param name="track">Track to play.</param>
+    public void PlayMusic<T>(T track)
     {
-        AudioClip clip = audioClipsSO.GetMusicClip(track);
-        if (clip)
-        {
-            musicAudioSource.clip = clip;
-            musicAudioSource.Play();
-        }
-    }
-    
-    public void PlayMusic(GameMusic track)
-    {
-        AudioClip clip = audioClipsSO.GetMusicClip(track);
-        if (clip)
-        {
-            musicAudioSource.clip = clip;
-            musicAudioSource.Play();
-        }
-    }
-    
-    public void PlayMusic(AmbienceMusic track)
-    {
-        AudioClip clip = audioClipsSO.GetMusicClip(track);
+        AudioClip clip = audioClipsSO.GetClip(track);
         if (clip)
         {
             musicAudioSource.clip = clip;
@@ -58,27 +52,14 @@ public class DAM : MonoBehaviour
         }
     }
 
-    public void PlaySFX(UISFX sfx)
+    /// <summary>
+    /// Plays sound effects based on the provided track type.
+    /// </summary>
+    /// <typeparam name="T">Type of the track.</typeparam>
+    /// <param name="track">Track to play.</param>
+    public void PlaySFX<T>(T track)
     {
-        AudioClip clip = audioClipsSO.GetSfxClip(sfx);
-        if (clip)
-        {
-            sfxAudioSource.PlayOneShot(clip);
-        }
-    }
-    
-    public void PlaySFX(PlayerSFX sfx)
-    {
-        AudioClip clip = audioClipsSO.GetSfxClip(sfx);
-        if (clip)
-        {
-            sfxAudioSource.PlayOneShot(clip);
-        }
-    }
-
-    public void PlaySFX(EnemySFX sfx)
-    {
-        AudioClip clip = audioClipsSO.GetSfxClip(sfx);
+        AudioClip clip = audioClipsSO.GetClip(track);
         if (clip)
         {
             sfxAudioSource.PlayOneShot(clip);
@@ -106,6 +87,11 @@ public class DAM : MonoBehaviour
         musicAudioSource.Stop();
     }
 
+    #endregion
+
+
+    #region Volume Control
+
     public void SetMusicVolume(float volume)
     {
         musicAudioSource.volume = volume;
@@ -126,34 +112,101 @@ public class DAM : MonoBehaviour
         return sfxAudioSource.volume;
     }
 
-    public void FadeInMusic(System.Enum trackType, float duration)
+    #endregion
+
+
+    #region AudioControlMethods
+
+    public void SetMusicLooping(bool shouldLoop)
     {
-        AudioClip clip = null;
+        musicAudioSource.loop = shouldLoop;
+    }
 
-        if (trackType is MenuMusic)
-        {
-            clip = audioClipsSO.GetMusicClip((MenuMusic)trackType);
-        }
-        else if (trackType is GameMusic)
-        {
-            clip = audioClipsSO.GetMusicClip((GameMusic)trackType);
-        }
-        else if (trackType is AmbienceMusic)
-        {
-            clip = audioClipsSO.GetMusicClip((AmbienceMusic)trackType);
-        }
+    public void MuteMusic()
+    {
+        musicAudioSource.mute = true;
+    }
 
+    public void UnmuteMusic()
+    {
+        musicAudioSource.mute = false;
+    }
+
+    public void SetMusicPitch(float pitch)
+    {
+        musicAudioSource.pitch = pitch;
+    }
+
+    public void SetSFXPitch(float pitch)
+    {
+        sfxAudioSource.pitch = pitch;
+    }
+
+    public void SetAudio3DSpatialBlend(float spatialBlend)
+    {
+        musicAudioSource.spatialBlend = spatialBlend;
+        sfxAudioSource.spatialBlend = spatialBlend;
+    }
+
+    #endregion
+
+
+    #region Fade Control
+
+    /// <summary>
+    /// Fades in music over a specified duration.
+    /// </summary>
+    /// <typeparam name="T">Type of the track.</typeparam>
+    /// <param name="trackType">Track to fade in.</param>
+    /// <param name="duration">Duration of the fade-in effect.</param>
+    public void FadeInMusic<T>(T trackType, float duration)
+    {
+        AudioClip clip = audioClipsSO.GetClip(trackType);
         if (clip != null)
         {
             StartCoroutine(FadeInProcess(musicAudioSource, clip, duration));
         }
     }
 
+    /// <summary>
+    /// Fades in sound effects over a specified duration.
+    /// </summary>
+    /// <typeparam name="T">Type of the track.</typeparam>
+    /// <param name="trackType">Track to fade in.</param>
+    /// <param name="duration">Duration of the fade-in effect.</param>
+    public void FadeInSFX<T>(T trackType, float duration)
+    {
+        AudioClip clip = audioClipsSO.GetClip(trackType);
+        if (clip != null)
+        {
+            StartCoroutine(FadeInProcess(sfxAudioSource, clip, duration));
+        }
+    }
+
+    /// <summary>
+    /// Fades out music over a specified duration.
+    /// </summary>
+    /// <param name="duration">Duration of the fade-out effect.</param>
     public void FadeOutMusic(float duration)
     {
         StartCoroutine(FadeOutProcess(musicAudioSource, duration));
     }
 
+    /// <summary>
+    /// Fades out sound effects over a specified duration.
+    /// </summary>
+    /// <param name="duration">Duration of the fade-out effect.</param>
+    public void FadeOutSFX(float duration)
+    {
+        StartCoroutine(FadeOutProcess(sfxAudioSource, duration));
+    }
+
+    /// <summary>
+    /// Transitions between two tracks with a fade-out and fade-in effect.
+    /// </summary>
+    /// <param name="fromTrack">Track to fade out.</param>
+    /// <param name="toTrack">Track to fade in.</param>
+    /// <param name="duration">Duration of the transition.</param>
     public void TransitionTracks(Enum fromTrack, Enum toTrack, float duration)
     {
         StartCoroutine(FadeOutProcess(musicAudioSource, duration, () =>
@@ -162,21 +215,10 @@ public class DAM : MonoBehaviour
         }));
     }
 
-    private IEnumerator FadeOutProcess(AudioSource audioSource, float duration, Action onFinished = null)
-    {
-        float startVolume = audioSource.volume;
+    #endregion
 
-        while (audioSource.volume > 0)
-        {
-            audioSource.volume -= startVolume * Time.deltaTime / duration;
-            yield return null;
-        }
 
-        audioSource.Stop();
-        audioSource.volume = startVolume; // Reset volume to original after stopping
-
-        onFinished?.Invoke();
-    }
+    #region Coroutines
 
     private IEnumerator FadeInProcess(AudioSource audioSource, AudioClip newClip, float duration)
     {
@@ -195,7 +237,7 @@ public class DAM : MonoBehaviour
         }
     }
 
-    private IEnumerator FadeOutProcess(AudioSource audioSource, float duration)
+    private IEnumerator FadeOutProcess(AudioSource audioSource, float duration, Action onFinished = null)
     {
         float startVolume = audioSource.volume;
 
@@ -206,8 +248,36 @@ public class DAM : MonoBehaviour
         }
 
         audioSource.Stop();
-        audioSource.volume = startVolume;
+        audioSource.volume = startVolume; 
+
+        onFinished?.Invoke();
     }
+
+    private IEnumerator CrossFadeProcess(Enum fromTrack, Enum toTrack, float duration)
+    {
+        // Fade out the current track
+        float startVolume = musicAudioSource.volume;
+        while (musicAudioSource.volume > 0)
+        {
+            musicAudioSource.volume -= startVolume * Time.deltaTime / (duration / 2);
+            yield return null;
+        }
+        musicAudioSource.Stop();
+
+        // Play the new track
+        PlayMusic(toTrack);
+
+        // Fade in the new track
+        musicAudioSource.volume = 0;
+        float targetVolume = 1.0f;
+        while (musicAudioSource.volume < targetVolume)
+        {
+            musicAudioSource.volume += targetVolume * Time.deltaTime / (duration / 2);
+            yield return null;
+        }
+    }
+
+    #endregion
 
 
     #region ENUMS

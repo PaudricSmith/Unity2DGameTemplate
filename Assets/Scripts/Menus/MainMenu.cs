@@ -35,4 +35,9 @@ public class MainMenu : MonoBehaviour
     {
         buttonBlockingPanel.SetActive(false); 
     }
+
+    public void PlayButtonClick()
+    {
+        DAM.One.PlaySFX(DAM.UISFX.ButtonClick);
+    }
 }
