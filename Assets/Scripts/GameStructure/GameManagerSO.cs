@@ -17,9 +17,14 @@ public class GameManagerSO : ScriptableObject
     {
         sceneManager.NewGame();
 
-        //DAM.One.PlayMusic(DAM.GameMusic.Level1Track1);
+        //DAM.One.PlayGameMusic(DAM.GameMusic.Level1Track1);
+        //DAM.One.PlayAmbienceMusic(DAM.AmbienceMusic.Dungeon1);
 
-        DAM.One.FadeInMusic(DAM.GameMusic.Level1Track1, 10f);
+        //DAM.One.TransitionTracks(DAM.GameMusic.Level1Track1, DAM.GameMusic.Level1Track2, 5f);
+
+        //DAM.One.FadeInAudio(DAM.AmbienceMusic.Track1, 5f);
+
+        //DAM.One.FadeInMusic(DAM.GameMusic.Level1Track1, 10f);
     }
 
     public void LoadNextLevel()
@@ -85,8 +90,6 @@ public class GameManagerSO : ScriptableObject
     public void UnloadSettingsMenu()
     {
         sceneManager.UnloadSettingsMenu();
-
-        eventManager.RaiseUnloadSettingsSceneEvent();
     }
 
     #endregion SETTINGS MENU

@@ -12,14 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 760b79d12f649ca48933ed3a7341129e, type: 3}
   m_Name: AudioClips
   m_EditorClassIdentifier: 
-  menuTracks:
-    tracks: []
   gameTracks:
     tracks:
-    - track: 2
+    - track: 6
       clip: {fileID: 8300000, guid: 818526121664ce04c9ef5073b951bbea, type: 3}
   ambienceTracks:
-    tracks: []
+    tracks:
+    - track: 1
+      clip: {fileID: 8300000, guid: 8efcbea0a55f73046af127c513fbbdea, type: 3}
+  sfxTracks:
+    tracks:
+    - track: 1
+      clip: {fileID: 8300000, guid: e45f4e976b396a342914d9137bd33160, type: 3}
   uiTracks:
     tracks:
     - track: 1

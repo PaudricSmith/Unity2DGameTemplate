@@ -26,13 +26,13 @@ public class AudioClipsSOEditor : Editor
         // Initialize serialized properties
         musicCategories = new SerializedProperty[]
         {
-            serializedObject.FindProperty("menuTracks").FindPropertyRelative("tracks"),
             serializedObject.FindProperty("gameTracks").FindPropertyRelative("tracks"),
             serializedObject.FindProperty("ambienceTracks").FindPropertyRelative("tracks")
         };
 
         sfxCategories = new SerializedProperty[]
         {
+            serializedObject.FindProperty("sfxTracks").FindPropertyRelative("tracks"),
             serializedObject.FindProperty("uiTracks").FindPropertyRelative("tracks"),
             serializedObject.FindProperty("playerTracks").FindPropertyRelative("tracks"),
             serializedObject.FindProperty("enemyTracks").FindPropertyRelative("tracks")
@@ -52,9 +52,9 @@ public class AudioClipsSOEditor : Editor
         serializedObject.Update();
 
         DrawCategories("Music Tracks", musicCategories, musicFoldouts, 
-            new System.Type[] { typeof(DAM.MenuMusic), typeof(DAM.GameMusic), typeof(DAM.AmbienceMusic) });
+            new System.Type[] { typeof(DAM.GameMusic), typeof(DAM.AmbienceMusic) });
         DrawCategories("SFX Tracks", sfxCategories, sfxFoldouts, 
-            new System.Type[] { typeof(DAM.UISFX), typeof(DAM.PlayerSFX), typeof(DAM.EnemySFX) });
+            new System.Type[] { typeof(DAM.SFX), typeof(DAM.UISFX), typeof(DAM.PlayerSFX), typeof(DAM.EnemySFX) });
 
         serializedObject.ApplyModifiedProperties();
     }

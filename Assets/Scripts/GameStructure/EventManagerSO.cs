@@ -5,14 +5,9 @@ using UnityEngine;
 public class EventManagerSO : ScriptableObject
 {
 
-    [Header("Game Events")]
-    [SerializeField] private GameEventSO OnUnloadSettingsScene;
+    //[Header("Game Events")]
 
 
-    public void RaiseUnloadSettingsSceneEvent()
-    {
-        OnUnloadSettingsScene.Raise();
-    }
 
 
     // Additional methods to handle other types of events can be added here

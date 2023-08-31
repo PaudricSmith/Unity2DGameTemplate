@@ -22,7 +22,7 @@ public class PauseMenu : MonoBehaviour
 
     private void AdjustMusicVolume(float volume)
     {
-        DAM.One.SetMusicVolume(volume);
+        DAM.One.SetGameMusicVolume(volume);
     }
 
 
@@ -59,7 +59,7 @@ public class PauseMenu : MonoBehaviour
         isPaused = true;
 
         // Initialize volume sliders to reflect current volume
-        musicVolumeSlider.value = DAM.One.GetMusicVolume();
+        musicVolumeSlider.value = DAM.One.GetGameMusicVolume();
         sfxVolumeSlider.value = DAM.One.GetSFXVolume();
     }
 

@@ -20,12 +20,6 @@ public class AudioClipsSO : ScriptableObject
     }
 
     [System.Serializable]
-    public class MenuMusicCategory
-    {
-        public AudioTrack<DAM.MenuMusic>[] tracks;
-    }
-
-    [System.Serializable]
     public class GameMusicCategory
     {
         public AudioTrack<DAM.GameMusic>[] tracks;
@@ -35,6 +29,12 @@ public class AudioClipsSO : ScriptableObject
     public class AmbienceMusicCategory
     {
         public AudioTrack<DAM.AmbienceMusic>[] tracks;
+    }
+
+    [System.Serializable]
+    public class SfxCategory
+    {
+        public AudioTrack<DAM.SFX>[] tracks;
     }
 
     [System.Serializable]
@@ -57,22 +57,22 @@ public class AudioClipsSO : ScriptableObject
 
 
     [Header("Music Tracks")]
-    public MenuMusicCategory menuTracks;
     public GameMusicCategory gameTracks;
     public AmbienceMusicCategory ambienceTracks;
 
     [Header("SFX Tracks")]
+    public SfxCategory sfxTracks;
     public UiSfxCategory uiTracks;
     public PlayerSfxCategory playerTracks;
     public EnemySfxCategory enemyTracks;
 
 
     /// <summary>
-    /// Dictionary to map MenuMusic types to their audio clips.
+    /// Dictionary to map audio types to their audio clips.
     /// </summary>
-    private Dictionary<DAM.MenuMusic, AudioClip> menuMusicDict;
     private Dictionary<DAM.GameMusic, AudioClip> gameMusicDict;
     private Dictionary<DAM.AmbienceMusic, AudioClip> ambienceMusicDict;
+    private Dictionary<DAM.SFX, AudioClip> sfxDict;
     private Dictionary<DAM.UISFX, AudioClip> uiSfxDict;
     private Dictionary<DAM.PlayerSFX, AudioClip> playerSfxDict;
     private Dictionary<DAM.EnemySFX, AudioClip> enemySfxDict;
@@ -83,9 +83,9 @@ public class AudioClipsSO : ScriptableObject
     /// </summary>
     private void OnEnable()
     {
-        menuMusicDict = CreateDictionary(menuTracks.tracks);
         gameMusicDict = CreateDictionary(gameTracks.tracks);
         ambienceMusicDict = CreateDictionary(ambienceTracks.tracks);
+        sfxDict = CreateDictionary(sfxTracks.tracks);
         uiSfxDict = CreateDictionary(uiTracks.tracks);
         playerSfxDict = CreateDictionary(playerTracks.tracks);
         enemySfxDict = CreateDictionary(enemyTracks.tracks);
@@ -109,6 +109,51 @@ public class AudioClipsSO : ScriptableObject
     }
 
 
+    public AudioClip GetGameMusicClip(DAM.GameMusic track)
+    {
+        if (!gameMusicDict[(DAM.GameMusic)(object)track])
+        {
+            Debug.LogWarning($"No audio clip found for the given track: {track}");
+            return null;
+        }
+
+        return gameMusicDict[(DAM.GameMusic)(object)track];
+    }
+    
+    public AudioClip GetAmbienceMusicClip(DAM.AmbienceMusic track)
+    {
+        if (!ambienceMusicDict[(DAM.AmbienceMusic)(object)track])
+        {
+            Debug.LogWarning($"No audio clip found for the given track: {track}");
+            return null;
+        }
+
+        return ambienceMusicDict[(DAM.AmbienceMusic)(object)track];
+    }
+    
+    public AudioClip GetSFXClip(DAM.SFX track)
+    {
+        if (!sfxDict[(DAM.SFX)(object)track])
+        {
+            Debug.LogWarning($"No audio clip found for the given track: {track}");
+            return null;
+        }
+
+        return sfxDict[(DAM.SFX)(object)track];
+    }
+
+    public AudioClip GetUISFXClip(DAM.UISFX track)
+    {
+        if (!uiSfxDict[(DAM.UISFX)(object)track])
+        {
+            Debug.LogWarning($"No audio clip found for the given track: {track}");
+            return null;
+        }
+
+        return uiSfxDict[(DAM.UISFX)(object)track];
+    }
+
+
     /// <summary>
     /// Retrieves the AudioClip associated with a given audio track type.
     /// </summary>
@@ -117,34 +162,29 @@ public class AudioClipsSO : ScriptableObject
     /// <returns>The associated AudioClip, or null if not found.</returns>
     public AudioClip GetClip<T>(T track)
     {
-        if (track is DAM.MenuMusic)
+        switch (track)
         {
-            return menuMusicDict[(DAM.MenuMusic)(object)track];
-        }
-        else if (track is DAM.GameMusic)
-        {
-            return gameMusicDict[(DAM.GameMusic)(object)track];
-        }
-        else if (track is DAM.AmbienceMusic)
-        {
-            return ambienceMusicDict[(DAM.AmbienceMusic)(object)track];
-        }
-        else if (track is DAM.UISFX)
-        {
-            return uiSfxDict[(DAM.UISFX)(object)track];
-        }
-        else if (track is DAM.PlayerSFX)
-        {
-            return playerSfxDict[(DAM.PlayerSFX)(object)track];
-        }
-        else if (track is DAM.EnemySFX)
-        {
-            return enemySfxDict[(DAM.EnemySFX)(object)track];
-        }
-        else
-        {
-            Debug.LogWarning($"No audio clip found for the given track: {track}");
-            return null;
+            case DAM.GameMusic:
+                return gameMusicDict[(DAM.GameMusic)(object)track];
+
+            case DAM.AmbienceMusic:
+                return ambienceMusicDict[(DAM.AmbienceMusic)(object)track];
+
+            case DAM.UISFX:
+                return uiSfxDict[(DAM.UISFX)(object)track];
+
+            case DAM.SFX:
+                return sfxDict[(DAM.SFX)(object)track];
+
+            case DAM.PlayerSFX:
+                return playerSfxDict[(DAM.PlayerSFX)(object)track];
+
+            case DAM.EnemySFX:
+                return enemySfxDict[(DAM.EnemySFX)(object)track];
+
+            default:
+                Debug.LogWarning($"No audio clip found for the given track: {track}");
+                return null;
         }
     }
 }

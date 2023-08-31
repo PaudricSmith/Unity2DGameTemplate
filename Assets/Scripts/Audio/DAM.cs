@@ -8,14 +8,27 @@ using UnityEngine;
 /// </summary>
 public class DAM : MonoBehaviour
 {
+    public float masterMusicVolume = 1.0f; // Master volume for all game music
+    public float masterAmbienceVolume = 1.0f; // Master volume for all ambience music
+    public float masterSFXVolume = 1.0f;  // Master volume for all general sound effects
+    public float masterUIVolume = 1.0f;  // Master volume for all UI sound effects
+    private bool isFadingGameMusic = false;
+    private bool isFadingAmbienceMusic = false;
+
+    [SerializeField] private AudioClipsSO audioClipsSO;
+
+    [SerializeField] private AudioSource gameMusicSource1;
+    [SerializeField] private AudioSource gameMusicSource2;
+    [SerializeField] private AudioSource ambienceMusicSource1;
+    [SerializeField] private AudioSource ambienceMusicSource2;
+    [SerializeField] private AudioSource sfxSource;
+    [SerializeField] private AudioSource uiSource;
+
+
     /// <summary>
     /// Singleton instance of DynamicAudioManager.
     /// </summary>
     public static DAM One;
-
-    [SerializeField] private AudioClipsSO audioClipsSO;
-    [SerializeField] private AudioSource musicAudioSource;
-    [SerializeField] private AudioSource sfxAudioSource;
 
     /// <summary>
     /// Initializes the singleton instance.
@@ -38,53 +51,269 @@ public class DAM : MonoBehaviour
     #region Playback Control
 
     /// <summary>
-    /// Plays music based on the provided track type.
+    /// Plays a game music track based on the provided track enumeration.
     /// </summary>
-    /// <typeparam name="T">Type of the track.</typeparam>
-    /// <param name="track">Track to play.</param>
-    public void PlayMusic<T>(T track)
+    /// <param name="track">The track to be played.</param>
+    /// <param name="audioSource">Optional AudioSource through which the music will be played. Defaults to the class's gameMusicSource1.</param>
+    public void PlayGameMusic(GameMusic track, AudioSource audioSource = null)
     {
-        AudioClip clip = audioClipsSO.GetClip(track);
+        AudioClip clip = audioClipsSO.GetGameMusicClip(track);
         if (clip)
         {
-            musicAudioSource.clip = clip;
-            musicAudioSource.Play();
+            AudioSource targetSource = (audioSource != null) ? audioSource : gameMusicSource1;
+            targetSource.clip = clip;
+            targetSource.volume *= masterMusicVolume;
+            targetSource.Play();
         }
     }
 
     /// <summary>
-    /// Plays sound effects based on the provided track type.
+    /// Plays a game music track with a specified delay.
     /// </summary>
-    /// <typeparam name="T">Type of the track.</typeparam>
-    /// <param name="track">Track to play.</param>
-    public void PlaySFX<T>(T track)
+    /// <param name="track">The track to be played.</param>
+    /// <param name="delay">The delay time in seconds before the track starts playing.</param>
+    /// <param name="audioSource">Optional AudioSource through which the music will be played. Defaults to the class's gameMusicSource1.</param>
+    public void PlayGameMusicDelayed(GameMusic track, float delay, AudioSource audioSource = null)
     {
-        AudioClip clip = audioClipsSO.GetClip(track);
+        AudioClip clip = audioClipsSO.GetGameMusicClip(track);
         if (clip)
         {
-            sfxAudioSource.PlayOneShot(clip);
+            AudioSource targetSource = (audioSource != null) ? audioSource : gameMusicSource1;
+            targetSource.clip = clip;
+            targetSource.volume *= masterMusicVolume;
+            targetSource.PlayDelayed(delay);
         }
     }
 
-    public void PauseMusic()
+    /// <summary>
+    /// Plays an ambience track based on the provided track enumeration.
+    /// </summary>
+    /// <param name="track">The track to be played.</param>
+    /// <param name="audioSource">Optional AudioSource through which the music will be played. Defaults to the class's gameMusicSource1.</param>
+    public void PlayAmbienceMusic(AmbienceMusic track, AudioSource audioSource = null)
     {
-        if (musicAudioSource.isPlaying)
+        AudioClip clip = audioClipsSO.GetAmbienceMusicClip(track);
+        if (clip)
         {
-            musicAudioSource.Pause();
+            AudioSource targetSource = (audioSource != null) ? audioSource : ambienceMusicSource1;
+            targetSource.clip = clip;
+            targetSource.volume *= masterAmbienceVolume;
+            targetSource.Play();
         }
     }
 
-    public void ResumeMusic()
+    /// <summary>
+    /// Plays an ambience music track with a specified delay.
+    /// </summary>
+    /// <param name="track">The track to be played.</param>
+    /// <param name="delay">The delay time in seconds before the track starts playing.</param>
+    /// <param name="audioSource">Optional AudioSource through which the music will be played. Defaults to the class's gameMusicSource1.</param>
+    public void PlayAmbienceMusicDelayed(AmbienceMusic track, float delay, AudioSource audioSource = null)
     {
-        if (!musicAudioSource.isPlaying)
+        AudioClip clip = audioClipsSO.GetAmbienceMusicClip(track);
+        if (clip)
         {
-            musicAudioSource.Play();
+            AudioSource targetSource = (audioSource != null) ? audioSource : ambienceMusicSource1;
+            targetSource.clip = clip;
+            targetSource.volume *= masterAmbienceVolume;
+            targetSource.PlayDelayed(delay);
         }
     }
 
-    public void StopMusic()
+    /// <summary>
+    /// Plays a sound effect (SFX) based on the provided track enumeration.
+    /// </summary>
+    /// <param name="track">The track to be played.</param>
+    public void PlaySFX(SFX track)
     {
-        musicAudioSource.Stop();
+        AudioClip clip = audioClipsSO.GetSFXClip(track);
+        if (clip)
+        {
+            sfxSource.volume *= masterSFXVolume;
+            sfxSource.PlayOneShot(clip);
+        }
+    }
+
+    /// <summary>
+    /// Plays a sound effect (SFX) using a specified AudioSource and track enumeration.
+    /// </summary>
+    /// <param name="audioSource">The AudioSource component through which the sound effect will be played.</param>
+    /// <param name="track">The track to be played.</param>
+    public void PlaySFXFromSource(SFX track, AudioSource audioSource)
+    {
+        AudioClip clip = audioClipsSO.GetSFXClip(track);
+        if (clip)
+        {
+            audioSource.volume *= masterSFXVolume;
+            audioSource.PlayOneShot(clip); 
+        }
+    }
+
+    /// <summary>
+    /// Plays a sound effect (SFX) with a specified delay.
+    /// </summary>
+    /// <param name="track">The track to be played.</param>
+    /// <param name="delay">The delay time in seconds before the track starts playing.</param>
+    public void PlaySFXDelayed(SFX track, float delay)
+    {
+        AudioClip clip = audioClipsSO.GetSFXClip(track);
+        if (clip)
+        {
+            sfxSource.clip = clip; 
+            sfxSource.volume *= masterSFXVolume;
+            sfxSource.PlayDelayed(delay);
+        }
+    }
+
+    /// <summary>
+    /// Plays a sound effect with a specified delay.
+    /// </summary>
+    /// <param name="track">The track to be played.</param>
+    /// <param name="delay">The delay time in seconds before the track starts playing.</param>
+    /// <param name="audioSource">Optional AudioSource through which the sound effect will be played. Defaults to the class's sfxSource.</param>
+    public void PlaySFXDelayedFromSource(SFX track, float delay, AudioSource audioSource)
+    {
+        AudioClip clip = audioClipsSO.GetSFXClip(track);
+        if (clip)
+        {
+            audioSource.clip = clip;
+            audioSource.volume *= masterSFXVolume;
+            audioSource.PlayDelayed(delay);
+        }
+    }
+
+    /// <summary>
+    /// Plays a UI sound effect (UISFX) based on the provided track enumeration.
+    /// </summary>
+    /// <param name="track">The track to be played.</param>
+    public void PlayUISFX(UISFX track)
+    {
+        AudioClip clip = audioClipsSO.GetUISFXClip(track);
+        if (clip)
+        {
+            uiSource.volume *= masterUIVolume;
+            uiSource.PlayOneShot(clip);
+        }
+    }
+
+    /// <summary>
+    /// Plays a UI sound effect (UISFX) using a specified AudioSource and track enumeration.
+    /// </summary>
+    /// <param name="audioSource">The AudioSource component through which the sound effect will be played.</param>
+    /// <param name="track">The track to be played.</param>
+    public void PlayUISFXFromSource(UISFX track, AudioSource audioSource)
+    {
+        AudioClip clip = audioClipsSO.GetUISFXClip(track);
+        if (clip)
+        {
+            audioSource.volume *= masterUIVolume;
+            audioSource.PlayOneShot(clip);
+        }
+    }
+
+    /// <summary>
+    /// Plays a UI sound effect (UISFX) with a specified delay.
+    /// </summary>
+    /// <param name="track">The track to be played.</param>
+    /// <param name="delay">The delay time in seconds before the track starts playing.</param>
+    public void PlayUISFXDelayed(UISFX track, float delay)
+    {
+        AudioClip clip = audioClipsSO.GetUISFXClip(track);
+        if (clip)
+        {
+            uiSource.clip = clip;
+            uiSource.volume *= masterUIVolume;
+            uiSource.PlayDelayed(delay);
+        }
+    }
+
+    /// <summary>
+    /// Plays a UI sound effect (UISFX) with a specified delay.
+    /// </summary>
+    /// <param name="track">The track to be played.</param>
+    /// <param name="delay">The delay time in seconds before the track starts playing.</param>
+    /// <param name="audioSource">Optional AudioSource through which the sound effect will be played. Defaults to the class's sfxSource.</param>
+    public void PlayUISFXDelayedFromSource(UISFX track, float delay, AudioSource audioSource)
+    {
+        AudioClip clip = audioClipsSO.GetUISFXClip(track);
+        if (clip)
+        {
+            audioSource.clip = clip;
+            audioSource.volume *= masterUIVolume;
+            audioSource.PlayDelayed(delay);
+        }
+    }
+
+    /// <summary>
+    /// Pauses the currently playing game music track.
+    /// </summary>
+    /// <param name="audioSource">Optional AudioSource through which the music is being played. Defaults to the class's gameMusicSource1.</param>
+    public void PauseGameMusic(AudioSource audioSource = null)
+    {
+        AudioSource targetSource = (audioSource != null) ? audioSource : gameMusicSource1;
+        if (targetSource.isPlaying)
+        {
+            targetSource.Pause();
+        }
+    }
+
+    /// <summary>
+    /// Pauses the currently playing ambience music track.
+    /// </summary>
+    /// <param name="audioSource">Optional AudioSource through which the music is being played. Defaults to the class's gameMusicSource1.</param>
+    public void PauseAmbienceMusic(AudioSource audioSource = null)
+    {
+        AudioSource targetSource = (audioSource != null) ? audioSource : ambienceMusicSource1;
+        if (targetSource.isPlaying)
+        {
+            targetSource.Pause();
+        }
+    }
+
+    /// <summary>
+    /// Resumes the currently paused game music track.
+    /// </summary>
+    /// <param name="audioSource">Optional AudioSource through which the music is being played. Defaults to the class's gameMusicSource1.</param>
+    public void ResumeGameMusic(AudioSource audioSource = null)
+    {
+        AudioSource targetSource = (audioSource != null) ? audioSource : gameMusicSource1;
+        if (!targetSource.isPlaying)
+        {
+            targetSource.Play();
+        }
+    }
+
+    /// <summary>
+    /// Resumes the currently paused ambience music track.
+    /// </summary>
+    /// <param name="audioSource">Optional AudioSource through which the music is being played. Defaults to the class's gameMusicSource1.</param>
+    public void ResumeAmbienceMusic(AudioSource audioSource = null)
+    {
+        AudioSource targetSource = (audioSource != null) ? audioSource : ambienceMusicSource1;
+        if (!targetSource.isPlaying)
+        {
+            targetSource.Play();
+        }
+    }
+
+    /// <summary>
+    /// Stops the currently playing game music track.
+    /// </summary>
+    /// <param name="audioSource">Optional AudioSource through which the music is being played. Defaults to the class's gameMusicSource1.</param>
+    public void StopGameMusic(AudioSource audioSource = null)
+    {
+        AudioSource targetSource = (audioSource != null) ? audioSource : gameMusicSource1;
+        targetSource.Stop();
+    }
+
+    /// <summary>
+    /// Stops the currently playing ambience music track.
+    /// </summary>
+    /// <param name="audioSource">Optional AudioSource through which the music is being played. Defaults to the class's gameMusicSource1.</param>
+    public void StopMusic(AudioSource audioSource = null)
+    {
+        AudioSource targetSource = (audioSource != null) ? audioSource : ambienceMusicSource1;
+        targetSource.Stop();
     }
 
     #endregion
@@ -92,24 +321,166 @@ public class DAM : MonoBehaviour
 
     #region Volume Control
 
-    public void SetMusicVolume(float volume)
+    /// <summary>
+    /// Sets the volume for game music playback.
+    /// </summary>
+    /// <param name="volume">The volume level between 0 and 1.</param>
+    /// <param name="audioSource">Optional AudioSource to set the volume for. Defaults to the class's gameMusicSource1.</param>
+    public void SetGameMusicVolume(float volume, AudioSource audioSource = null)
     {
-        musicAudioSource.volume = volume;
+        // Error handling: Check if volume is within range
+        if (volume < 0 || volume > 1)
+        {
+            Debug.LogWarning("Volume must be between 0 and 1.");
+            return;
+        }
+
+        AudioSource targetSource = (audioSource != null) ? audioSource : gameMusicSource1;
+        targetSource.volume = volume * masterMusicVolume;
     }
 
+    /// <summary>
+    /// Sets the volume for ambience music playback.
+    /// </summary>
+    /// <param name="volume">The volume level between 0 and 1.</param>
+    /// <param name="audioSource">Optional AudioSource to set the volume for. Defaults to the class's gameMusicSource1.</param>
+    public void SetAmbienceMusicVolume(float volume, AudioSource audioSource = null)
+    {
+        // Error handling: Check if volume is within range
+        if (volume < 0 || volume > 1)
+        {
+            Debug.LogWarning("Volume must be between 0 and 1.");
+            return;
+        }
+
+        AudioSource targetSource = (audioSource != null) ? audioSource : ambienceMusicSource1;
+        targetSource.volume = volume * masterAmbienceVolume;
+    }
+
+    /// <summary>
+    /// Sets the volume for general sound effects.
+    /// </summary>
+    /// <param name="volume">The volume level between 0 and 1.</param>
     public void SetSFXVolume(float volume)
     {
-        sfxAudioSource.volume = volume;
+        // Error handling: Check if volume is within range
+        if (volume < 0 || volume > 1)
+        {
+            Debug.LogWarning("Volume must be between 0 and 1.");
+            return;
+        }
+
+        sfxSource.volume = volume * masterSFXVolume;
     }
 
-    public float GetMusicVolume()
+    /// <summary>
+    /// Sets the volume of a sound effect from a specified AudioSource.
+    /// </summary>
+    /// <param name="volume">The volume level to set, between 0 and 1.</param>
+    /// <param name="audioSource">The AudioSource component through which the sound effect is being played.</param>
+    public void SetSFXVolumeFromSource(float volume, AudioSource audioSource)
     {
-        return musicAudioSource.volume;
+        // Error handling: Check if volume is within range
+        if (volume < 0 || volume > 1)
+        {
+            Debug.LogWarning("Volume must be between 0 and 1.");
+            return;
+        }
+
+        audioSource.volume = volume * masterSFXVolume;
     }
 
+    /// <summary>
+    /// Sets the volume for UI sound effects.
+    /// </summary>
+    /// <param name="volume">The volume level between 0 and 1.</param>
+    public void SetUISFXVolume(float volume)
+    {
+        // Error handling: Check if volume is within range
+        if (volume < 0 || volume > 1)
+        {
+            Debug.LogWarning("Volume must be between 0 and 1.");
+            return;
+        }
+
+        uiSource.volume = volume * masterUIVolume;
+    }
+
+    /// <summary>
+    /// Sets the volume of a UI sound effect from a specified AudioSource.
+    /// </summary>
+    /// <param name="volume">The volume level to set, between 0 and 1.</param>
+    /// <param name="audioSource">The AudioSource component through which the sound effect is being played.</param>
+    public void SetUISFXVolumeFromSource(float volume, AudioSource audioSource)
+    {
+        // Error handling: Check if volume is within range
+        if (volume < 0 || volume > 1)
+        {
+            Debug.LogWarning("Volume must be between 0 and 1.");
+            return;
+        }
+
+        audioSource.volume = volume * masterUIVolume;
+    }
+
+    /// <summary>
+    /// Gets the current volume level of the game music track.
+    /// </summary>
+    /// <param name="audioSource">Optional AudioSource through which the music is being played. Defaults to the class's gameMusicSource1.</param>
+    /// <returns>Current volume level.</returns>
+    public float GetGameMusicVolume(AudioSource audioSource = null)
+    {
+        AudioSource targetSource = (audioSource != null) ? audioSource : gameMusicSource1;
+        return targetSource.volume;
+    }
+
+    /// <summary>
+    /// Gets the current volume level of the ambience music track.
+    /// </summary>
+    /// <param name="audioSource">Optional AudioSource through which the music is being played. Defaults to the class's gameMusicSource1.</param>
+    /// <returns>Current volume level.</returns>
+    public float GetAmbienceMusicVolume(AudioSource audioSource = null)
+    {
+        AudioSource targetSource = (audioSource != null) ? audioSource : ambienceMusicSource1;
+        return targetSource.volume;
+    }
+
+    /// <summary>
+    /// Gets the current volume level of the general sound effects.
+    /// </summary>
+    /// <returns>Current volume level.</returns>
     public float GetSFXVolume()
     {
-        return sfxAudioSource.volume;
+        return sfxSource.volume;
+    }
+
+    /// <summary>
+    /// Gets the current volume level of the sound effects from a specified AudioSource.
+    /// </summary>
+    /// <param name="audioSource">The AudioSource component through which the sound effect is being played.</param>
+    /// <returns>Current volume level.</returns>
+    public float GetSFXVolumeFromSource(AudioSource audioSource)
+    {
+        return audioSource.volume;
+    }
+
+    /// <summary>
+    /// Gets the current volume level of the UI sound effects.
+    /// </summary>
+    /// <returns>Current volume level.</returns>
+    public float GetUISFXVolume()
+    {
+        return uiSource.volume;
+    }
+
+    /// <summary>
+    /// Gets the current volume level of the UI sound effects from a specified AudioSource.
+    /// </summary>
+    /// <param name="audioSource">The AudioSource component through which the sound effect is being played.</param>
+    /// <returns>Current volume level.</returns>
+    public float GetUISFXVolumeFromSource(AudioSource audioSource)
+    {
+        return audioSource.volume;
     }
 
     #endregion
@@ -117,35 +488,128 @@ public class DAM : MonoBehaviour
 
     #region AudioControlMethods
 
-    public void SetMusicLooping(bool shouldLoop)
+    /// <summary>
+    /// Sets whether the game music should loop.
+    /// </summary>
+    /// <param name="shouldLoop">True if the music should loop, false otherwise.</param>
+    /// <param name="audioSource">Optional AudioSource to set the looping for. Defaults to the class's gameMusicSource1.</param>
+    public void SetGameMusicLooping(bool shouldLoop, AudioSource audioSource = null)
     {
-        musicAudioSource.loop = shouldLoop;
+        AudioSource targetSource = (audioSource != null) ? audioSource : gameMusicSource1;
+        targetSource.loop = shouldLoop;
     }
 
-    public void MuteMusic()
+    /// <summary>
+    /// Mutes the game music.
+    /// </summary>
+    /// <param name="audioSource">Optional AudioSource to mute. Defaults to the class's gameMusicSource1.</param>
+    public void MuteGameMusic(AudioSource audioSource = null)
     {
-        musicAudioSource.mute = true;
+        AudioSource targetSource = (audioSource != null) ? audioSource : gameMusicSource1;
+        targetSource.mute = true;
     }
 
-    public void UnmuteMusic()
+    /// <summary>
+    /// Unmutes the game music.
+    /// </summary>
+    /// <param name="audioSource">Optional AudioSource to unmute. Defaults to the class's gameMusicSource1.</param>
+    public void UnmuteGameMusic(AudioSource audioSource = null)
     {
-        musicAudioSource.mute = false;
+        AudioSource targetSource = (audioSource != null) ? audioSource : gameMusicSource1;
+        targetSource.mute = false;
     }
 
-    public void SetMusicPitch(float pitch)
+    /// <summary>
+    /// Sets the pitch of the game music track.
+    /// </summary>
+    /// <param name="pitch">The pitch level to set.</param>
+    /// <param name="audioSource">Optional AudioSource through which the music is being played. Defaults to the class's gameMusicSource1.</param>
+    public void SetGameMusicPitch(float pitch, AudioSource audioSource = null)
     {
-        musicAudioSource.pitch = pitch;
+        AudioSource targetSource = (audioSource != null) ? audioSource : gameMusicSource1;
+        targetSource.pitch = pitch;
     }
 
+    /// <summary>
+    /// Sets whether the ambience music should loop.
+    /// </summary>
+    /// <param name="shouldLoop">True if the music should loop, false otherwise.</param>
+    /// <param name="audioSource">Optional AudioSource to set the looping for. Defaults to the class's gameMusicSource1.</param>
+    public void SetAmbienceMusicLooping(bool shouldLoop, AudioSource audioSource = null)
+    {
+        AudioSource targetSource = (audioSource != null) ? audioSource : ambienceMusicSource1;
+        targetSource.loop = shouldLoop;
+    }
+
+    /// <summary>
+    /// Mutes the ambience music.
+    /// </summary>
+    /// <param name="audioSource">Optional AudioSource to mute. Defaults to the class's gameMusicSource1.</param>
+    public void MuteAmbienceMusic(AudioSource audioSource = null)
+    {
+        AudioSource targetSource = (audioSource != null) ? audioSource : ambienceMusicSource1;
+        targetSource.mute = true;
+    }
+
+    /// <summary>
+    /// Unmutes the ambience music.
+    /// </summary>
+    /// <param name="audioSource">Optional AudioSource to unmute. Defaults to the class's gameMusicSource1.</param>
+    public void UnmuteAmbienceMusic(AudioSource audioSource = null)
+    {
+        AudioSource targetSource = (audioSource != null) ? audioSource : ambienceMusicSource1;
+        targetSource.mute = false;
+    }
+
+    /// <summary>
+    /// Sets the pitch of the ambience music track.
+    /// </summary>
+    /// <param name="pitch">The pitch level to set.</param>
+    /// <param name="audioSource">Optional AudioSource through which the music is being played. Defaults to the class's gameMusicSource1.</param>
+    public void SetAmbienceMusicPitch(float pitch, AudioSource audioSource = null)
+    {
+        AudioSource targetSource = (audioSource != null) ? audioSource : ambienceMusicSource1;
+        targetSource.pitch = pitch;
+    }
+
+    /// <summary>
+    /// Sets the pitch of the general sound effects.
+    /// </summary>
+    /// <param name="pitch">The pitch level to set.</param>
     public void SetSFXPitch(float pitch)
     {
-        sfxAudioSource.pitch = pitch;
+        sfxSource.pitch = pitch;
     }
 
-    public void SetAudio3DSpatialBlend(float spatialBlend)
+
+    /// <summary>
+    /// Sets the pitch of the sound effects from a specified AudioSource.
+    /// </summary>
+    /// <param name="pitch">The pitch level to set.</param>
+    /// <param name="audioSource">The AudioSource component through which the sound effect is being played.</param>
+    public void SetSFXPitchFromSource(float pitch, AudioSource audioSource)
     {
-        musicAudioSource.spatialBlend = spatialBlend;
-        sfxAudioSource.spatialBlend = spatialBlend;
+        audioSource.pitch = pitch;
+    }
+
+    /// <summary>
+    /// Sets the pitch of the UI sound effects.
+    /// </summary>
+    /// <param name="pitch">The pitch level to set.</param>
+    public void SetUISFXPitch(float pitch)
+    {
+        uiSource.pitch = pitch;
+    }
+
+
+    /// <summary>
+    /// Sets the pitch of the UI sound effects from a specified AudioSource.
+    /// </summary>
+    /// <param name="pitch">The pitch level to set.</param>
+    /// <param name="audioSource">The AudioSource component through which the sound effect is being played.</param>
+    public void SetUISFXPitchFromSource(float pitch, AudioSource audioSource)
+    {
+        audioSource.pitch = pitch;
     }
 
     #endregion
@@ -154,64 +618,204 @@ public class DAM : MonoBehaviour
     #region Fade Control
 
     /// <summary>
-    /// Fades in music over a specified duration.
+    /// Fades in game music over a specified duration.
     /// </summary>
-    /// <typeparam name="T">Type of the track.</typeparam>
-    /// <param name="trackType">Track to fade in.</param>
+    /// <param name="track">Track to fade in.</param>
     /// <param name="duration">Duration of the fade-in effect.</param>
-    public void FadeInMusic<T>(T trackType, float duration)
+    /// <param name="audioSource">Optional AudioSource to fade in. Defaults to the class's gameMusicSource1.</param>
+    public void FadeInGameMusic(GameMusic track, float duration, AudioSource audioSource = null)
     {
-        AudioClip clip = audioClipsSO.GetClip(trackType);
+        AudioSource targetSource = (audioSource != null) ? audioSource : gameMusicSource1;
+        AudioClip clip = audioClipsSO.GetGameMusicClip(track);
         if (clip != null)
         {
-            StartCoroutine(FadeInProcess(musicAudioSource, clip, duration));
+            StartCoroutine(FadeInProcess(targetSource, clip, duration));
         }
     }
 
     /// <summary>
-    /// Fades in sound effects over a specified duration.
-    /// </summary>
-    /// <typeparam name="T">Type of the track.</typeparam>
-    /// <param name="trackType">Track to fade in.</param>
-    /// <param name="duration">Duration of the fade-in effect.</param>
-    public void FadeInSFX<T>(T trackType, float duration)
-    {
-        AudioClip clip = audioClipsSO.GetClip(trackType);
-        if (clip != null)
-        {
-            StartCoroutine(FadeInProcess(sfxAudioSource, clip, duration));
-        }
-    }
-
-    /// <summary>
-    /// Fades out music over a specified duration.
+    /// Fades out game music over a specified duration.
     /// </summary>
     /// <param name="duration">Duration of the fade-out effect.</param>
-    public void FadeOutMusic(float duration)
+    /// <param name="audioSource">Optional AudioSource to fade out. Defaults to the class's gameMusicSource1.</param>
+    public void FadeOutGameMusic(float duration, AudioSource audioSource = null)
     {
-        StartCoroutine(FadeOutProcess(musicAudioSource, duration));
+        AudioSource targetSource = (audioSource != null) ? audioSource : gameMusicSource1;
+        StartCoroutine(FadeOutProcess(targetSource, duration));
     }
 
     /// <summary>
-    /// Fades out sound effects over a specified duration.
+    /// Fades in ambience music over a specified duration.
+    /// </summary>
+    /// <param name="track">Track to fade in.</param>
+    /// <param name="duration">Duration of the fade-in effect.</param>
+    /// <param name="audioSource">Optional AudioSource to fade in. Defaults to the class's gameMusicSource1.</param>
+    public void FadeInAmbienceMusic(AmbienceMusic track, float duration, AudioSource audioSource = null)
+    {
+        AudioSource targetSource = (audioSource != null) ? audioSource : ambienceMusicSource1;
+        AudioClip clip = audioClipsSO.GetAmbienceMusicClip(track);
+        if (clip != null)
+        {
+            StartCoroutine(FadeInProcess(targetSource, clip, duration));
+        }
+    }
+
+    /// <summary>
+    /// Fades out ambience music over a specified duration.
+    /// </summary>
+    /// <param name="duration">Duration of the fade-out effect.</param>
+    /// <param name="audioSource">Optional AudioSource to fade out. Defaults to the class's gameMusicSource1.</param>
+    public void FadeOutAmbienceMusic(float duration, AudioSource audioSource = null)
+    {
+        AudioSource targetSource = (audioSource != null) ? audioSource : ambienceMusicSource1;
+        StartCoroutine(FadeOutProcess(targetSource, duration));
+    }
+
+    /// <summary>
+    /// Fades in general sound effects over a specified duration.
+    /// </summary>
+    /// <param name="track">Track to fade in.</param>
+    /// <param name="duration">Duration of the fade-in effect.</param>
+    public void FadeInSFX(SFX track, float duration)
+    {
+        AudioClip clip = audioClipsSO.GetSFXClip(track);
+        if (clip != null)
+        {
+            StartCoroutine(FadeInProcess(sfxSource, clip, duration));
+        }
+    }
+
+    /// <summary>
+    /// Fades in a sound effect from a specified AudioSource over a given duration.
+    /// </summary>
+    /// <param name="track">The track to be played.</param>
+    /// <param name="duration">The duration over which to fade in the sound effect.</param>
+    /// <param name="audioSource">The AudioSource component through which the sound effect will be played.</param>
+    public void FadeInSFXFromSource(SFX track, float duration, AudioSource audioSource)
+    {
+        AudioClip clip = audioClipsSO.GetSFXClip(track);
+        if (clip != null)
+        {
+            StartCoroutine(FadeInProcess(audioSource, clip, duration));
+        }
+    }
+
+    /// <summary>
+    /// Fades out general sound effects over a specified duration.
     /// </summary>
     /// <param name="duration">Duration of the fade-out effect.</param>
     public void FadeOutSFX(float duration)
     {
-        StartCoroutine(FadeOutProcess(sfxAudioSource, duration));
+        StartCoroutine(FadeOutProcess(sfxSource, duration));
     }
 
     /// <summary>
-    /// Transitions between two tracks with a fade-out and fade-in effect.
+    /// Fades out a sound effect from a specified AudioSource over a given duration.
+    /// </summary>
+    /// <param name="duration">The duration over which to fade out the sound effect.</param>
+    /// <param name="audioSource">The AudioSource component through which the sound effect is being played.</param>
+    public void FadeOutSFXFromSource(float duration, AudioSource audioSource)
+    {
+        StartCoroutine(FadeOutProcess(audioSource, duration));
+    }
+
+    /// <summary>
+    /// Fades in UI sound effects over a specified duration.
+    /// </summary>
+    /// <param name="track">Track to fade in.</param>
+    /// <param name="duration">Duration of the fade-in effect.</param>
+    public void FadeInUISFX(UISFX track, float duration)
+    {
+        AudioClip clip = audioClipsSO.GetUISFXClip(track);
+        if (clip != null)
+        {
+            StartCoroutine(FadeInProcess(uiSource, clip, duration));
+        }
+    }
+
+    /// <summary>
+    /// Fades in a UI sound effect from a specified AudioSource over a given duration.
+    /// </summary>
+    /// <param name="track">The track to be played.</param>
+    /// <param name="duration">The duration over which to fade in the sound effect.</param>
+    /// <param name="audioSource">The AudioSource component through which the sound effect will be played.</param>
+    public void FadeInUISFXFromSource(UISFX track, float duration, AudioSource audioSource)
+    {
+        AudioClip clip = audioClipsSO.GetUISFXClip(track);
+        if (clip != null)
+        {
+            StartCoroutine(FadeInProcess(audioSource, clip, duration));
+        }
+    }
+
+    /// <summary>
+    /// Fades out UI sound effects over a specified duration.
+    /// </summary>
+    /// <param name="duration">Duration of the fade-out effect.</param>
+    public void FadeOutUISFX(float duration)
+    {
+        StartCoroutine(FadeOutProcess(uiSource, duration));
+    }
+
+    /// <summary>
+    /// Fades out a UI sound effect from a specified AudioSource over a given duration.
+    /// </summary>
+    /// <param name="duration">The duration over which to fade out the sound effect.</param>
+    /// <param name="audioSource">The AudioSource component through which the sound effect is being played.</param>
+    public void FadeOutUISFXFromSource(float duration, AudioSource audioSource)
+    {
+        StartCoroutine(FadeOutProcess(audioSource, duration));
+    }
+
+    /// <summary>
+    /// Initiates a crossfade between the currently playing game music AudioClip and a new AudioClip.
+    /// </summary>
+    /// <param name="newClip">The AudioClip to crossfade to.</param>
+    /// <param name="duration">The duration of the crossfade in seconds.</param>
+    public void CrossFadeGameMusic(AudioClip newClip, float duration)
+    {
+        if (isFadingGameMusic) return; // Prevent overlapping fades
+
+        StartCoroutine(CrossFadeGameMusicProcess(newClip, duration));
+    }
+
+    /// <summary>
+    /// Initiates a crossfade between the currently playing ambience music AudioClip and a new AudioClip.
+    /// </summary>
+    /// <param name="newClip">The AudioClip to crossfade to.</param>
+    /// <param name="duration">The duration of the crossfade in seconds.</param>
+    public void CrossFadeAmbienceMusic(AudioClip newClip, float duration)
+    {
+        if (isFadingAmbienceMusic) return; // Prevent overlapping fades
+
+        StartCoroutine(CrossFadeAmbienceMusicProcess(newClip, duration));
+    }
+
+    /// <summary>
+    /// Transitions between two game music tracks with a fade-out and fade-in effect.
     /// </summary>
     /// <param name="fromTrack">Track to fade out.</param>
     /// <param name="toTrack">Track to fade in.</param>
     /// <param name="duration">Duration of the transition.</param>
-    public void TransitionTracks(Enum fromTrack, Enum toTrack, float duration)
+    public void TransitionGameMusicTracks(GameMusic fromTrack, GameMusic toTrack, float duration)
     {
-        StartCoroutine(FadeOutProcess(musicAudioSource, duration, () =>
+        StartCoroutine(FadeOutProcess(gameMusicSource1, duration, () =>
         {
-            FadeInMusic(toTrack, duration);
+            FadeInGameMusic(toTrack, duration);
+        }));
+    }
+
+    /// <summary>
+    /// Transitions between two ambience music tracks with a fade-out and fade-in effect.
+    /// </summary>
+    /// <param name="fromTrack">Track to fade out.</param>
+    /// <param name="toTrack">Track to fade in.</param>
+    /// <param name="duration">Duration of the transition.</param>
+    public void TransitionAmbienceMusicTracks(AmbienceMusic fromTrack, AmbienceMusic toTrack, float duration)
+    {
+        StartCoroutine(FadeOutProcess(ambienceMusicSource1, duration, () =>
+        {
+            FadeInAmbienceMusic(toTrack, duration);
         }));
     }
 
@@ -222,59 +826,107 @@ public class DAM : MonoBehaviour
 
     private IEnumerator FadeInProcess(AudioSource audioSource, AudioClip newClip, float duration)
     {
+        // Check if a new audio clip is provided
         if (newClip)
         {
+            // Set the new audio clip and start playing
             audioSource.clip = newClip;
             audioSource.Play();
         }
 
+        // Initialize volume to zero
         audioSource.volume = 0;
-        float targetVolume = 1.0f;
+        float targetVolume = 1.0f * masterMusicVolume;
+
+        // Gradually increase volume to target volume
         while (audioSource.volume < targetVolume)
         {
+            // Incrementally increase the volume of the audio source based on the target volume, frame time, and duration
             audioSource.volume += targetVolume * Time.deltaTime / duration;
+
+            // Pause the coroutine and wait for the next frame before continuing
             yield return null;
         }
     }
 
     private IEnumerator FadeOutProcess(AudioSource audioSource, float duration, Action onFinished = null)
     {
-        float startVolume = audioSource.volume;
+        // Store the initial volume
+        float startVolume = audioSource.volume * masterMusicVolume;
 
+        // Gradually reduce the volume to zero
         while (audioSource.volume > 0)
         {
             audioSource.volume -= startVolume * Time.deltaTime / duration;
+
             yield return null;
         }
 
         audioSource.Stop();
-        audioSource.volume = startVolume; 
 
+        // Reset the volume to the initial value
+        audioSource.volume = startVolume;
+
+        // Invoke any callback actions
         onFinished?.Invoke();
     }
 
-    private IEnumerator CrossFadeProcess(Enum fromTrack, Enum toTrack, float duration)
+    private IEnumerator CrossFadeGameMusicProcess(AudioClip newClip, float duration)
     {
-        // Fade out the current track
-        float startVolume = musicAudioSource.volume;
-        while (musicAudioSource.volume > 0)
+        isFadingGameMusic = true;
+
+        AudioSource activeSource = (gameMusicSource1.isPlaying) ? gameMusicSource1 : gameMusicSource2;
+        AudioSource inactiveSource = (activeSource == gameMusicSource1) ? gameMusicSource2 : gameMusicSource1;
+
+        inactiveSource.clip = newClip;
+        inactiveSource.Play();
+        inactiveSource.volume = 0;
+
+        float halfDuration = duration / 2.0f;
+
+        // Fade out the active source and fade in the inactive source
+        for (float t = 0; t < halfDuration; t += Time.deltaTime)
         {
-            musicAudioSource.volume -= startVolume * Time.deltaTime / (duration / 2);
+            activeSource.volume = Mathf.Lerp(1 * masterMusicVolume, 0, t / halfDuration);
+            inactiveSource.volume = Mathf.Lerp(0, 1 * masterMusicVolume, t / halfDuration);
+
             yield return null;
         }
-        musicAudioSource.Stop();
 
-        // Play the new track
-        PlayMusic(toTrack);
+        // Stop the active source and make the inactive source the new active source
+        activeSource.Stop();
+        activeSource.volume = 1; // Reset volume for future use
 
-        // Fade in the new track
-        musicAudioSource.volume = 0;
-        float targetVolume = 1.0f;
-        while (musicAudioSource.volume < targetVolume)
+        isFadingGameMusic = false;
+    }
+
+    private IEnumerator CrossFadeAmbienceMusicProcess(AudioClip newClip, float duration)
+    {
+        isFadingAmbienceMusic = true;
+
+        AudioSource activeSource = (ambienceMusicSource1.isPlaying) ? ambienceMusicSource1 : ambienceMusicSource2;
+        AudioSource inactiveSource = (activeSource == ambienceMusicSource1) ? ambienceMusicSource2 : ambienceMusicSource1;
+
+        inactiveSource.clip = newClip;
+        inactiveSource.Play();
+        inactiveSource.volume = 0;
+
+        float halfDuration = duration / 2.0f;
+
+        // Fade out the active source and fade in the inactive source
+        for (float t = 0; t < halfDuration; t += Time.deltaTime)
         {
-            musicAudioSource.volume += targetVolume * Time.deltaTime / (duration / 2);
+            activeSource.volume = Mathf.Lerp(1 * masterAmbienceVolume, 0, t / halfDuration);
+            inactiveSource.volume = Mathf.Lerp(0, 1 * masterAmbienceVolume, t / halfDuration);
+
             yield return null;
         }
+
+        // Stop the active source and make the inactive source the new active source
+        activeSource.Stop();
+        activeSource.volume = 1; // Reset volume for future use
+
+        isFadingAmbienceMusic = false;
     }
 
     #endregion
@@ -282,33 +934,42 @@ public class DAM : MonoBehaviour
 
     #region ENUMS
 
-    public enum MenuMusic
+    public enum GameMusic
     {
         None,
         MainTrack1,
         MainTrack2,
         PauseTrack1,
         PauseTrack2,
-
-    }
-
-    public enum GameMusic
-    {
-        None,
         IntroTrack,
         Level1Track1,
         Level1Track2,
         Level2Track1,
         Level2Track2,
         CreditsTrack,
-
     }
+
     public enum AmbienceMusic
     {
         None,
-        Track1,
+        Dungeon1,
         Track2,
         Track3,
+
+    }
+
+    public enum SFX
+    {
+        None,
+        DoorOpen,
+        DoorClose,
+        ChestOpen,
+        ChestClose,
+        Thud,
+        Success,
+        Failed,
+        Positive,
+        Negative,
 
     }
 

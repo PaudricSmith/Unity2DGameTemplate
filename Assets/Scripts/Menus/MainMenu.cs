@@ -8,10 +8,6 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Vector2 hotSpot = new Vector2(0, 0); // The "active" point of the cursor
     [SerializeField] private CursorMode cursorMode = CursorMode.Auto;
 
-    [Header("Button Blocker Panel")]
-    public GameObject buttonBlockingPanel;
-
-
 
     private void Start()
     {
@@ -20,24 +16,10 @@ public class MainMenu : MonoBehaviour
 
         // Set the custom cursor
         Cursor.SetCursor(cursorTexture, hotSpot, cursorMode);
-
-        DisableMainMenuButtonPanelBlocker();
-    }
-
-
-    public void EnableMainMenuButtonPanelBlocker()
-    {
-        buttonBlockingPanel.SetActive(true); 
-    }
-
-
-    public void DisableMainMenuButtonPanelBlocker()
-    {
-        buttonBlockingPanel.SetActive(false); 
     }
 
     public void PlayButtonClick()
     {
-        DAM.One.PlaySFX(DAM.UISFX.ButtonClick);
+        DAM.One.PlayUISFX(DAM.UISFX.ButtonClick);
     }
 }
