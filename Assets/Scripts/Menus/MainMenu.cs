@@ -8,11 +8,15 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Vector2 hotSpot = new Vector2(0, 0); // The "active" point of the cursor
     [SerializeField] private CursorMode cursorMode = CursorMode.Auto;
 
+    [SerializeField] private GameSettingsDataSO gameSettings;
+
 
     private void Start()
     {
-        // Set the resolution to 1920x1080 and enable fullscreen
-        Screen.SetResolution(1920, 1080, true);
+        gameSettings.LoadSettings();
+
+        // Set the resolution to the saved resolution and saved fullscreen values
+        Screen.SetResolution(gameSettings.resolutionWidth, gameSettings.resolutionHeight, gameSettings.isFullscreen);
 
         // Set the custom cursor
         Cursor.SetCursor(cursorTexture, hotSpot, cursorMode);

@@ -633,7 +633,7 @@ MonoBehaviour:
   m_Color: {r: 1, g: 0.65723264, b: 0.65723264, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
+  m_Maskable: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -782,15 +782,15 @@ Camera:
   m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.03125
+    x: 0
     y: 0
-    width: 0.9375001
+    width: 1
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 6
+  orthographic size: 3
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -802,7 +802,7 @@ Camera:
   m_HDR: 0
   m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
-  m_ForceIntoRT: 1
+  m_ForceIntoRT: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
@@ -833,14 +833,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a160d838ff8b4b4693ac20007e008c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AssetsPPU: 16
+  m_AssetsPPU: 32
   m_RefResolutionX: 320
   m_RefResolutionY: 192
   m_UpscaleRT: 0
   m_PixelSnapping: 1
   m_CropFrameX: 1
   m_CropFrameY: 1
-  m_StretchFill: 1
+  m_StretchFill: 0
 --- !u!1001 &803050482
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -971,6 +971,10 @@ PrefabInstance:
     - target: {fileID: 2399385515373171553, guid: c1cab1f5ff502444ebd7d89ca94564b4, type: 3}
       propertyPath: m_Name
       value: FullscreenToggle
+      objectReference: {fileID: 0}
+    - target: {fileID: 2399385515373171555, guid: c1cab1f5ff502444ebd7d89ca94564b4, type: 3}
+      propertyPath: m_IsOn
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c1cab1f5ff502444ebd7d89ca94564b4, type: 3}
@@ -1236,6 +1240,34 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 143307517}
     m_Modifications:
+    - target: {fileID: 460886555780834931, guid: 643bcdea16332e3428ddd2e91a91d473, type: 3}
+      propertyPath: m_Text
+      value: 1920 x 1080
+      objectReference: {fileID: 0}
+    - target: {fileID: 1469350309583811885, guid: 643bcdea16332e3428ddd2e91a91d473, type: 3}
+      propertyPath: m_PixelsPerUnitMultiplier
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2695964983516781190, guid: 643bcdea16332e3428ddd2e91a91d473, type: 3}
+      propertyPath: m_Options.m_Options.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2695964983516781190, guid: 643bcdea16332e3428ddd2e91a91d473, type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_Text
+      value: 1920 x 1080
+      objectReference: {fileID: 0}
+    - target: {fileID: 2695964983516781190, guid: 643bcdea16332e3428ddd2e91a91d473, type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_Text
+      value: 1280 x 768
+      objectReference: {fileID: 0}
+    - target: {fileID: 2695964983516781190, guid: 643bcdea16332e3428ddd2e91a91d473, type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_Text
+      value: 122 x 240
+      objectReference: {fileID: 0}
+    - target: {fileID: 2796650948824657323, guid: 643bcdea16332e3428ddd2e91a91d473, type: 3}
+      propertyPath: m_PixelsPerUnitMultiplier
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3831181308911420919, guid: 643bcdea16332e3428ddd2e91a91d473, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1595,8 +1627,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_UiScaleMode: 0
-  m_ReferencePixelsPerUnit: 46
-  m_ScaleFactor: 1.5
+  m_ReferencePixelsPerUnit: 32
+  m_ScaleFactor: 1
   m_ReferenceResolution: {x: 320, y: 192}
   m_ScreenMatchMode: 2
   m_MatchWidthOrHeight: 0.62
@@ -1660,6 +1692,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28f086020feb5724782bb6d0ac0999c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameSettings: {fileID: 11400000, guid: 5c3a0c3e2c98eaf4eb99d2ddb7fb89ca, type: 2}
   fullscreenToggle: {fileID: 1270171203}
   resolutionDropdown: {fileID: 1277937258}
   masterVolumeSlider: {fileID: 1422050113}

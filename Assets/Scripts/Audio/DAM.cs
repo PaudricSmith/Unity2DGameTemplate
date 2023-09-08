@@ -8,13 +8,9 @@ using UnityEngine;
 /// </summary>
 public class DAM : MonoBehaviour
 {
-    public float masterMusicVolume = 1.0f; // Master volume for all game music
-    public float masterAmbienceVolume = 1.0f; // Master volume for all ambience music
-    public float masterSFXVolume = 1.0f;  // Master volume for all general sound effects
-    public float masterUIVolume = 1.0f;  // Master volume for all UI sound effects
     private bool isFadingGameMusic = false;
     private bool isFadingAmbienceMusic = false;
-
+    
     [SerializeField] private AudioClipsSO audioClipsSO;
 
     [SerializeField] private AudioSource gameMusicSource1;
@@ -62,7 +58,6 @@ public class DAM : MonoBehaviour
         {
             AudioSource targetSource = (audioSource != null) ? audioSource : gameMusicSource1;
             targetSource.clip = clip;
-            targetSource.volume *= masterMusicVolume;
             targetSource.Play();
         }
     }
@@ -80,7 +75,6 @@ public class DAM : MonoBehaviour
         {
             AudioSource targetSource = (audioSource != null) ? audioSource : gameMusicSource1;
             targetSource.clip = clip;
-            targetSource.volume *= masterMusicVolume;
             targetSource.PlayDelayed(delay);
         }
     }
@@ -97,7 +91,6 @@ public class DAM : MonoBehaviour
         {
             AudioSource targetSource = (audioSource != null) ? audioSource : ambienceMusicSource1;
             targetSource.clip = clip;
-            targetSource.volume *= masterAmbienceVolume;
             targetSource.Play();
         }
     }
@@ -115,7 +108,6 @@ public class DAM : MonoBehaviour
         {
             AudioSource targetSource = (audioSource != null) ? audioSource : ambienceMusicSource1;
             targetSource.clip = clip;
-            targetSource.volume *= masterAmbienceVolume;
             targetSource.PlayDelayed(delay);
         }
     }
@@ -129,7 +121,6 @@ public class DAM : MonoBehaviour
         AudioClip clip = audioClipsSO.GetSFXClip(track);
         if (clip)
         {
-            sfxSource.volume *= masterSFXVolume;
             sfxSource.PlayOneShot(clip);
         }
     }
@@ -144,7 +135,6 @@ public class DAM : MonoBehaviour
         AudioClip clip = audioClipsSO.GetSFXClip(track);
         if (clip)
         {
-            audioSource.volume *= masterSFXVolume;
             audioSource.PlayOneShot(clip); 
         }
     }
@@ -160,7 +150,6 @@ public class DAM : MonoBehaviour
         if (clip)
         {
             sfxSource.clip = clip; 
-            sfxSource.volume *= masterSFXVolume;
             sfxSource.PlayDelayed(delay);
         }
     }
@@ -177,7 +166,6 @@ public class DAM : MonoBehaviour
         if (clip)
         {
             audioSource.clip = clip;
-            audioSource.volume *= masterSFXVolume;
             audioSource.PlayDelayed(delay);
         }
     }
@@ -191,7 +179,6 @@ public class DAM : MonoBehaviour
         AudioClip clip = audioClipsSO.GetUISFXClip(track);
         if (clip)
         {
-            uiSource.volume *= masterUIVolume;
             uiSource.PlayOneShot(clip);
         }
     }
@@ -206,7 +193,6 @@ public class DAM : MonoBehaviour
         AudioClip clip = audioClipsSO.GetUISFXClip(track);
         if (clip)
         {
-            audioSource.volume *= masterUIVolume;
             audioSource.PlayOneShot(clip);
         }
     }
@@ -222,7 +208,6 @@ public class DAM : MonoBehaviour
         if (clip)
         {
             uiSource.clip = clip;
-            uiSource.volume *= masterUIVolume;
             uiSource.PlayDelayed(delay);
         }
     }
@@ -239,7 +224,6 @@ public class DAM : MonoBehaviour
         if (clip)
         {
             audioSource.clip = clip;
-            audioSource.volume *= masterUIVolume;
             audioSource.PlayDelayed(delay);
         }
     }
@@ -325,18 +309,21 @@ public class DAM : MonoBehaviour
     /// Sets the volume for game music playback.
     /// </summary>
     /// <param name="volume">The volume level between 0 and 1.</param>
-    /// <param name="audioSource">Optional AudioSource to set the volume for. Defaults to the class's gameMusicSource1.</param>
+    /// <param name="audioSource">Optional AudioSource to set the volume for. Defaults to the class's game music sources.</param>
     public void SetGameMusicVolume(float volume, AudioSource audioSource = null)
     {
-        // Error handling: Check if volume is within range
-        if (volume < 0 || volume > 1)
-        {
-            Debug.LogWarning("Volume must be between 0 and 1.");
-            return;
-        }
+        // Clamp the volume to be within the range [0, 1]
+        volume = Mathf.Clamp(volume, 0, 1);
 
-        AudioSource targetSource = (audioSource != null) ? audioSource : gameMusicSource1;
-        targetSource.volume = volume * masterMusicVolume;
+        if (audioSource == null)
+        {
+            gameMusicSource1.volume = volume;
+            gameMusicSource2.volume = volume;
+        }
+        else
+        {
+            audioSource.volume = volume;
+        }
     }
 
     /// <summary>
@@ -346,15 +333,18 @@ public class DAM : MonoBehaviour
     /// <param name="audioSource">Optional AudioSource to set the volume for. Defaults to the class's gameMusicSource1.</param>
     public void SetAmbienceMusicVolume(float volume, AudioSource audioSource = null)
     {
-        // Error handling: Check if volume is within range
-        if (volume < 0 || volume > 1)
-        {
-            Debug.LogWarning("Volume must be between 0 and 1.");
-            return;
-        }
+        // Clamp the volume to be within the range [0, 1]
+        volume = Mathf.Clamp(volume, 0, 1);
 
-        AudioSource targetSource = (audioSource != null) ? audioSource : ambienceMusicSource1;
-        targetSource.volume = volume * masterAmbienceVolume;
+        if (audioSource == null)
+        {
+            ambienceMusicSource1.volume = volume;
+            ambienceMusicSource2.volume = volume;
+        }
+        else
+        {
+            audioSource.volume = volume;
+        }
     }
 
     /// <summary>
@@ -363,14 +353,10 @@ public class DAM : MonoBehaviour
     /// <param name="volume">The volume level between 0 and 1.</param>
     public void SetSFXVolume(float volume)
     {
-        // Error handling: Check if volume is within range
-        if (volume < 0 || volume > 1)
-        {
-            Debug.LogWarning("Volume must be between 0 and 1.");
-            return;
-        }
+        // Clamp the volume to be within the range [0, 1]
+        volume = Mathf.Clamp(volume, 0, 1);
 
-        sfxSource.volume = volume * masterSFXVolume;
+        sfxSource.volume = volume;
     }
 
     /// <summary>
@@ -380,14 +366,10 @@ public class DAM : MonoBehaviour
     /// <param name="audioSource">The AudioSource component through which the sound effect is being played.</param>
     public void SetSFXVolumeFromSource(float volume, AudioSource audioSource)
     {
-        // Error handling: Check if volume is within range
-        if (volume < 0 || volume > 1)
-        {
-            Debug.LogWarning("Volume must be between 0 and 1.");
-            return;
-        }
+        // Clamp the volume to be within the range [0, 1]
+        volume = Mathf.Clamp(volume, 0, 1);
 
-        audioSource.volume = volume * masterSFXVolume;
+        audioSource.volume = volume;
     }
 
     /// <summary>
@@ -396,14 +378,10 @@ public class DAM : MonoBehaviour
     /// <param name="volume">The volume level between 0 and 1.</param>
     public void SetUISFXVolume(float volume)
     {
-        // Error handling: Check if volume is within range
-        if (volume < 0 || volume > 1)
-        {
-            Debug.LogWarning("Volume must be between 0 and 1.");
-            return;
-        }
+        // Clamp the volume to be within the range [0, 1]
+        volume = Mathf.Clamp(volume, 0, 1);
 
-        uiSource.volume = volume * masterUIVolume;
+        uiSource.volume = volume;
     }
 
     /// <summary>
@@ -413,14 +391,10 @@ public class DAM : MonoBehaviour
     /// <param name="audioSource">The AudioSource component through which the sound effect is being played.</param>
     public void SetUISFXVolumeFromSource(float volume, AudioSource audioSource)
     {
-        // Error handling: Check if volume is within range
-        if (volume < 0 || volume > 1)
-        {
-            Debug.LogWarning("Volume must be between 0 and 1.");
-            return;
-        }
+        // Clamp the volume to be within the range [0, 1]
+        volume = Mathf.Clamp(volume, 0, 1);
 
-        audioSource.volume = volume * masterUIVolume;
+        audioSource.volume = volume;
     }
 
     /// <summary>
@@ -836,7 +810,7 @@ public class DAM : MonoBehaviour
 
         // Initialize volume to zero
         audioSource.volume = 0;
-        float targetVolume = 1.0f * masterMusicVolume;
+        float targetVolume = 1.0f;
 
         // Gradually increase volume to target volume
         while (audioSource.volume < targetVolume)
@@ -852,7 +826,7 @@ public class DAM : MonoBehaviour
     private IEnumerator FadeOutProcess(AudioSource audioSource, float duration, Action onFinished = null)
     {
         // Store the initial volume
-        float startVolume = audioSource.volume * masterMusicVolume;
+        float startVolume = audioSource.volume;
 
         // Gradually reduce the volume to zero
         while (audioSource.volume > 0)
@@ -887,8 +861,8 @@ public class DAM : MonoBehaviour
         // Fade out the active source and fade in the inactive source
         for (float t = 0; t < halfDuration; t += Time.deltaTime)
         {
-            activeSource.volume = Mathf.Lerp(1 * masterMusicVolume, 0, t / halfDuration);
-            inactiveSource.volume = Mathf.Lerp(0, 1 * masterMusicVolume, t / halfDuration);
+            activeSource.volume = Mathf.Lerp(1, 0, t / halfDuration);
+            inactiveSource.volume = Mathf.Lerp(0, 1, t / halfDuration);
 
             yield return null;
         }
@@ -916,8 +890,8 @@ public class DAM : MonoBehaviour
         // Fade out the active source and fade in the inactive source
         for (float t = 0; t < halfDuration; t += Time.deltaTime)
         {
-            activeSource.volume = Mathf.Lerp(1 * masterAmbienceVolume, 0, t / halfDuration);
-            inactiveSource.volume = Mathf.Lerp(0, 1 * masterAmbienceVolume, t / halfDuration);
+            activeSource.volume = Mathf.Lerp(1, 0, t / halfDuration);
+            inactiveSource.volume = Mathf.Lerp(0, 1, t / halfDuration);
 
             yield return null;
         }

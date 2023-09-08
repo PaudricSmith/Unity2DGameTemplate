@@ -15,6 +15,7 @@ public class GameManagerSO : ScriptableObject
 
     public void NewGame()
     {
+        Debug.LogWarning(Screen.resolutions);
         sceneManager.NewGame();
 
         //DAM.One.PlayGameMusic(DAM.GameMusic.Level1Track1);
@@ -84,6 +85,7 @@ public class GameManagerSO : ScriptableObject
 
     public void LoadSettingsMenu()
     {
+        Debug.LogWarning(Screen.resolutions);
         sceneManager.LoadSettingsMenu();
     }
 
