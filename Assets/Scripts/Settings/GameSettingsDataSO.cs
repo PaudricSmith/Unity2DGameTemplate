@@ -17,7 +17,8 @@ public class GameSettingsDataSO : ScriptableObject
     [Header("Screen Settings")]
     public bool isFullscreen = true;
     public int resolutionWidth = 1920;
-    public int resolutionHeight = 1080;
+    public int resolutionHeight = 1152;
+    //public int resolutionHeight = 1080;
 
 
 
@@ -25,6 +26,12 @@ public class GameSettingsDataSO : ScriptableObject
     {
         // Define the path where the settings file will be stored
         settingsFilePath = Path.Combine(Application.persistentDataPath, "gameSettingsData.json");
+    }
+
+    public void SetScreenSettings()
+    {
+        // Set the resolution to the saved resolution and saved fullscreen values
+        Screen.SetResolution(resolutionWidth, resolutionHeight, isFullscreen);
     }
 
     public void SaveSettings()

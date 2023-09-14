@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
@@ -10,16 +10,35 @@ public class MainMenu : MonoBehaviour
 
     [SerializeField] private GameSettingsDataSO gameSettings;
 
+    [SerializeField] private Button settingsButton;
+    [SerializeField] private Button newGameButton;
+    [SerializeField] private Button loadGameButton;
+    [SerializeField] private Button quitButton;
+
 
     private void Start()
     {
+        // Set the game settings
         gameSettings.LoadSettings();
-
-        // Set the resolution to the saved resolution and saved fullscreen values
-        Screen.SetResolution(gameSettings.resolutionWidth, gameSettings.resolutionHeight, gameSettings.isFullscreen);
+        gameSettings.SetScreenSettings();
+        DAM.One.SetAudioSettings(gameSettings);
 
         // Set the custom cursor
         Cursor.SetCursor(cursorTexture, hotSpot, cursorMode);
+
+
+        // Start playing menu theme if not 
+        if (!DAM.One.IsGameMusicSource1Playing && !DAM.One.IsGameMusicSource2Playing)
+        {
+            DAM.One.PlayGameMusic(DAM.GameMusic.MenuTrack1);
+        }
+
+
+        // Add listeners for each button so they can play their sfx when clicked
+        settingsButton.onClick.AddListener(PlayButtonClick);
+        newGameButton.onClick.AddListener(PlayButtonClick);
+        loadGameButton.onClick.AddListener(PlayButtonClick);
+        quitButton.onClick.AddListener(PlayButtonClick);
     }
 
     public void PlayButtonClick()

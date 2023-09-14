@@ -14,8 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameTracks:
     tracks:
+    - track: 2
+      clip: {fileID: 8300000, guid: 57fd640f410598447a7d6285572b57b9, type: 3}
     - track: 6
-      clip: {fileID: 8300000, guid: 818526121664ce04c9ef5073b951bbea, type: 3}
+      clip: {fileID: 8300000, guid: b5d8b6c26a2a81548b97f1a8baeb2074, type: 3}
+    - track: 4
+      clip: {fileID: 8300000, guid: 6b5b128a2c5aeb54080f0b67708f0215, type: 3}
   ambienceTracks:
     tracks:
     - track: 1
@@ -27,7 +31,7 @@ MonoBehaviour:
   uiTracks:
     tracks:
     - track: 1
-      clip: {fileID: 8300000, guid: 567333f625d523a4fb6d734c239e4156, type: 3}
+      clip: {fileID: 8300000, guid: 950450fab008a9d48b7f9acf706ec805, type: 3}
   playerTracks:
     tracks: []
   enemyTracks:

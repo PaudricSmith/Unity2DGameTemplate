@@ -12,7 +12,6 @@ public class DAM : MonoBehaviour
     private bool isFadingAmbienceMusic = false;
     
     [SerializeField] private AudioClipsSO audioClipsSO;
-
     [SerializeField] private AudioSource gameMusicSource1;
     [SerializeField] private AudioSource gameMusicSource2;
     [SerializeField] private AudioSource ambienceMusicSource1;
@@ -42,6 +41,33 @@ public class DAM : MonoBehaviour
             return;
         }
     }
+
+
+    #region Properties
+
+    // Properties to expose the playing state of the audio sources
+    public bool IsGameMusicSource1Playing => gameMusicSource1.isPlaying;
+    public bool IsGameMusicSource2Playing => gameMusicSource2.isPlaying;
+    public bool IsAmbienceMusicSource1Playing => ambienceMusicSource1.isPlaying;
+    public bool IsAmbienceMusicSource2Playing => ambienceMusicSource2.isPlaying;
+    public bool IsSFXSourcePlaying => sfxSource.isPlaying;
+    public bool IsUISourcePlaying => uiSource.isPlaying;
+
+    #endregion Properties
+
+
+    #region Setters
+
+    public void SetAudioSettings(GameSettingsDataSO gameSettings)
+    {
+        AudioListener.volume = gameSettings.masterVolume;
+        SetGameMusicVolume(gameSettings.gameMusicVolume);
+        SetAmbienceMusicVolume(gameSettings.ambienceMusicVolume);
+        SetSFXVolume(gameSettings.sfxVolume);
+        SetUISFXVolume(gameSettings.uiSfxVolume);
+    }
+
+    #endregion Setters
 
 
     #region Playback Control
@@ -911,11 +937,11 @@ public class DAM : MonoBehaviour
     public enum GameMusic
     {
         None,
-        MainTrack1,
-        MainTrack2,
+        IntroTrack,
+        MenuTrack1,
+        MenuTrack2,
         PauseTrack1,
         PauseTrack2,
-        IntroTrack,
         Level1Track1,
         Level1Track2,
         Level2Track1,

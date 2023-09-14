@@ -114,7 +114,7 @@ public class SceneManagerSO : ScriptableObject
     // Load Settings Menu additively on top of menu scene
     public void LoadSettingsMenu()
     {
-        SceneManager.LoadSceneAsync(menus[(int)MenuType.Settings_Menu].SceneName, LoadSceneMode.Additive);
+        SceneManager.LoadSceneAsync(menus[(int)MenuType.Settings_Menu].SceneName);
     }
 
     // Unload Settings Menu when click 'Back' button

@@ -5,15 +5,12 @@ using UnityEngine.UI;
 
 public class SettingsMenu : MonoBehaviour
 {
-    //private List<Resolution> customResolutions = new List<Resolution>();
-
     private Resolution[] customResolutions = new Resolution[]
     {
-        new Resolution { width = 1920, height = 1152 },
+        //new Resolution { width = 1920, height = 1152 },
+        //new Resolution { width = 1280, height = 768 },
         new Resolution { width = 1920, height = 1080 },
-        new Resolution { width = 1280, height = 768 },
-        // new Resolution { width = 320, height = 192 },
-        // Add other custom resolutions here
+        new Resolution { width = 1280, height = 720 }
     };
 
     [SerializeField] private GameSettingsDataSO gameSettings;
@@ -26,37 +23,22 @@ public class SettingsMenu : MonoBehaviour
     [SerializeField] private Slider sfxSlider;
     [SerializeField] private Slider uiSlider;
 
+    [SerializeField] private Button backButton;
+    [SerializeField] private Button applyButton;
+
 
     private void Start()
     {
-        //// Generate custom resolutions based on the base resolution
-        //int baseWidth = 320;
-        //int baseHeight = 192;
-        //int minResMultiplier = 3;
-        //int maxResMultiplier = 6;
-
-        //for (int i = minResMultiplier; i <= maxResMultiplier; i++)
-        //{
-        //    Resolution res = new Resolution
-        //    {
-        //        width = baseWidth * i,
-        //        height = baseHeight * i
-        //    };
-        //    customResolutions.Add(res);
-        //}
-
-        //customResolutions.Add(new Resolution { width = 1920, height = 1080 });
-
-
-
         PopulateResolutionDropdown();
 
         // When the scene first loads get all the settings from the GameSettingsSO and set their UI and audio sources
+        SetAudioUI();
         SetAudioSettings();
-        SetScreenSettings();
+        SetScreenUI();
 
-
-        AudioTest();
+        // Add listeners for each button so they can play their sfx when clicked
+        backButton.onClick.AddListener(PlayButtonClick);
+        applyButton.onClick.AddListener(PlayButtonClick);
     }
 
     private void PopulateResolutionDropdown()
@@ -73,50 +55,29 @@ public class SettingsMenu : MonoBehaviour
         resolutionDropdown.AddOptions(options);
     }
 
-    private void AudioTest()
-    {
-        //////////////////////////////////////////////////////////////////////////////////////////////////////
-        //////////////////////////////////////***    TESTING    ***///////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        // Play game and ambience here to test volume control
-        DAM.One.PlayGameMusic(DAM.GameMusic.Level1Track1);
-
-        DAM.One.SetAmbienceMusicLooping(true);
-        DAM.One.PlayAmbienceMusic(DAM.AmbienceMusic.Dungeon1);
-
-        //////////////////////////////////////////////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////////////////////////////////////////
-    }
-
-    private void SetAudioSettings()
+    private void SetAudioUI()
     {
         masterVolumeSlider.value = gameSettings.masterVolume;
         gameMusicSlider.value = gameSettings.gameMusicVolume;
         ambienceMusicSlider.value = gameSettings.ambienceMusicVolume;
         sfxSlider.value = gameSettings.sfxVolume;
         uiSlider.value = gameSettings.uiSfxVolume;
-
-        ApplyAudioSettings();
     }
 
-    private void ApplyAudioSettings()
+    private void SetAudioSettings()
     {
-        AudioListener.volume = masterVolumeSlider.value;
-        DAM.One.SetGameMusicVolume(gameMusicSlider.value);
-        DAM.One.SetAmbienceMusicVolume(ambienceMusicSlider.value);
-        DAM.One.SetSFXVolume(sfxSlider.value);
-        DAM.One.SetUISFXVolume(uiSlider.value);
-
+        // Set the audio game settings to the latest slider volume values
         gameSettings.masterVolume = masterVolumeSlider.value;
         gameSettings.gameMusicVolume = gameMusicSlider.value;
         gameSettings.ambienceMusicVolume = ambienceMusicSlider.value;
         gameSettings.sfxVolume = sfxSlider.value;
         gameSettings.uiSfxVolume = uiSlider.value;
+        
+        // Set the audio sources in the DAM with the latest slider volume values
+        DAM.One.SetAudioSettings(gameSettings);
     }
 
-    private void SetScreenSettings()
+    private void SetScreenUI()
     {
         // Set the fullscreen toggle based on the saved fullscreen state
         fullscreenToggle.isOn = gameSettings.isFullscreen;
@@ -138,56 +99,34 @@ public class SettingsMenu : MonoBehaviour
 
         // Refresh the dropdown to show the selected value
         resolutionDropdown.RefreshShownValue();
-
-        ApplyScreenSettings();
     }
 
 
-    private void ApplyScreenSettings()
+    private void SetScreenSettings()
     {
+        // Get the selected resolution from the dropdown UI
         Resolution resolution = customResolutions[resolutionDropdown.value];
 
-        //Resolution[] supportedResolutions = Screen.resolutions;
-        //Resolution resolution = supportedResolutions[resolutionDropdown.value];
+        // Set the selected resolutions width and height and fullscreen state game settings
+        gameSettings.resolutionWidth = resolution.width;
+        gameSettings.resolutionHeight = resolution.height;
+        gameSettings.isFullscreen = fullscreenToggle.isOn;
 
-
-        // Validate if the selected resolution is supported
-        //if (IsResolutionSupported(resolution))
-        //{
-            Screen.fullScreen = gameSettings.isFullscreen;
-            Screen.SetResolution(gameSettings.resolutionWidth = resolution.width,
-                gameSettings.resolutionHeight = resolution.height,
-                gameSettings.isFullscreen = fullscreenToggle.isOn);
-        //}
-        //else
-        //{
-        //    Debug.LogWarning("The selected resolution is not supported.");
-        //}
+        // Set the new screen settings
+        gameSettings.SetScreenSettings();
     }
 
-    // Method to check if a resolution is supported
-    private bool IsResolutionSupported(Resolution resolution)
-    {
-        Resolution[] supportedResolutions = Screen.resolutions;
-
-        foreach (Resolution res in supportedResolutions)
-        {
-            if (res.width == resolution.width && res.height == resolution.height)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     public void ApplySettings()
     {
-        ApplyAudioSettings();
+        SetAudioSettings();
+        SetScreenSettings();
 
-        ApplyScreenSettings();
-
-        // Save to json
         gameSettings.SaveSettings();
+    }
+
+    public void PlayButtonClick()
+    {
+        DAM.One.PlayUISFX(DAM.UISFX.ButtonClick);
     }
 }

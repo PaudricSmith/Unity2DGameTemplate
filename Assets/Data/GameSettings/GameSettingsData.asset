@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: GameSettingsData
   m_EditorClassIdentifier: 
   masterVolume: 1
-  gameMusicVolume: 1
-  ambienceMusicVolume: 1
+  gameMusicVolume: 0.33993128
+  ambienceMusicVolume: 0.70921576
   sfxVolume: 1
-  uiSfxVolume: 1
+  uiSfxVolume: 0.8174351
   isFullscreen: 1
   resolutionWidth: 1920
-  resolutionHeight: 1080
+  resolutionHeight: 1152
