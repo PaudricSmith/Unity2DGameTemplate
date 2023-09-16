@@ -14,6 +14,7 @@ public enum MenuType
 {
     Main_Menu,
     Settings_Menu,
+    LoadGame_Menu,
     Pause_Menu
     
     // Add more menus here

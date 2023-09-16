@@ -32,6 +32,16 @@ MonoBehaviour:
     tracks:
     - track: 1
       clip: {fileID: 8300000, guid: 950450fab008a9d48b7f9acf706ec805, type: 3}
+    - track: 5
+      clip: {fileID: 8300000, guid: 567333f625d523a4fb6d734c239e4156, type: 3}
+    - track: 7
+      clip: {fileID: 8300000, guid: 1c2c4d11cdcb8aa419f489faeccfc60e, type: 3}
+    - track: 8
+      clip: {fileID: 8300000, guid: 77c90ccd5167a02479c01939444f7abb, type: 3}
+    - track: 9
+      clip: {fileID: 8300000, guid: e392396e2e741d94dba2c1d5169c59f8, type: 3}
+    - track: 3
+      clip: {fileID: 8300000, guid: 5f4fe594c6a4a0c43a81274cab719bb0, type: 3}
   playerTracks:
     tracks: []
   enemyTracks:

@@ -1651,6 +1651,34 @@ PrefabInstance:
       propertyPath: m_Options.m_Options.Array.data[2].m_Text
       value: 1280 x 720
       objectReference: {fileID: 0}
+    - target: {fileID: 2695964983516781190, guid: 643bcdea16332e3428ddd2e91a91d473, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2695964983516781190, guid: 643bcdea16332e3428ddd2e91a91d473, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2695964983516781190, guid: 643bcdea16332e3428ddd2e91a91d473, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1918494351}
+    - target: {fileID: 2695964983516781190, guid: 643bcdea16332e3428ddd2e91a91d473, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2695964983516781190, guid: 643bcdea16332e3428ddd2e91a91d473, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: PlayDropdownSFX
+      objectReference: {fileID: 0}
+    - target: {fileID: 2695964983516781190, guid: 643bcdea16332e3428ddd2e91a91d473, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SettingsMenu, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2695964983516781190, guid: 643bcdea16332e3428ddd2e91a91d473, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 2796650948824657323, guid: 643bcdea16332e3428ddd2e91a91d473, type: 3}
       propertyPath: m_Type
       value: 1
@@ -1843,6 +1871,34 @@ PrefabInstance:
       propertyPath: m_VerticalScrollbarVisibility
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 6457819114997806424, guid: 643bcdea16332e3428ddd2e91a91d473, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6457819114997806424, guid: 643bcdea16332e3428ddd2e91a91d473, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6457819114997806424, guid: 643bcdea16332e3428ddd2e91a91d473, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1918494351}
+    - target: {fileID: 6457819114997806424, guid: 643bcdea16332e3428ddd2e91a91d473, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6457819114997806424, guid: 643bcdea16332e3428ddd2e91a91d473, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: PlayDropdownSFX
+      objectReference: {fileID: 0}
+    - target: {fileID: 6457819114997806424, guid: 643bcdea16332e3428ddd2e91a91d473, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SettingsMenu, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6457819114997806424, guid: 643bcdea16332e3428ddd2e91a91d473, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 7074856218801720552, guid: 643bcdea16332e3428ddd2e91a91d473, type: 3}
       propertyPath: m_CullTransparentMesh
       value: 0
@@ -1953,15 +2009,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 523158835707026661, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_Color.b
-      value: 0
+      value: 0.59607846
       objectReference: {fileID: 0}
     - target: {fileID: 523158835707026661, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_Color.g
-      value: 0.8404256
+      value: 0.4745098
       objectReference: {fileID: 0}
     - target: {fileID: 523158835707026661, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_Color.r
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 523158835707026661, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_FontData.m_MaxSize
@@ -2197,15 +2253,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 523158835707026661, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_Color.b
-      value: 0.089058906
+      value: 0.078431375
       objectReference: {fileID: 0}
     - target: {fileID: 523158835707026661, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_Color.g
-      value: 0.089058906
+      value: 0.078431375
       objectReference: {fileID: 0}
     - target: {fileID: 523158835707026661, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_Color.r
-      value: 0.745283
+      value: 0.7058824
       objectReference: {fileID: 0}
     - target: {fileID: 523158835707026661, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_FontData.m_MaxSize

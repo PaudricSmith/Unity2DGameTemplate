@@ -111,17 +111,22 @@ public class SceneManagerSO : ScriptableObject
 
     #region SETTINGS MENU
 
-    // Load Settings Menu additively on top of menu scene
+    // Load Settings Menu when Settings button is clicked in the Main Menu
     public void LoadSettingsMenu()
     {
         SceneManager.LoadSceneAsync(menus[(int)MenuType.Settings_Menu].SceneName);
     }
 
-    // Unload Settings Menu when click 'Back' button
-    public void UnloadSettingsMenu()
+    #endregion SETTINGS MENU
+
+
+    #region LOADGAME MENU
+
+    // Load LoadGame Menu when LoadGame button is clicked in the Main Menu
+    public void LoadLoadGameMenu()
     {
-        SceneManager.UnloadSceneAsync(menus[(int)MenuType.Settings_Menu].SceneName);
+        SceneManager.LoadSceneAsync(menus[(int)MenuType.LoadGame_Menu].SceneName);
     }
 
-    #endregion SETTINGS MENU
+    #endregion LOADGAME MENU
 }

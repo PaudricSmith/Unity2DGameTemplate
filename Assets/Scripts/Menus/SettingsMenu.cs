@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 
@@ -12,6 +14,10 @@ public class SettingsMenu : MonoBehaviour
         new Resolution { width = 1920, height = 1080 },
         new Resolution { width = 1280, height = 720 }
     };
+
+    private float lastSoundTime = 0f;
+    private float debounceTime = 0.2f; // 200 milliseconds
+
 
     [SerializeField] private GameSettingsDataSO gameSettings;
 
@@ -36,9 +42,21 @@ public class SettingsMenu : MonoBehaviour
         SetAudioSettings();
         SetScreenUI();
 
-        // Add listeners for each button so they can play their sfx when clicked
+        // Add listeners for each UI so they can play their sfx when interacted with
         backButton.onClick.AddListener(PlayButtonClick);
         applyButton.onClick.AddListener(PlayButtonClick);
+
+        fullscreenToggle.onValueChanged.AddListener(PlayToggleSFX);
+
+        // Add a listener when the dropdown UI is opened
+        AddPointerClickTrigger(resolutionDropdown.gameObject, PlayDropdownSFX);
+        resolutionDropdown.onValueChanged.AddListener(PlayDropdownSelect);
+
+        masterVolumeSlider.onValueChanged.AddListener(PlaySliderSelect);
+        gameMusicSlider.onValueChanged.AddListener(PlaySliderSelect);
+        ambienceMusicSlider.onValueChanged.AddListener(PlaySliderSelect);
+        sfxSlider.onValueChanged.AddListener(PlaySliderSelect);
+        uiSlider.onValueChanged.AddListener(PlaySliderSelect);
     }
 
     private void PopulateResolutionDropdown()
@@ -127,6 +145,40 @@ public class SettingsMenu : MonoBehaviour
 
     public void PlayButtonClick()
     {
-        DAM.One.PlayUISFX(DAM.UISFX.ButtonClick);
+        DAM.One.PlayUISFX(DAM.UISFX.ButtonClick1);
+    }
+
+    public void PlayToggleSFX(bool _)
+    {
+        DAM.One.PlayUISFX(DAM.UISFX.Toggle1);
+    }
+
+    private void AddPointerClickTrigger(GameObject target, UnityEngine.Events.UnityAction<BaseEventData> action)
+    {
+        EventTrigger trigger = target.AddComponent<EventTrigger>();
+        EventTrigger.Entry entry = new EventTrigger.Entry();
+        entry.eventID = EventTriggerType.PointerClick;
+        entry.callback.AddListener(action);
+        trigger.triggers.Add(entry);
+    }
+
+    public void PlayDropdownSFX(BaseEventData _)
+    {
+        DAM.One.PlayUISFX(DAM.UISFX.DropdownOpened);
+    }
+
+    public void PlayDropdownSelect(int _)
+    {
+        DAM.One.PlayUISFX(DAM.UISFX.Select);
+    }
+
+    public void PlaySliderSelect(float _)
+    {
+        float currentTime = Time.time;
+        if (currentTime - lastSoundTime > debounceTime)
+        {
+            DAM.One.PlayUISFX(DAM.UISFX.SliderSelect);
+            lastSoundTime = currentTime;
+        }
     }
 }

@@ -976,8 +976,15 @@ public class DAM : MonoBehaviour
     public enum UISFX
     {
         None,
-        ButtonClick,
-        ButtonHover,
+        ButtonClick1,
+        ButtonClick2,
+        ButtonHover1,
+        ButtonHover2,
+        Toggle1,
+        Toggle2,
+        DropdownOpened,
+        Select,
+        SliderSelect,
         PopupOpen,
         MenuOpen,
         MenuClose,

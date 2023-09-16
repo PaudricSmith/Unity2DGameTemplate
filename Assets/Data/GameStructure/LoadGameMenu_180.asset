@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c83cfc9f523ff8f42899ca4bb42f0e0b, type: 3}
-  m_Name: SettingsMenu
+  m_Name: LoadGameMenu_180
   m_EditorClassIdentifier: 
-  sceneName: SettingsMenu
-  shortDescription: Menu with all the settings.
-  type: 1
+  sceneName: LoadGameMenu_180
+  shortDescription: Menu with all the saved games to chose from to load.
+  type: 2

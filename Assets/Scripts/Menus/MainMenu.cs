@@ -43,6 +43,6 @@ public class MainMenu : MonoBehaviour
 
     public void PlayButtonClick()
     {
-        DAM.One.PlayUISFX(DAM.UISFX.ButtonClick);
+        DAM.One.PlayUISFX(DAM.UISFX.ButtonClick1);
     }
 }
