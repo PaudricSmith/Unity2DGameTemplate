@@ -9,7 +9,7 @@ public class LoadGameMenu : MonoBehaviour
     private List<SavedGame> savedGames;
     private SavedGame selectedGame;
 
-    [SerializeField] private GameSettingsDataSO gameSettings;
+    [SerializeField] private GameSettingsDataSO gameSettingsSO;
     
     [SerializeField] private GameObject savedGamePrefab;
     [SerializeField] private Transform savedGamesParent;
@@ -23,7 +23,7 @@ public class LoadGameMenu : MonoBehaviour
 
     private void Start()
     {
-        DAM.One.SetAudioSettings(gameSettings);
+        DAM.One.SetAudioSettings(gameSettingsSO);
 
         loadButton.onClick.AddListener(LoadSelectedGame);
         loadButton.onClick.AddListener(PlayButtonClick);

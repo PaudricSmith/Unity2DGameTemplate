@@ -20,6 +20,9 @@ public class GameSettingsDataSO : ScriptableObject
     public int resolutionHeight = 1152;
     //public int resolutionHeight = 1080;
 
+    [Header("Control Settings")]
+    public bool isGamepadEnabled = false;
+
 
 
     private void OnEnable()

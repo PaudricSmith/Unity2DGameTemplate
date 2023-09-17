@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -19,8 +18,10 @@ public class SettingsMenu : MonoBehaviour
     private float debounceTime = 0.2f; // 200 milliseconds
 
 
-    [SerializeField] private GameSettingsDataSO gameSettings;
+    [SerializeField] private GameSettingsDataSO gameSettingsSO;
+    [SerializeField] private GameManagerSO gameManagerSO;
 
+    [SerializeField] private Toggle gameControlsToggle;
     [SerializeField] private Toggle fullscreenToggle;
     [SerializeField] private Dropdown resolutionDropdown;
     [SerializeField] private Slider masterVolumeSlider;
@@ -41,11 +42,13 @@ public class SettingsMenu : MonoBehaviour
         SetAudioUI();
         SetAudioSettings();
         SetScreenUI();
+        SetControlsToggleUI();
 
         // Add listeners for each UI so they can play their sfx when interacted with
         backButton.onClick.AddListener(PlayButtonClick);
         applyButton.onClick.AddListener(PlayButtonClick);
 
+        gameControlsToggle.onValueChanged.AddListener(PlayToggleSFX);
         fullscreenToggle.onValueChanged.AddListener(PlayToggleSFX);
 
         // Add a listener when the dropdown UI is opened
@@ -75,37 +78,37 @@ public class SettingsMenu : MonoBehaviour
 
     private void SetAudioUI()
     {
-        masterVolumeSlider.value = gameSettings.masterVolume;
-        gameMusicSlider.value = gameSettings.gameMusicVolume;
-        ambienceMusicSlider.value = gameSettings.ambienceMusicVolume;
-        sfxSlider.value = gameSettings.sfxVolume;
-        uiSlider.value = gameSettings.uiSfxVolume;
+        masterVolumeSlider.value = gameSettingsSO.masterVolume;
+        gameMusicSlider.value = gameSettingsSO.gameMusicVolume;
+        ambienceMusicSlider.value = gameSettingsSO.ambienceMusicVolume;
+        sfxSlider.value = gameSettingsSO.sfxVolume;
+        uiSlider.value = gameSettingsSO.uiSfxVolume;
     }
 
     private void SetAudioSettings()
     {
         // Set the audio game settings to the latest slider volume values
-        gameSettings.masterVolume = masterVolumeSlider.value;
-        gameSettings.gameMusicVolume = gameMusicSlider.value;
-        gameSettings.ambienceMusicVolume = ambienceMusicSlider.value;
-        gameSettings.sfxVolume = sfxSlider.value;
-        gameSettings.uiSfxVolume = uiSlider.value;
+        gameSettingsSO.masterVolume = masterVolumeSlider.value;
+        gameSettingsSO.gameMusicVolume = gameMusicSlider.value;
+        gameSettingsSO.ambienceMusicVolume = ambienceMusicSlider.value;
+        gameSettingsSO.sfxVolume = sfxSlider.value;
+        gameSettingsSO.uiSfxVolume = uiSlider.value;
         
         // Set the audio sources in the DAM with the latest slider volume values
-        DAM.One.SetAudioSettings(gameSettings);
+        DAM.One.SetAudioSettings(gameSettingsSO);
     }
 
     private void SetScreenUI()
     {
         // Set the fullscreen toggle based on the saved fullscreen state
-        fullscreenToggle.isOn = gameSettings.isFullscreen;
+        fullscreenToggle.isOn = gameSettingsSO.isFullscreen;
 
 
         // Loop through each option in the dropdown to find the index of the current resolution
         for (int i = 0; i < resolutionDropdown.options.Count; i++)
         {
             string option = resolutionDropdown.options[i].text;
-            string currentSetting = gameSettings.resolutionWidth + " x " + gameSettings.resolutionHeight;
+            string currentSetting = gameSettingsSO.resolutionWidth + " x " + gameSettingsSO.resolutionHeight;
 
             if (option == currentSetting)
             {
@@ -126,21 +129,31 @@ public class SettingsMenu : MonoBehaviour
         Resolution resolution = customResolutions[resolutionDropdown.value];
 
         // Set the selected resolutions width and height and fullscreen state game settings
-        gameSettings.resolutionWidth = resolution.width;
-        gameSettings.resolutionHeight = resolution.height;
-        gameSettings.isFullscreen = fullscreenToggle.isOn;
+        gameSettingsSO.resolutionWidth = resolution.width;
+        gameSettingsSO.resolutionHeight = resolution.height;
+        gameSettingsSO.isFullscreen = fullscreenToggle.isOn;
 
         // Set the new screen settings
-        gameSettings.SetScreenSettings();
+        gameSettingsSO.SetScreenSettings();
     }
 
+    private void SetControlsToggleUI()
+    {
+        gameControlsToggle.isOn = gameSettingsSO.isGamepadEnabled;
+    }
+
+    public void SetControlsSettings()
+    {
+        gameSettingsSO.isGamepadEnabled = gameControlsToggle.isOn;
+    }
 
     public void ApplySettings()
     {
         SetAudioSettings();
         SetScreenSettings();
+        SetControlsSettings();
 
-        gameSettings.SaveSettings();
+        gameSettingsSO.SaveSettings();
     }
 
     public void PlayButtonClick()

@@ -8,7 +8,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Vector2 hotSpot = new Vector2(0, 0); // The "active" point of the cursor
     [SerializeField] private CursorMode cursorMode = CursorMode.Auto;
 
-    [SerializeField] private GameSettingsDataSO gameSettings;
+    [SerializeField] private GameSettingsDataSO gameSettingsSO;
 
     [SerializeField] private Button settingsButton;
     [SerializeField] private Button newGameButton;
@@ -19,9 +19,9 @@ public class MainMenu : MonoBehaviour
     private void Start()
     {
         // Set the game settings
-        gameSettings.LoadSettings();
-        gameSettings.SetScreenSettings();
-        DAM.One.SetAudioSettings(gameSettings);
+        gameSettingsSO.LoadSettings();
+        gameSettingsSO.SetScreenSettings();
+        DAM.One.SetAudioSettings(gameSettingsSO);
 
         // Set the custom cursor
         Cursor.SetCursor(cursorTexture, hotSpot, cursorMode);

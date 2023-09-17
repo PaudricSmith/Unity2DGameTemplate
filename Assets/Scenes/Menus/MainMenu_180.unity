@@ -240,7 +240,7 @@ MonoBehaviour:
   cursorTexture: {fileID: 2800000, guid: 71aebea66b7705042b05eb16e4991344, type: 3}
   hotSpot: {x: 0, y: 0}
   cursorMode: 0
-  gameSettings: {fileID: 11400000, guid: 5c3a0c3e2c98eaf4eb99d2ddb7fb89ca, type: 2}
+  gameSettingsSO: {fileID: 11400000, guid: 5c3a0c3e2c98eaf4eb99d2ddb7fb89ca, type: 2}
   settingsButton: {fileID: 1386802138}
   newGameButton: {fileID: 346398640}
   loadGameButton: {fileID: 949754785}

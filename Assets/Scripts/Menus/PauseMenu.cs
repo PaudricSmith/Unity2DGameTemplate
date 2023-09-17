@@ -1,74 +1,42 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-
 
 public class PauseMenu : MonoBehaviour
 {
-    public GameObject pauseMenuUI; // Drag the Panel here.
-    public Slider musicVolumeSlider;
-    public Slider sfxVolumeSlider;
-    private bool isPaused = false;
+    [SerializeField] private Button saveButton;
+    [SerializeField] private Button resumeButton;
+    [SerializeField] private Button exitButton;
 
+    [SerializeField] private GameManagerSO gameManager;
 
     private void Start()
     {
-        musicVolumeSlider.onValueChanged.AddListener(AdjustMusicVolume);
-        sfxVolumeSlider.onValueChanged.AddListener(AdjustSFXVolume);
+        //saveButton.onClick.AddListener(gameManager.SaveGame);  // Implement SaveGame in GameManagerSO
+        resumeButton.onClick.AddListener(gameManager.ResumeGame);
+        exitButton.onClick.AddListener(gameManager.QuitGame);
 
-        pauseMenuUI.SetActive(false);
+        gameObject.SetActive(false);
     }
 
-
-    private void AdjustMusicVolume(float volume)
+    public void OnPause(InputAction.CallbackContext context)
     {
-        DAM.One.SetGameMusicVolume(volume);
-    }
-
-
-    private void AdjustSFXVolume(float volume)
-    {
-        DAM.One.SetSFXVolume(volume);
-    }
-
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (context.performed)
         {
-            if (isPaused)
-                Resume();
-            else
-                Pause();
+            TogglePauseMenu();
         }
     }
 
-
-    public void Resume()
+    private void TogglePauseMenu()
     {
-        pauseMenuUI.SetActive(false);
-        Time.timeScale = 1f;  // Resume game time.
-        isPaused = false;
-    }
-
-
-    public void Pause()
-    {
-        pauseMenuUI.SetActive(true);
-        Time.timeScale = 0f;  // Freeze game time.
-        isPaused = true;
-
-        // Initialize volume sliders to reflect current volume
-        musicVolumeSlider.value = DAM.One.GetGameMusicVolume();
-        sfxVolumeSlider.value = DAM.One.GetSFXVolume();
-    }
-
-
-    public void QuitGame()
-    {
-        // Implement your quit logic. Maybe go back to the main menu or quit the application.
-        SceneManager.LoadScene("MainMenu"); // if you have a scene named "MainMenu"
-        // OR
-        // Application.Quit();
+        gameObject.SetActive(!gameObject.activeSelf);
+        if (gameObject.activeSelf)
+        {
+            gameManager.PauseGame();
+        }
+        else
+        {
+            gameManager.ResumeGame();
+        }
     }
 }

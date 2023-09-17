@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using UnityEngine.InputSystem;
 
 [CreateAssetMenu(fileName = "NewGameManager", menuName = "Scriptable Objects/Game Data/Game Manager")]
 public class GameManagerSO : ScriptableObject
@@ -8,7 +8,6 @@ public class GameManagerSO : ScriptableObject
     [Header("Manager References")]
     [SerializeField] private SceneManagerSO sceneManager;
     [SerializeField] private EventManagerSO eventManager;
-
 
 
     #region LEVELS
