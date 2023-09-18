@@ -11,59 +11,62 @@ public class SceneManagerSO : ScriptableObject
     [SerializeField] private List<LevelSO> levels = new List<LevelSO>();
 
     [Header("               Current Level")]
-    [SerializeField] private int CurrentLevelIndex = 0;
+    [SerializeField] private int currentLevelIndex = 0;
+
+
+    public int CurrentLevelIndex { get => currentLevelIndex; }
 
 
 
     #region LEVELS
 
     // Load a scene with a given index   
-    private void LoadLevelWithIndex(int index)
+    public void LoadLevelWithIndex(int index)
     {
         if (index <= levels.Count)
         {
-            CurrentLevelIndex = index;
-            SceneManager.LoadSceneAsync(levels[CurrentLevelIndex - 1].SceneName);
+            currentLevelIndex = index;
+            SceneManager.LoadSceneAsync(levels[currentLevelIndex - 1].SceneName);
         }
         // reset the index if we have no more levels or overflows during testing
         else
         {
-            CurrentLevelIndex = 1;
+            currentLevelIndex = 1;
         }
     }
 
     // Main Menu = 0, New game = 1, so load level 1
     public void NewGame()
     {
-        CurrentLevelIndex = 1;
-        LoadLevelWithIndex(CurrentLevelIndex);
+        currentLevelIndex = 1;
+        LoadLevelWithIndex(currentLevelIndex);
     }
 
     // Start next level
     public void NextLevel()
     {
-        CurrentLevelIndex++;
-        LoadLevelWithIndex(CurrentLevelIndex);
+        currentLevelIndex++;
+        LoadLevelWithIndex(currentLevelIndex);
     }
 
     // Start previous level
     public void PreviousLevel()
     {
-        CurrentLevelIndex--;
-        LoadLevelWithIndex(CurrentLevelIndex);
+        currentLevelIndex--;
+        LoadLevelWithIndex(currentLevelIndex);
     }
 
     // Restart current level
     public void RestartLevel()
     {
-        LoadLevelWithIndex(CurrentLevelIndex);
+        LoadLevelWithIndex(currentLevelIndex);
     }
 
     // Quit game
     public void QuitGame()
     {
         // Set index to Main menu index '0'
-        CurrentLevelIndex = 0;
+        currentLevelIndex = 0;
 
         #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;

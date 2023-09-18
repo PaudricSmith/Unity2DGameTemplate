@@ -9,6 +9,7 @@ public class InputManager : MonoBehaviour
     private Vector2 aimInput;
 
     [SerializeField] private GameSettingsDataSO gameSettingsSO;
+    [SerializeField] private PauseMenu pauseMenu;
     [SerializeField] private GameState currentState;
 
 
@@ -23,6 +24,10 @@ public class InputManager : MonoBehaviour
 
     void Awake()
     {
+        gameSettingsSO.LoadSettings();
+        DAM.One.SetAudioSettings(gameSettingsSO);
+
+
         // Initialize the PlayerControls class from the new Input System
         gameControls = new GameControls();
 
@@ -37,17 +42,6 @@ public class InputManager : MonoBehaviour
 
         gameControls.Gameplay.Esc.performed += ctx => HandleEscKey();
 
-    }
-
-    void Update()
-    {
-        // Use the moveInput and aimInput vectors to control your character
-        // For example:
-        //transform.position += new Vector3(moveInput.x, moveInput.y, 0) * Time.deltaTime;
-
-        // Aiming logic
-        Vector3 aimDirection = new Vector3(aimInput.x, aimInput.y, 0);
-        // Implement your aiming logic here, using aimDirection
     }
 
     // Public method to get move input
@@ -70,9 +64,9 @@ public class InputManager : MonoBehaviour
             case GameState.Gameplay:
                 TogglePause();
                 break;
-            case GameState.Inventory:
-                CloseInventory();
-                break;
+            //case GameState.Inventory:
+            //    CloseInventory();
+            //    break;
             // Add more cases as needed
             default:
                 break;
@@ -98,16 +92,17 @@ public class InputManager : MonoBehaviour
     // Method to toggle pause
     private void TogglePause()
     {
-        // Your pause logic here
-        // For example, you could set Time.timeScale to 0 to pause the game
-        if (Time.timeScale == 0)
-        {
-            Time.timeScale = 1;
-        }
-        else
-        {
-            Time.timeScale = 0;
-        }
+        pauseMenu.TogglePause();
+        
+        //if (gameControls.Gameplay.enabled)
+        //{
+        //    gameControls.Gameplay.Disable();
+        //}
+        //else
+        //{
+        //    gameControls.Gameplay.Enable();
+        //}
+
     }
 
     // Method to close the inventory
@@ -120,14 +115,16 @@ public class InputManager : MonoBehaviour
     // Initialize control devices based on settings
     private void InitializeControlDevices()
     {
-        if (gameSettingsSO.isGamepadEnabled)
-        {
-            gameControls.devices = new InputDevice[] { Gamepad.current };
-        }
-        else
-        {
-            gameControls.devices = new InputDevice[] { Keyboard.current, Mouse.current };
-        }
+        gameControls.devices = new InputDevice[] { Keyboard.current, Mouse.current };
+
+        //if (gameSettingsSO.isGamepadEnabled)
+        //{
+        //    gameControls.devices = new InputDevice[] { Gamepad.current };
+        //}
+        //else
+        //{
+        //    gameControls.devices = new InputDevice[] { Keyboard.current, Mouse.current };
+        //}
     }
 
     void OnEnable()

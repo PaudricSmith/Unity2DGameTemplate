@@ -9,8 +9,10 @@ public class LoadGameMenu : MonoBehaviour
     private List<SavedGame> savedGames;
     private SavedGame selectedGame;
 
+    [SerializeField] private GameManagerSO gameManagerSO;
     [SerializeField] private GameSettingsDataSO gameSettingsSO;
-    
+    [SerializeField] private PlayerDataSO playerDataSO;
+
     [SerializeField] private GameObject savedGamePrefab;
     [SerializeField] private Transform savedGamesParent;
     [SerializeField] private Button loadButton;
@@ -20,9 +22,9 @@ public class LoadGameMenu : MonoBehaviour
     [SerializeField] private SaveLoadManager saveLoadManager;
 
 
-
     private void Start()
     {
+        gameSettingsSO.LoadSettings();
         DAM.One.SetAudioSettings(gameSettingsSO);
 
         loadButton.onClick.AddListener(LoadSelectedGame);
@@ -44,6 +46,16 @@ public class LoadGameMenu : MonoBehaviour
 
         foreach (var savedGame in savedGames)
         {
+            // Log the saved games for debugging
+            Debug.Log($"SavedGame: {savedGame.saveName}");
+
+            // Check for null or empty saveName
+            if (string.IsNullOrEmpty(savedGame.saveName))
+            {
+                Debug.LogWarning("SavedGame has a null or empty saveName.");
+                continue; // Skip this iteration
+            }
+
             GameObject item = Instantiate(savedGamePrefab, savedGamesParent);
             SavedGameItem savedGameItem = item.GetComponent<SavedGameItem>();
             savedGameItem.Initialize(savedGame);
@@ -52,7 +64,7 @@ public class LoadGameMenu : MonoBehaviour
             itemButton.onClick.AddListener(() => SelectSavedGame(savedGame));
             itemButton.onClick.AddListener(PlayButtonClick);
 
-            savedGameItems.Add(savedGame.saveName, item);
+            savedGameItems.Add(savedGame.UniqueID, item);
         }
     }
 
@@ -69,7 +81,15 @@ public class LoadGameMenu : MonoBehaviour
     {
         if (selectedGame != null)
         {
-            saveLoadManager.LoadGame(selectedGame);
+            SavedGame loadedGame = saveLoadManager.LoadGame(selectedGame);
+
+            // Update the PlayerDataSO
+            playerDataSO.PlayerPosition = new Vector3(
+                loadedGame.playerPositionX, loadedGame.playerPositionY,
+                loadedGame.playerPositionZ);
+
+            // Load the level
+            gameManagerSO.LoadLevelByIndex(loadedGame.level);
 
             DeselectSavedGame();
         }
@@ -83,11 +103,10 @@ public class LoadGameMenu : MonoBehaviour
             savedGames.Remove(selectedGame);
 
             // Destroy the GameObject
-            if (savedGameItems.ContainsKey(selectedGame.saveName))
+            if (savedGameItems.ContainsKey(selectedGame.UniqueID))
             {
-
-                Destroy(savedGameItems[selectedGame.saveName]);
-                savedGameItems.Remove(selectedGame.saveName);
+                Destroy(savedGameItems[selectedGame.UniqueID]);
+                savedGameItems.Remove(selectedGame.UniqueID);
                 
                 DeselectSavedGame();
             }
@@ -103,17 +122,23 @@ public class LoadGameMenu : MonoBehaviour
 
     private List<SavedGame> FetchSavedGames()
     {
-        return new List<SavedGame>
-        {
-            new SavedGame("Dungeon at last Yea!", "01/01/2023", "12:34 PM", 1, 100.0f),
-            new SavedGame("Dungeons Forever", "01/01/2023", "01:45 PM", 1, 90.0f),
-            new SavedGame("Dungeon 1", "01/01/2023", "01:45 PM", 1, 90.0f )
-            //new SavedGame { saveName = "Save 2", saveDate = "", level = 1, playerHealth = 100f }
-            // ...
-        };
+        //return new List<SavedGame>
+        //{
+        //    new SavedGame("Dungeon at last Yea!", "01/01/2023", "12:34 PM", 1, 100.0f),
+        //    new SavedGame("Dungeons Forever", "01/01/2023", "01:45 PM", 1, 90.0f),
+        //    new SavedGame("Dungeon 1", "01/01/2023", "01:45 PM", 1, 90.0f )
+        //    //new SavedGame { saveName = "Save 2", saveDate = "", level = 1, playerHealth = 100f }
+        //    // ...
+        //};
 
-        //// Fetch saved games from storage
-        //return saveLoadManager.FetchAllSavedGames();
+        //SavedGame newSavedGame = new SavedGame("Save1", "01-01-2023", "12:34:56", 1, 100.0f);
+
+        //{ "saveName":"SaveName","saveDate":"SaveDate","saveTime":"SaveTime","level":1,"playerHealth":100.0}
+
+        // Fetch saved games from storage
+        
+        return saveLoadManager.FetchAllSavedGames();
+        
     }
 
     public void PlayButtonClick()

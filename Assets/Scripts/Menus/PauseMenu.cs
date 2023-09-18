@@ -1,42 +1,119 @@
+using System;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour
 {
-    [SerializeField] private Button saveButton;
-    [SerializeField] private Button resumeButton;
-    [SerializeField] private Button exitButton;
+    private const int MaxSaves = 20;
+    private bool isPaused = false;
+    
+    [SerializeField] private GameManagerSO gameManagerSO;
 
-    [SerializeField] private GameManagerSO gameManager;
+    [SerializeField] private GameObject pausePanel;
+    [SerializeField] private GameObject saveGamePanel;
+    [SerializeField] private GameObject buttonPanel;
+    [SerializeField] private InputField saveGameNameInputField;
+    [SerializeField] private Button saveButton;
+    [SerializeField] private Text warningText;
+    [SerializeField] private SaveLoadManager saveLoadManager;
+
 
     private void Start()
     {
-        //saveButton.onClick.AddListener(gameManager.SaveGame);  // Implement SaveGame in GameManagerSO
-        resumeButton.onClick.AddListener(gameManager.ResumeGame);
-        exitButton.onClick.AddListener(gameManager.QuitGame);
+        Time.timeScale = 1f;
 
-        gameObject.SetActive(false);
+        pausePanel.SetActive(false);
+        buttonPanel.SetActive(false);
+        saveGamePanel.SetActive(false);
     }
 
-    public void OnPause(InputAction.CallbackContext context)
+    public void TogglePause()
     {
-        if (context.performed)
+        if (isPaused)
         {
-            TogglePauseMenu();
-        }
-    }
-
-    private void TogglePauseMenu()
-    {
-        gameObject.SetActive(!gameObject.activeSelf);
-        if (gameObject.activeSelf)
-        {
-            gameManager.PauseGame();
+            Resume();
         }
         else
         {
-            gameManager.ResumeGame();
+            Pause();
         }
+    }
+
+    public void Pause()
+    {
+        Time.timeScale = 0f;
+        isPaused = true;
+
+        pausePanel.SetActive(true);
+        buttonPanel.SetActive(true);
+        saveGamePanel.SetActive(false);
+    }
+
+    public void Resume()
+    {
+        if (saveGamePanel.activeSelf)
+        {
+            saveGamePanel.SetActive(false);
+            buttonPanel.SetActive(true);
+        }
+        else
+        {
+            Time.timeScale = 1f;
+            isPaused = false;
+            pausePanel.SetActive(false);
+        }
+    }
+
+    // *Used by the 'SaveGame' button OnClick event in the editor
+    public void ShowSaveGamePanel()
+    {
+        saveGamePanel.SetActive(true);
+        buttonPanel.SetActive(false);
+
+        if (saveLoadManager.GetSavedGameCount() >= MaxSaves)
+        {
+            warningText.text = "Maximum number of saved games reached (20).";
+            warningText.gameObject.SetActive(true);
+            saveButton.interactable = false;
+
+            return;
+        }
+       
+        warningText.gameObject.SetActive(false);
+        saveButton.interactable = true;
+    }
+
+    // *Used by the 'SaveGamePanel' 'Back' button OnClick event in the editor
+    public void HideSaveGamePanel()
+    {
+        saveGamePanel.SetActive(false);
+        buttonPanel.SetActive(true);
+        warningText.gameObject.SetActive(false);
+    }
+
+    // *Used by the 'SaveGamePanel' 'Save' button OnClick event in the editor
+    public void SaveGame()
+    {
+        string saveName = string.IsNullOrEmpty(saveGameNameInputField.text) ? "Default Name" : saveGameNameInputField.text;
+        DateTime saveDate = DateTime.Now;
+
+        // Get the player's position
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        Vector3 playerPosition = player.transform.position;
+
+        // *** TODO *** Get the level number and player health from the player
+        // int level = gameManagerSO.Level;
+        // float playerHealth = playerDataSO.Health;
+
+        SavedGame savedGame = new SavedGame(saveName, saveDate.ToString(), gameManagerSO.GetCurrentLevelIndex(), 100f, playerPosition);
+        saveLoadManager.SaveGame(savedGame);
+
+        Debug.Log("Game Saved !!!");
+    }
+
+    // *Used by all the 'PauseCanvas' buttons 'OnClick' event in the editor
+    public void PlayButtonClick()
+    {
+        DAM.One.PlayUISFX(DAM.UISFX.ButtonClick1);
     }
 }

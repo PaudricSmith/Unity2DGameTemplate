@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
+
 
 [CreateAssetMenu(fileName = "NewGameManager", menuName = "Scriptable Objects/Game Data/Game Manager")]
 public class GameManagerSO : ScriptableObject
@@ -10,6 +10,12 @@ public class GameManagerSO : ScriptableObject
     [SerializeField] private EventManagerSO eventManager;
 
 
+    public int GetCurrentLevelIndex()
+    {
+        return sceneManager.CurrentLevelIndex;
+    }
+
+
     #region LEVELS
 
     public void NewGame()
@@ -17,6 +23,11 @@ public class GameManagerSO : ScriptableObject
         DAM.One.TransitionGameMusicTracks(DAM.GameMusic.MenuTrack1, DAM.GameMusic.Level1Track1, 2f);
         
         sceneManager.NewGame();
+    }
+
+    public void LoadLevelByIndex(int levelIndex)
+    {
+        sceneManager.LoadLevelWithIndex(levelIndex);
     }
 
     public void LoadNextLevel()

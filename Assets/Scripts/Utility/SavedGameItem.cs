@@ -5,14 +5,12 @@ using UnityEngine.UI;
 public class SavedGameItem : MonoBehaviour
 {
     [SerializeField] private Text saveNameText;
-    [SerializeField] private Text saveDateText;
-    [SerializeField] private Text saveTimeText;
+    [SerializeField] private Text saveDateTimeText;
 
     public void Initialize(SavedGame savedGame)
     {
         saveNameText.text = savedGame.saveName;
-        saveDateText.text = savedGame.saveDate;
-        saveTimeText.text = savedGame.saveTime;
+        saveDateTimeText.text = savedGame.saveDateTime;
     }
 
     public void PlayButtonHover()

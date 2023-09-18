@@ -1,26 +1,39 @@
+using UnityEngine;
 
 
 public class SavedGame
 {
     public string saveName;
-    public string saveDate;
-    public string saveTime;
-    public int level;
+    public string saveDateTime;
     public float playerHealth;
+    public float playerPositionX;
+    public float playerPositionY;
+    public float playerPositionZ;
+    public int level;
 
-    // Additional fields like inventory, game progress, etc.
-   
-    
-    public string UniqueID => $"{saveName}_{saveDate}_{saveTime}";  // e.g., "Dungeon_01-01-2023_12:34:56"
 
-    public SavedGame(string saveName, string saveDate, string saveTime, int level, float playerHealth)
+    // Constructor
+    public SavedGame(string saveName, string saveDateTime, int level, float playerHealth, Vector3 playerPosition)
     {
+        // Existing fields
         this.saveName = saveName;
-        this.saveDate = saveDate;
-        this.saveTime = saveTime;
+        this.saveDateTime = saveDateTime;
         this.level = level;
         this.playerHealth = playerHealth;
-        // Initialize additional fields
+
+        playerPositionX = playerPosition.x;
+        playerPositionY = playerPosition.y;
+        playerPositionZ = playerPosition.z;
     }
 
+
+    public string UniqueID
+    {
+        get
+        {
+            string sanitizedSaveName = saveName.Replace(" ", "_");
+            string sanitizedSaveDateTime = saveDateTime.Replace(":", "_").Replace(" ", "_").Replace("/", "_");
+            return $"{sanitizedSaveName}_{sanitizedSaveDateTime}";
+        }
+    }
 }
