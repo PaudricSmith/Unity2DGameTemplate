@@ -3,11 +3,12 @@ using System.IO;
 using System.Collections.Generic;
 using System;
 using System.Linq;
-
+using System.Runtime.Serialization.Formatters.Binary;
 
 public class SaveLoadManager : MonoBehaviour
 {
     private string directoryPath;
+
 
 
     // Initialize directory path
@@ -25,46 +26,42 @@ public class SaveLoadManager : MonoBehaviour
         }
     }
 
-    // Save game data to a JSON file
+    // Save LevelSO data to a binary file
     public void SaveGame(SavedGame savedGame)
     {
-        string json = JsonUtility.ToJson(savedGame);
-        string path = directoryPath + "/" + savedGame.UniqueID + ".json";
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream file = File.Create(directoryPath + "/" + savedGame.UniqueID + ".dat");
+        bf.Serialize(file, savedGame);
+        file.Close();
 
         Debug.Log("UniqueID: " + savedGame.UniqueID);
-        Debug.Log("Full Path: " + path);
-
-        try
-        {
-            File.WriteAllText(path, json);
-        }
-        catch (Exception e)
-        {
-            Debug.LogError("An error occurred while saving the game: " + e.Message);
-        }
+        Debug.Log("File: " + file.ToString());
     }
 
-    // Load game data from a JSON file
-    public SavedGame LoadGame(SavedGame savedGame)
+    // Load game data from a binary file
+    public SavedGame LoadGame(string uniqueID)
     {
-        string path = directoryPath + "/" + savedGame.UniqueID + ".json";
+        string path = directoryPath + "/" + uniqueID + ".dat";
 
         if (File.Exists(path))
         {
-            string json = File.ReadAllText(path);
-            return JsonUtility.FromJson<SavedGame>(json);
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream file = File.Open(path, FileMode.Open);
+            SavedGame savedGame = (SavedGame)bf.Deserialize(file);
+            file.Close();
+            return savedGame;
         }
         else
         {
-            Debug.LogWarning("No save game found.");
+            Debug.LogError("No save file found.");
             return null;
         }
     }
 
     // Delete a saved game file
-    public void DeleteGame(SavedGame savedGame)
+    public void DeleteGame(string uniqueID)
     {
-        string path = directoryPath + "/" + savedGame.UniqueID + ".json";
+        string path = directoryPath + "/" + uniqueID + ".dat";
 
         if (File.Exists(path))
         {
@@ -80,23 +77,22 @@ public class SaveLoadManager : MonoBehaviour
     public List<SavedGame> FetchAllSavedGames()
     {
         List<SavedGame> savedGames = new List<SavedGame>();
-        string[] files = Directory.GetFiles(directoryPath, "*.json");
+        string[] files = Directory.GetFiles(directoryPath, "*.dat");
 
         // If no files, return an empty list early
-        if (files.Length == 0) return savedGames;
-        
+        if (files.Length == 0)
+        {
+            Debug.Log("There are no saved games to fetch");
+            return savedGames;
+        }
+
         foreach (string file in files)
         {
-            try
-            {
-                string json = File.ReadAllText(file);
-                SavedGame savedGame = JsonUtility.FromJson<SavedGame>(json);
-                savedGames.Add(savedGame);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError("An error occurred while fetching saved games: " + e.Message);
-            }
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream fileStream = File.Open(file, FileMode.Open);
+            SavedGame savedGame = (SavedGame)bf.Deserialize(fileStream);
+            fileStream.Close();
+            savedGames.Add(savedGame);
         }
 
         // Sort the list by DateTime in Descending order
@@ -107,6 +103,6 @@ public class SaveLoadManager : MonoBehaviour
 
     public int GetSavedGameCount()
     {
-        return Directory.GetFiles(directoryPath, "*.json").Length;
+        return Directory.GetFiles(directoryPath, "*.dat").Length;
     }
 }

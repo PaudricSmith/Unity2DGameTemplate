@@ -9,7 +9,7 @@ public class LoadGameMenu : MonoBehaviour
     private List<SavedGame> savedGames;
     private SavedGame selectedGame;
 
-    [SerializeField] private GameManagerSO gameManagerSO;
+    [SerializeField] private SceneManagerSO sceneManagerSO;
     [SerializeField] private GameSettingsDataSO gameSettingsSO;
     [SerializeField] private PlayerDataSO playerDataSO;
 
@@ -81,15 +81,19 @@ public class LoadGameMenu : MonoBehaviour
     {
         if (selectedGame != null)
         {
-            SavedGame loadedGame = saveLoadManager.LoadGame(selectedGame);
+            // Load the data based on the selected saved game
+            SavedGame loadedGame = saveLoadManager.LoadGame(selectedGame.UniqueID);
 
-            // Update the PlayerDataSO
-            playerDataSO.PlayerPosition = new Vector3(
-                loadedGame.playerPositionX, loadedGame.playerPositionY,
-                loadedGame.playerPositionZ);
+            // Update the player data
+            playerDataSO.Position = new Vector3(
+                loadedGame.playerStartingPositionX, 
+                loadedGame.playerStartingPositionY, 
+                loadedGame.playerStartingPositionZ);
+
+            playerDataSO.Health = loadedGame.playerHealth;
 
             // Load the level
-            gameManagerSO.LoadLevelByIndex(loadedGame.level);
+            sceneManagerSO.LoadLevelWithIndex(loadedGame.level);
 
             DeselectSavedGame();
         }
@@ -99,7 +103,7 @@ public class LoadGameMenu : MonoBehaviour
     {
         if (selectedGame != null)
         {
-            saveLoadManager.DeleteGame(selectedGame);
+            saveLoadManager.DeleteGame(selectedGame.UniqueID);
             savedGames.Remove(selectedGame);
 
             // Destroy the GameObject

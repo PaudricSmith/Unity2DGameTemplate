@@ -338,6 +338,7 @@ GameObject:
   m_Component:
   - component: {fileID: 208589915}
   - component: {fileID: 208589914}
+  - component: {fileID: 208589917}
   - component: {fileID: 208589916}
   m_Layer: 0
   m_Name: Player
@@ -426,6 +427,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputManager: {fileID: 1702603682}
+  playerDataSO: {fileID: 11400000, guid: 9d5b61c377589ae46adb6b33cf446299, type: 2}
+--- !u!114 &208589917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 208589913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02611c270bccb154ca298c634841f7ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   playerDataSO: {fileID: 11400000, guid: 9d5b61c377589ae46adb6b33cf446299, type: 2}
 --- !u!1 &327301325
 GameObject:
@@ -1237,6 +1251,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManagerSO: {fileID: 11400000, guid: 25a7ec0fb247e79458a21df66476bbf1, type: 2}
+  sceneManagerSO: {fileID: 11400000, guid: 1af9f4966d1e61b418d0ecc7d79e3c73, type: 2}
+  playerDataSO: {fileID: 11400000, guid: 9d5b61c377589ae46adb6b33cf446299, type: 2}
   pausePanel: {fileID: 1481268959}
   saveGamePanel: {fileID: 1351579254}
   buttonPanel: {fileID: 1337218547}
@@ -1415,7 +1431,7 @@ PrefabInstance:
     - target: {fileID: 7128878733178503351, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 11400000, guid: 25a7ec0fb247e79458a21df66476bbf1, type: 2}
+      objectReference: {fileID: 11400000, guid: 1af9f4966d1e61b418d0ecc7d79e3c73, type: 2}
     - target: {fileID: 7128878733178503351, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
@@ -1438,7 +1454,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7128878733178503351, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: GameManagerSO, Assembly-CSharp
+      value: SceneManagerSO, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 7128878733178503351, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
@@ -2410,7 +2426,7 @@ PrefabInstance:
     - target: {fileID: 7128878733178503351, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 11400000, guid: 25a7ec0fb247e79458a21df66476bbf1, type: 2}
+      objectReference: {fileID: 11400000, guid: 1af9f4966d1e61b418d0ecc7d79e3c73, type: 2}
     - target: {fileID: 7128878733178503351, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
@@ -2433,7 +2449,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7128878733178503351, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: GameManagerSO, Assembly-CSharp
+      value: SceneManagerSO, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 7128878733178503351, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName

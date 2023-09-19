@@ -9,99 +9,17 @@ public class GameManagerSO : ScriptableObject
     [SerializeField] private SceneManagerSO sceneManager;
     [SerializeField] private EventManagerSO eventManager;
 
+    public SceneManagerSO SceneManager { get => sceneManager; set => sceneManager = value; }
 
-    public int GetCurrentLevelIndex()
+
+    public void StartGame()
     {
-        return sceneManager.CurrentLevelIndex;
+        // Start game logic here
+        // ...
+
+        // Raise the OnGameStart event
+        //eventManager.RaiseEvent(OnGameStart);
     }
-
-
-    #region LEVELS
-
-    public void NewGame()
-    {
-        DAM.One.TransitionGameMusicTracks(DAM.GameMusic.MenuTrack1, DAM.GameMusic.Level1Track1, 2f);
-        
-        sceneManager.NewGame();
-    }
-
-    public void LoadLevelByIndex(int levelIndex)
-    {
-        sceneManager.LoadLevelWithIndex(levelIndex);
-    }
-
-    public void LoadNextLevel()
-    {
-        sceneManager.NextLevel();
-    }
-
-    public void LoadPreviousLevel()
-    {
-        sceneManager.PreviousLevel();
-    }
-
-    public void RestartLevel()
-    {
-        sceneManager.RestartLevel();
-    }
-
-    public void QuitGame()
-    {
-        sceneManager.QuitGame();
-    }
-
-    #endregion LEVELS
-
-
-    #region MAIN MENU
-
-    public void LoadMainMenu()
-    {
-        sceneManager.LoadMainMenu();
-    }
-
-    #endregion MAIN MENU
-
-
-    #region PAUSE MENU
-
-    public void LoadPauseMenu()
-    {
-        sceneManager.LoadPauseMenu();
-    }
-
-    public void UnloadPauseMenu()
-    {
-        sceneManager.UnloadPauseMenu();
-    }
-
-    public void UnloadPauseMenuWithKey()
-    {
-        sceneManager.UnloadPauseMenuWithKey();
-    }
-
-    #endregion PAUSE MENU
-
-
-    #region SETTINGS MENU
-
-    public void LoadSettingsMenu()
-    {
-        sceneManager.LoadSettingsMenu();
-    }
-
-    #endregion SETTINGS MENU
-
-
-    #region LOADGAME MENU
-
-    public void LoadLoadGameMenu()
-    {
-        sceneManager.LoadLoadGameMenu();
-    }
-
-    #endregion LOADGAME MENU
-
 
     public void PauseGame()
     {

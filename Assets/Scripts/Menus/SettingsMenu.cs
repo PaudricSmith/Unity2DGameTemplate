@@ -19,7 +19,6 @@ public class SettingsMenu : MonoBehaviour
 
 
     [SerializeField] private GameSettingsDataSO gameSettingsSO;
-    [SerializeField] private GameManagerSO gameManagerSO;
 
     [SerializeField] private Toggle gameControlsToggle;
     [SerializeField] private Toggle fullscreenToggle;

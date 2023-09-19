@@ -9,7 +9,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
-        transform.position = playerDataSO.PlayerPosition;
+        //transform.position = playerDataSO.PlayerPosition;
     }
 
 

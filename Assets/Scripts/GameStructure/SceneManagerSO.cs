@@ -15,6 +15,7 @@ public class SceneManagerSO : ScriptableObject
 
 
     public int CurrentLevelIndex { get => currentLevelIndex; }
+    public List<LevelSO> Levels { get => levels; set => levels = value; }
 
 
 
@@ -38,6 +39,8 @@ public class SceneManagerSO : ScriptableObject
     // Main Menu = 0, New game = 1, so load level 1
     public void NewGame()
     {
+        DAM.One.TransitionGameMusicTracks(DAM.GameMusic.MenuTrack1, DAM.GameMusic.Level1Track1, 2f);
+
         currentLevelIndex = 1;
         LoadLevelWithIndex(currentLevelIndex);
     }

@@ -8,6 +8,8 @@ public class PauseMenu : MonoBehaviour
     private bool isPaused = false;
     
     [SerializeField] private GameManagerSO gameManagerSO;
+    [SerializeField] private SceneManagerSO sceneManagerSO;
+    [SerializeField] private PlayerDataSO playerDataSO;
 
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private GameObject saveGamePanel;
@@ -95,17 +97,20 @@ public class PauseMenu : MonoBehaviour
     public void SaveGame()
     {
         string saveName = string.IsNullOrEmpty(saveGameNameInputField.text) ? "Default Name" : saveGameNameInputField.text;
-        DateTime saveDate = DateTime.Now;
+        DateTime saveDateTime = DateTime.Now;
 
         // Get the player's position
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         Vector3 playerPosition = player.transform.position;
 
-        // *** TODO *** Get the level number and player health from the player
-        // int level = gameManagerSO.Level;
-        // float playerHealth = playerDataSO.Health;
+        SavedGame savedGame = new SavedGame(
+            saveName, 
+            saveDateTime.ToString(), 
+            sceneManagerSO.CurrentLevelIndex, 
+            playerDataSO.Health, 
+            playerPosition);
 
-        SavedGame savedGame = new SavedGame(saveName, saveDate.ToString(), gameManagerSO.GetCurrentLevelIndex(), 100f, playerPosition);
+
         saveLoadManager.SaveGame(savedGame);
 
         Debug.Log("Game Saved !!!");
