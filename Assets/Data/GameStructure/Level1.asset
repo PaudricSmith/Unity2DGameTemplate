@@ -9,9 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c83cfc9f523ff8f42899ca4bb42f0e0b, type: 3}
-  m_Name: LoadGameMenu_180
+  m_Script: {fileID: 11500000, guid: 268c5620c871a6d48b471b8b983453af, type: 3}
+  m_Name: Level1
   m_EditorClassIdentifier: 
-  sceneName: LoadGameMenu_180
-  shortDescription: Menu with all the saved games to chose from to load.
-  type: 2
+  sceneName: Level1
+  shortDescription: Level 1 of the game with res 320x180 for full screen (1920 x
+    1080).
+  level: 1
+  hasGameStarted: 0

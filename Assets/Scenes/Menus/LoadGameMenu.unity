@@ -1960,6 +1960,7 @@ MonoBehaviour:
   sceneManagerSO: {fileID: 11400000, guid: 1af9f4966d1e61b418d0ecc7d79e3c73, type: 2}
   gameSettingsSO: {fileID: 11400000, guid: 5c3a0c3e2c98eaf4eb99d2ddb7fb89ca, type: 2}
   playerDataSO: {fileID: 11400000, guid: 9d5b61c377589ae46adb6b33cf446299, type: 2}
+  enemyDataListSO: {fileID: 11400000, guid: 61a6a50267751e64394b47228a6e0620, type: 2}
   savedGamePrefab: {fileID: 1828945655375292037, guid: 0287cca2c8b81d84dbd5c53125b876bf, type: 3}
   savedGamesParent: {fileID: 2094511301}
   loadButton: {fileID: 1332782812}

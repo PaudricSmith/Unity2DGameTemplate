@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,6 +19,7 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private Button saveButton;
     [SerializeField] private Text warningText;
     [SerializeField] private SaveLoadManager saveLoadManager;
+    [SerializeField] private EnemyManager enemyManager;
 
 
     private void Start()
@@ -97,18 +99,56 @@ public class PauseMenu : MonoBehaviour
     public void SaveGame()
     {
         string saveName = string.IsNullOrEmpty(saveGameNameInputField.text) ? "Default Name" : saveGameNameInputField.text;
-        DateTime saveDateTime = DateTime.Now;
+        string saveDateTime = DateTime.Now.ToString();
+        int currentLevel = sceneManagerSO.CurrentLevelIndex;
 
         // Get the player's position
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        Vector3 playerPosition = player.transform.position;
+        playerDataSO.PositionX = player.transform.position.x;
+        playerDataSO.PositionY = player.transform.position.y;
+        playerDataSO.PositionZ = player.transform.position.z;
 
-        SavedGame savedGame = new SavedGame(
-            saveName, 
-            saveDateTime.ToString(), 
-            sceneManagerSO.CurrentLevelIndex, 
-            playerDataSO.Health, 
-            playerPosition);
+        SerializablePlayerData serializablePlayerData = new SerializablePlayerData
+        {
+            PositionX = playerDataSO.PositionX,
+            PositionY = playerDataSO.PositionY,
+            PositionZ = playerDataSO.PositionZ,
+            Health = playerDataSO.Health,
+        };
+
+
+        // Get enemy data
+        List<EnemyDataSO> enemyDataListSO = new List<EnemyDataSO>();
+        foreach (GameObject enemy in enemyManager.ActiveEnemies)
+        {
+            EnemyDataSO enemyData = enemy.GetComponent<Enemy>().GetEnemyData();
+            enemyData.PositionX = enemy.transform.position.x;
+            enemyData.PositionY = enemy.transform.position.y;
+            enemyData.PositionZ = enemy.transform.position.z;
+
+            enemyDataListSO.Add(enemyData);
+        }
+
+        List<SerializableEnemyData> serializableEnemyDataList = new List<SerializableEnemyData>();
+        foreach (EnemyDataSO enemyData in enemyDataListSO)
+        {
+            SerializableEnemyData serializableEnemyData = new SerializableEnemyData
+            {
+                PositionX = enemyData.PositionX,
+                PositionY = enemyData.PositionY,
+                PositionZ = enemyData.PositionZ,
+                Health = enemyData.Health,
+                EnemyType = enemyData.EnemyType,
+            };
+            serializableEnemyDataList.Add(serializableEnemyData);
+        }
+
+
+        SavedGame savedGame = new(saveName,
+                                  saveDateTime,
+                                  currentLevel,
+                                  serializablePlayerData,
+                                  serializableEnemyDataList);
 
 
         saveLoadManager.SaveGame(savedGame);

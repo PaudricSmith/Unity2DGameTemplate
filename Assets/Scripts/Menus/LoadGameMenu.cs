@@ -12,6 +12,7 @@ public class LoadGameMenu : MonoBehaviour
     [SerializeField] private SceneManagerSO sceneManagerSO;
     [SerializeField] private GameSettingsDataSO gameSettingsSO;
     [SerializeField] private PlayerDataSO playerDataSO;
+    [SerializeField] private EnemyDataListSO enemyDataListSO;
 
     [SerializeField] private GameObject savedGamePrefab;
     [SerializeField] private Transform savedGamesParent;
@@ -84,13 +85,31 @@ public class LoadGameMenu : MonoBehaviour
             // Load the data based on the selected saved game
             SavedGame loadedGame = saveLoadManager.LoadGame(selectedGame.UniqueID);
 
-            // Update the player data
-            playerDataSO.Position = new Vector3(
-                loadedGame.playerStartingPositionX, 
-                loadedGame.playerStartingPositionY, 
-                loadedGame.playerStartingPositionZ);
+            // Update the player data here so it can be used in to initialize the player in the next scene
+            SerializablePlayerData loadedPlayerData = loadedGame.playerData;
+            playerDataSO.PositionX = loadedPlayerData.PositionX;
+            playerDataSO.PositionY = loadedPlayerData.PositionY;
+            playerDataSO.PositionZ = loadedPlayerData.PositionZ;
+            playerDataSO.Health = loadedPlayerData.Health;
 
-            playerDataSO.Health = loadedGame.playerHealth;
+            
+            enemyDataListSO.EnemyDataList.Clear();  // Clear existing data if needed
+
+            // Update the enemy data list here so it can be used in to initialize the enemies in the next scene
+            List<SerializableEnemyData> loadedEnemyDataList = loadedGame.enemyDataList;
+            foreach (SerializableEnemyData loadedEnemyData in loadedEnemyDataList)
+            {
+                // Create a new EnemyDataSO or find the corresponding one and populate it
+                EnemyDataSO enemyDataSO = new EnemyDataSO(); // or find the existing one
+                enemyDataSO.PositionX = loadedEnemyData.PositionX;
+                enemyDataSO.PositionY = loadedEnemyData.PositionY;
+                enemyDataSO.PositionZ = loadedEnemyData.PositionZ;
+                enemyDataSO.Health = loadedEnemyData.Health;
+                enemyDataSO.EnemyType = loadedEnemyData.EnemyType;
+
+                // Add the populated EnemyDataSO to the EnemyDataListSO
+                enemyDataListSO.EnemyDataList.Add(enemyDataSO);
+            }
 
             // Load the level
             sceneManagerSO.LoadLevelWithIndex(loadedGame.level);
@@ -125,24 +144,8 @@ public class LoadGameMenu : MonoBehaviour
     }
 
     private List<SavedGame> FetchSavedGames()
-    {
-        //return new List<SavedGame>
-        //{
-        //    new SavedGame("Dungeon at last Yea!", "01/01/2023", "12:34 PM", 1, 100.0f),
-        //    new SavedGame("Dungeons Forever", "01/01/2023", "01:45 PM", 1, 90.0f),
-        //    new SavedGame("Dungeon 1", "01/01/2023", "01:45 PM", 1, 90.0f )
-        //    //new SavedGame { saveName = "Save 2", saveDate = "", level = 1, playerHealth = 100f }
-        //    // ...
-        //};
-
-        //SavedGame newSavedGame = new SavedGame("Save1", "01-01-2023", "12:34:56", 1, 100.0f);
-
-        //{ "saveName":"SaveName","saveDate":"SaveDate","saveTime":"SaveTime","level":1,"playerHealth":100.0}
-
-        // Fetch saved games from storage
-        
-        return saveLoadManager.FetchAllSavedGames();
-        
+    {   
+        return saveLoadManager.FetchAllSavedGames();   
     }
 
     public void PlayButtonClick()

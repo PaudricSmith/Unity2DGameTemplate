@@ -1,30 +1,31 @@
 using System;
-using UnityEngine;
-
+using System.Collections.Generic;
 
 [Serializable]
 public class SavedGame
 {
+    public SerializableVector3 playerStartingPosition;
     public string saveName;
     public string saveDateTime;
-    public float playerStartingPositionX;
-    public float playerStartingPositionY;
-    public float playerStartingPositionZ;
-    public int playerHealth;
     public int level;
+    public SerializablePlayerData playerData;
+    public List<SerializableEnemyData> enemyDataList;  
 
 
     // Constructor
-    public SavedGame(string saveName, string saveDateTime, int level, int playerHealth, Vector3 playerStartingPosition)
+    public SavedGame(
+        string saveName, 
+        string saveDateTime, 
+        int level, 
+        SerializablePlayerData playerData,
+        List<SerializableEnemyData> enemyDataList)
     {
-        // Existing fields
+
         this.saveName = saveName;
         this.saveDateTime = saveDateTime;
         this.level = level;
-        this.playerHealth = playerHealth;
-        this.playerStartingPositionX = playerStartingPosition.x;
-        this.playerStartingPositionY = playerStartingPosition.y;
-        this.playerStartingPositionZ = playerStartingPosition.z;
+        this.playerData = playerData;
+        this.enemyDataList = enemyDataList;
     }
 
 
