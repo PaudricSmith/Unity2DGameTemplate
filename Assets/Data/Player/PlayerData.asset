@@ -12,4 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81ef60fa526dd8745b2620a9311eef00, type: 3}
   m_Name: PlayerData
   m_EditorClassIdentifier: 
-  playerPosition: {x: 0, y: 0, z: 0}
+  positionX: 7.4950566
+  positionY: -3.4950798
+  positionZ: 0
+  health: 0

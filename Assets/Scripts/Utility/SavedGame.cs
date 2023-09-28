@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 
+
+
 [Serializable]
 public class SavedGame
 {
@@ -9,7 +11,7 @@ public class SavedGame
     public string saveDateTime;
     public int level;
     public SerializablePlayerData playerData;
-    public List<SerializableEnemyData> enemyDataList;  
+    public List<EnemyData> enemyList;  
 
 
     // Constructor
@@ -18,14 +20,14 @@ public class SavedGame
         string saveDateTime, 
         int level, 
         SerializablePlayerData playerData,
-        List<SerializableEnemyData> enemyDataList)
+        List<EnemyData> enemyList)
     {
 
         this.saveName = saveName;
         this.saveDateTime = saveDateTime;
         this.level = level;
         this.playerData = playerData;
-        this.enemyDataList = enemyDataList;
+        this.enemyList = enemyList;
     }
 
 

@@ -37,8 +37,15 @@ public class MainMenu : MonoBehaviour
         // Add listeners for each button so they can play their sfx when clicked
         settingsButton.onClick.AddListener(PlayButtonClick);
         newGameButton.onClick.AddListener(PlayButtonClick);
+        newGameButton.onClick.AddListener(ClearSaveStringPlayerPrefs);
         loadGameButton.onClick.AddListener(PlayButtonClick);
         quitButton.onClick.AddListener(PlayButtonClick);
+    }
+
+
+    public void ClearSaveStringPlayerPrefs()
+    {
+        PlayerPrefs.DeleteKey("GameToLoad");
     }
 
     public void PlayButtonClick()

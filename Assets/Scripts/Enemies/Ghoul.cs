@@ -3,10 +3,16 @@ using UnityEngine;
 
 public class Ghoul : Enemy
 {
-    public override void Initialize(EnemyDataSO enemyData)
+
+
+
+    protected override void Start()
     {
-        base.Initialize(enemyData);
-        SetMovementBehavior(new RandomDirectionMovement());
-        // Additional initialization for Ghoul
+        base.Start();
+        detectionRange = 5.0f; // Ghoul-specific detection range
+        walkSpeed = 1.0f; // Ghoul-specific move speed
+        chaseSpeed = 1.5f; // Ghoul-specific move speed
     }
+
+    // Additional Ghoul-specific logic here
 }

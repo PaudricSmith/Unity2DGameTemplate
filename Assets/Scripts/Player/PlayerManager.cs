@@ -4,14 +4,27 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
+    [SerializeField] private SaveLoadManager saveLoadManager;
     [SerializeField] private PlayerDataSO playerDataSO;
 
 
     void Start()
     {
-        // Gets the players starting position from the player data asset
-        transform.position = new Vector3(playerDataSO.PositionX, playerDataSO.PositionY, playerDataSO.PositionZ);
+        //Debug.Log("In PlayerManager Start");
 
+        string gameToLoad = PlayerPrefs.GetString("GameToLoad");
+
+        if (!string.IsNullOrEmpty(gameToLoad))
+        {
+            SavedGame loadedGame = saveLoadManager.LoadGame(gameToLoad);
+
+            // Gets the players starting position from the player data asset
+            transform.position = new Vector3(
+                loadedGame.playerData.PositionX,
+                loadedGame.playerData.PositionY,
+                loadedGame.playerData.PositionZ);
+        }
+        
     }
 
 }

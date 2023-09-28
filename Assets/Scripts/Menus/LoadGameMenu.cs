@@ -82,37 +82,11 @@ public class LoadGameMenu : MonoBehaviour
     {
         if (selectedGame != null)
         {
-            // Load the data based on the selected saved game
-            SavedGame loadedGame = saveLoadManager.LoadGame(selectedGame.UniqueID);
-
-            // Update the player data here so it can be used in to initialize the player in the next scene
-            SerializablePlayerData loadedPlayerData = loadedGame.playerData;
-            playerDataSO.PositionX = loadedPlayerData.PositionX;
-            playerDataSO.PositionY = loadedPlayerData.PositionY;
-            playerDataSO.PositionZ = loadedPlayerData.PositionZ;
-            playerDataSO.Health = loadedPlayerData.Health;
-
-            
-            enemyDataListSO.EnemyDataList.Clear();  // Clear existing data if needed
-
-            // Update the enemy data list here so it can be used in to initialize the enemies in the next scene
-            List<SerializableEnemyData> loadedEnemyDataList = loadedGame.enemyDataList;
-            foreach (SerializableEnemyData loadedEnemyData in loadedEnemyDataList)
-            {
-                // Create a new EnemyDataSO or find the corresponding one and populate it
-                EnemyDataSO enemyDataSO = new EnemyDataSO(); // or find the existing one
-                enemyDataSO.PositionX = loadedEnemyData.PositionX;
-                enemyDataSO.PositionY = loadedEnemyData.PositionY;
-                enemyDataSO.PositionZ = loadedEnemyData.PositionZ;
-                enemyDataSO.Health = loadedEnemyData.Health;
-                enemyDataSO.EnemyType = loadedEnemyData.EnemyType;
-
-                // Add the populated EnemyDataSO to the EnemyDataListSO
-                enemyDataListSO.EnemyDataList.Add(enemyDataSO);
-            }
+            // Save the unique id in a player pref string of the file to be loaded in the next scene
+            PlayerPrefs.SetString("GameToLoad" ,selectedGame.UniqueID);
 
             // Load the level
-            sceneManagerSO.LoadLevelWithIndex(loadedGame.level);
+            sceneManagerSO.LoadLevelWithIndex(selectedGame.level);
 
             DeselectSavedGame();
         }

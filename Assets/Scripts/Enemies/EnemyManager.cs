@@ -1,174 +1,123 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 
 public class EnemyManager : MonoBehaviour
 {
-    [SerializeField] private EnemyDataListSO enemyDataListSO;
-    [SerializeField] private List<EnemyDataSO> enemyDataList;
-    [SerializeField] private Transform spawnPointsParent;
-
+    // List to hold spawn points and active enemies
     private List<Transform> spawnPoints = new List<Transform>();
-    private List<GameObject> activeEnemies = new List<GameObject>();
-    private Dictionary<string, GameObject> enemyPrefabs = new Dictionary<string, GameObject>();
+    private List<Enemy> activeEnemies = new List<Enemy>();  // Using Enemy type for better type safety
+
+    // Serialized fields for Unity Editor
+    [SerializeField] private SaveLoadManager saveLoadManager;
+    [SerializeField] private Transform spawnPointsParent;
+    [SerializeField] private List<Enemy> enemyPrefabs;  // Using Enemy prefabs
 
 
-    public List<GameObject> ActiveEnemies { get => activeEnemies; set => activeEnemies = value; }
-
+    // Property to get or set active enemies
+    public List<Enemy> ActiveEnemies { get => activeEnemies; set => activeEnemies = value; }
 
     void Start()
     {
-        // Initialize enemy prefabs
-        foreach (var enemyData in enemyDataList)
-        {
-            enemyPrefabs.Add(enemyData.EnemyType, enemyData.Prefab);
-        }
+        // Delete any existing enemies
+        DeleteAllEnemies();
 
-        // Initialize spawn points
+        // Initialize spawn points from the parent transform
         foreach (Transform child in spawnPointsParent)
         {
             spawnPoints.Add(child);
         }
 
-        // Check if there is saved enemy data
-        if (enemyDataListSO.EnemyDataList != null && enemyDataListSO.EnemyDataList.Count > 0)
+        // Check if there's a game to load
+        string gameToLoad = PlayerPrefs.GetString("GameToLoad");
+
+        if (!string.IsNullOrEmpty(gameToLoad))
         {
-            LoadEnemies(enemyDataListSO.EnemyDataList);
+            // Load the saved game
+            SavedGame loadedGame = saveLoadManager.LoadGame(gameToLoad);
+            if (loadedGame != null)
+            {
+                // Load enemies from the saved game
+                LoadEnemies(loadedGame);
+            }
+            else
+            {
+                Debug.LogError("Failed to load the game.");
+            }
         }
         else
         {
-            // Spawn initial enemies if there's no saved data
+            // Spawn initial set of enemies
             SpawnInitialEnemies(2);
         }
     }
 
-    private void SpawnInitialEnemies(int count)
+
+    // Function to load enemies from a saved game
+    private void LoadEnemies(SavedGame loadedGame)
     {
-        int maxEnemies = Mathf.Min(count, spawnPoints.Count);
-        for (int i = 0; i < maxEnemies; i++)
+        foreach (var enemyData in loadedGame.enemyList)
         {
-            // Use modulo just in case there are fewer enemyData than spawn points
-            EnemyDataSO enemyData = enemyDataList[i % enemyDataList.Count]; 
-            SpawnEnemy(i, enemyData);
+            // Find the corresponding enemy prefab
+            Enemy enemyPrefab = enemyPrefabs.Find(prefab => prefab.name == enemyData.EnemyType);
+            if (enemyPrefab != null)
+            {
+                // Instantiate the enemy and initialize it
+                Enemy enemyInstance = Instantiate(enemyPrefab, new Vector3(enemyData.PositionX, enemyData.PositionY, enemyData.PositionZ), Quaternion.identity);
+                enemyInstance.FromEnemyData(enemyData);
+                activeEnemies.Add(enemyInstance);
+            }
+            else
+            {
+                Debug.LogError("Enemy prefab not found.");
+            }
         }
     }
 
-    public void SpawnEnemy(int spawnPointIndex, EnemyDataSO enemyData)
+
+    // Function to spawn an enemy at a specific spawn point
+    public void SpawnEnemy(int spawnPointIndex, Enemy enemyPrefab)
     {
-        Vector3 enemyPosition = new Vector3(enemyData.PositionX, enemyData.PositionY, enemyData.PositionZ);
-        GameObject prefab = enemyPrefabs[enemyData.EnemyType];
-
-        Vector3 spawnPosition = (enemyPosition != Vector3.zero) ? enemyPosition : spawnPoints[spawnPointIndex].position;
-        GameObject enemy = Instantiate(prefab, spawnPosition, spawnPoints[spawnPointIndex].rotation);
-
-        enemy.GetComponent<Enemy>().Initialize(enemyData);
+        // Instantiate the enemy and add it to the active enemies list
+        Enemy enemy = Instantiate(enemyPrefab, spawnPoints[spawnPointIndex].position, spawnPoints[spawnPointIndex].rotation);
         activeEnemies.Add(enemy);
     }
 
-    public void DeleteEnemy(GameObject enemy)
+
+    // Function to spawn an initial set of enemies
+    private void SpawnInitialEnemies(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            // Select an enemy prefab from the list by using modulo
+            // to loop back to the start of the list if 'i' exceeds the list count
+            Enemy enemyPrefab = enemyPrefabs[i % enemyPrefabs.Count];
+            SpawnEnemy(i, enemyPrefab);
+        }
+    }
+
+
+    // Function to delete a specific enemy
+    public void DeleteEnemy(Enemy enemy)
     {
         if (activeEnemies.Contains(enemy))
         {
+            // Remove the enemy and destroy its GameObject
             activeEnemies.Remove(enemy);
-            Destroy(enemy);
+            Destroy(enemy.gameObject);  // Destroy the GameObject, not the Enemy script
         }
     }
 
+
+    // Function to delete all active enemies
     public void DeleteAllEnemies()
     {
-        foreach (GameObject enemy in activeEnemies)
+        foreach (Enemy enemy in activeEnemies)
         {
-            Destroy(enemy);
+            // Destroy each enemy GameObject
+            Destroy(enemy.gameObject);  // Destroy the GameObject, not the Enemy script
         }
+        // Clear the list of active enemies
         activeEnemies.Clear();
     }
-
-    public void LoadEnemies(List<EnemyDataSO> loadedEnemies)
-    {
-        // Delete all existing enemies first
-        DeleteAllEnemies();
-
-        // Now load the saved enemies
-        int maxEnemies = Mathf.Min(loadedEnemies.Count, spawnPoints.Count);
-        for (int i = 0; i < maxEnemies; i++)
-        {
-            EnemyDataSO enemyData = loadedEnemies[i];
-            SpawnEnemy(i, enemyData);
-        }
-    }
 }
-
-
-public class Enemy : MonoBehaviour
-{
-    private Transform playerTransform;
-    
-    protected EnemyDataSO enemyData;
-    protected IMovementBehaviour movementBehaviour;
-
-    [SerializeField] private float detectionRange = 3.0f;
-
-
-    public virtual void Initialize(EnemyDataSO enemyData)
-    {
-        this.enemyData = enemyData;
-        transform.position = new Vector3(enemyData.PositionX, enemyData.PositionY, enemyData.PositionZ);
-    }
-
-    private void Start()
-    {
-        // Initialize playerTransform and default movementBehaviour
-        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-        SetMovementBehavior(new RandomDirectionMovement());
-    }
-
-    private void Update()
-    {
-        // Check distance to player
-        float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
-
-        // Change movement behavior based on distance
-        if (distanceToPlayer <= detectionRange && !(movementBehaviour is MoveTowardsPlayer))
-        {
-            SetMovementBehavior(new MoveTowardsPlayer(playerTransform));
-        }
-        else if (distanceToPlayer > detectionRange && !(movementBehaviour is RandomDirectionMovement))
-        {
-            SetMovementBehavior(new RandomDirectionMovement());
-        }
-
-        // Execute the movement
-        movementBehaviour?.Move(transform);
-    }
-
-    public void SetMovementBehavior(IMovementBehaviour behavior)
-    {
-        this.movementBehaviour = behavior;
-    }
-
-    public EnemyDataSO GetEnemyData()
-    {
-        return this.enemyData;
-    }
-}
-
-
-
-[Serializable]
-public class SerializableEnemyData
-{
-    private string enemyType; // e.g., "Skeleton" or "Ghoul"
-    private float positionX;
-    private float positionY;
-    private float positionZ;
-    private int health;
-
-
-    public string EnemyType { get => enemyType; set => enemyType = value; }
-    public float PositionX { get => positionX; set => positionX = value; }
-    public float PositionY { get => positionY; set => positionY = value; }
-    public float PositionZ { get => positionZ; set => positionZ = value; }
-    public int Health { get => health; set => health = value; }
-}
-
