@@ -17,8 +17,8 @@ public class GameSettingsDataSO : ScriptableObject
     [Header("Screen Settings")]
     public bool isFullscreen = true;
     public int resolutionWidth = 1920;
-    public int resolutionHeight = 1152;
-    //public int resolutionHeight = 1080;
+    public int resolutionHeight = 1080;
+    //public int resolutionHeight = 1152;
 
     [Header("Control Settings")]
     public bool isGamepadEnabled = false;

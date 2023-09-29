@@ -2,37 +2,43 @@ using System;
 using UnityEngine;
 
 
+
 public class PlayerManager : MonoBehaviour
 {
-    [SerializeField] private SaveLoadManager saveLoadManager;
+
     [SerializeField] private PlayerDataSO playerDataSO;
+
 
 
     void Start()
     {
-        //Debug.Log("In PlayerManager Start");
 
-        string gameToLoad = PlayerPrefs.GetString("GameToLoad");
+        SavedGame loadedGame = GameManager.One.LoadedGame;
 
-        if (!string.IsNullOrEmpty(gameToLoad))
+        if (loadedGame != null)
         {
-            SavedGame loadedGame = saveLoadManager.LoadGame(gameToLoad);
-
             // Gets the players starting position from the player data asset
             transform.position = new Vector3(
                 loadedGame.playerData.PositionX,
                 loadedGame.playerData.PositionY,
                 loadedGame.playerData.PositionZ);
         }
-        
-    }
 
+    }
 }
+
+
+
+
+
+
+
 
 
 [Serializable]
 public class SerializablePlayerData
 {
+
     private float positionX;
     private float positionY;
     private float positionZ;

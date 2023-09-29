@@ -1,21 +1,20 @@
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
-
+using System.Collections.Generic;
+using System;
 
 public class SettingsMenu : MonoBehaviour
 {
     private Resolution[] customResolutions = new Resolution[]
     {
-        //new Resolution { width = 1920, height = 1152 },
-        //new Resolution { width = 1280, height = 768 },
         new Resolution { width = 1920, height = 1080 },
         new Resolution { width = 1280, height = 720 }
     };
 
+    private const float DEBOUNCE_TIME = 0.2f; // 200 milliseconds
     private float lastSoundTime = 0f;
-    private float debounceTime = 0.2f; // 200 milliseconds
+    private bool settingsChanged = false;
+
 
 
     [SerializeField] private GameSettingsDataSO gameSettingsSO;
@@ -23,43 +22,30 @@ public class SettingsMenu : MonoBehaviour
     [SerializeField] private Toggle gameControlsToggle;
     [SerializeField] private Toggle fullscreenToggle;
     [SerializeField] private Dropdown resolutionDropdown;
+
     [SerializeField] private Slider masterVolumeSlider;
     [SerializeField] private Slider gameMusicSlider;
     [SerializeField] private Slider ambienceMusicSlider;
     [SerializeField] private Slider sfxSlider;
     [SerializeField] private Slider uiSlider;
 
-    [SerializeField] private Button backButton;
     [SerializeField] private Button applyButton;
 
 
     private void Start()
     {
+        // Populate the resolution dropdown with available options
         PopulateResolutionDropdown();
 
-        // When the scene first loads get all the settings from the GameSettingsSO and set their UI and audio sources
-        SetAudioUI();
-        SetAudioSettings();
-        SetScreenUI();
-        SetControlsToggleUI();
+        // Initialize the UI elements based on saved game settings
+        InitializeUI();
 
-        // Add listeners for each UI so they can play their sfx when interacted with
-        backButton.onClick.AddListener(PlayButtonClick);
-        applyButton.onClick.AddListener(PlayButtonClick);
+        AddUiListeners();
 
-        gameControlsToggle.onValueChanged.AddListener(PlayToggleSFX);
-        fullscreenToggle.onValueChanged.AddListener(PlayToggleSFX);
-
-        // Add a listener when the dropdown UI is opened
-        AddPointerClickTrigger(resolutionDropdown.gameObject, PlayDropdownSFX);
-        resolutionDropdown.onValueChanged.AddListener(PlayDropdownSelect);
-
-        masterVolumeSlider.onValueChanged.AddListener(PlaySliderSelect);
-        gameMusicSlider.onValueChanged.AddListener(PlaySliderSelect);
-        ambienceMusicSlider.onValueChanged.AddListener(PlaySliderSelect);
-        sfxSlider.onValueChanged.AddListener(PlaySliderSelect);
-        uiSlider.onValueChanged.AddListener(PlaySliderSelect);
+        // Initialize the "Apply" button to be disabled
+        applyButton.interactable = false;
     }
+
 
     private void PopulateResolutionDropdown()
     {
@@ -75,6 +61,54 @@ public class SettingsMenu : MonoBehaviour
         resolutionDropdown.AddOptions(options);
     }
 
+    private void InitializeUI()
+    {
+        // When the scene first loads get all the settings from the GameSettingsSO and set their UI and audio sources
+        SetAudioUI();
+        SetResolutionUI();
+
+        DAM.One.SetAudioSettings(gameSettingsSO);
+
+        // Set the fullscreen toggle UI based on the saved fullscreen state
+        fullscreenToggle.isOn = gameSettingsSO.isFullscreen;
+
+        // Set the game controls toggle UI based on the saved gamepad value
+        gameControlsToggle.isOn = gameSettingsSO.isGamepadEnabled;
+    }
+
+    private void AddUiListeners()
+    {
+        // Add Listeners for the UI objects
+        gameControlsToggle.onValueChanged.AddListener(OnGamepadToggleClicked);
+        fullscreenToggle.onValueChanged.AddListener(OnFullscreenToggleClicked);
+        resolutionDropdown.onValueChanged.AddListener(OnResolutionDropdownClicked);
+
+        masterVolumeSlider.onValueChanged.AddListener(OnMasterVolumeClicked);
+        gameMusicSlider.onValueChanged.AddListener(OnGameMusicVolumeClicked);
+        ambienceMusicSlider.onValueChanged.AddListener(OnAmbienceMusicVolumeClicked);
+        sfxSlider.onValueChanged.AddListener(OnSfxVolumeClicked);
+        uiSlider.onValueChanged.AddListener(OnUiVolumeClicked);
+    }
+
+    private void OnDestroy()
+    {
+        RemoveUIListeners();
+    }
+
+    private void RemoveUIListeners()
+    {
+        gameControlsToggle.onValueChanged.RemoveAllListeners();
+        fullscreenToggle.onValueChanged.RemoveAllListeners();
+        resolutionDropdown.onValueChanged.RemoveAllListeners();
+
+        masterVolumeSlider.onValueChanged.RemoveAllListeners();
+        gameMusicSlider.onValueChanged.RemoveAllListeners();
+        ambienceMusicSlider.onValueChanged.RemoveAllListeners();
+        sfxSlider.onValueChanged.RemoveAllListeners();
+        uiSlider.onValueChanged.RemoveAllListeners();
+    }
+
+
     private void SetAudioUI()
     {
         masterVolumeSlider.value = gameSettingsSO.masterVolume;
@@ -84,25 +118,8 @@ public class SettingsMenu : MonoBehaviour
         uiSlider.value = gameSettingsSO.uiSfxVolume;
     }
 
-    private void SetAudioSettings()
+    private void SetResolutionUI()
     {
-        // Set the audio game settings to the latest slider volume values
-        gameSettingsSO.masterVolume = masterVolumeSlider.value;
-        gameSettingsSO.gameMusicVolume = gameMusicSlider.value;
-        gameSettingsSO.ambienceMusicVolume = ambienceMusicSlider.value;
-        gameSettingsSO.sfxVolume = sfxSlider.value;
-        gameSettingsSO.uiSfxVolume = uiSlider.value;
-        
-        // Set the audio sources in the DAM with the latest slider volume values
-        DAM.One.SetAudioSettings(gameSettingsSO);
-    }
-
-    private void SetScreenUI()
-    {
-        // Set the fullscreen toggle based on the saved fullscreen state
-        fullscreenToggle.isOn = gameSettingsSO.isFullscreen;
-
-
         // Loop through each option in the dropdown to find the index of the current resolution
         for (int i = 0; i < resolutionDropdown.options.Count; i++)
         {
@@ -122,7 +139,7 @@ public class SettingsMenu : MonoBehaviour
     }
 
 
-    private void SetScreenSettings()
+    private void SetResolutionSettings()
     {
         // Get the selected resolution from the dropdown UI
         Resolution resolution = customResolutions[resolutionDropdown.value];
@@ -130,67 +147,130 @@ public class SettingsMenu : MonoBehaviour
         // Set the selected resolutions width and height and fullscreen state game settings
         gameSettingsSO.resolutionWidth = resolution.width;
         gameSettingsSO.resolutionHeight = resolution.height;
-        gameSettingsSO.isFullscreen = fullscreenToggle.isOn;
+    }
+
+    private void ApplySettings()
+    {
+        // Set the audio sources in the DAM with the latest slider volume values
+        DAM.One.SetAudioSettings(gameSettingsSO);
 
         // Set the new screen settings
         gameSettingsSO.SetScreenSettings();
-    }
-
-    private void SetControlsToggleUI()
-    {
-        gameControlsToggle.isOn = gameSettingsSO.isGamepadEnabled;
-    }
-
-    public void SetControlsSettings()
-    {
-        gameSettingsSO.isGamepadEnabled = gameControlsToggle.isOn;
-    }
-
-    public void ApplySettings()
-    {
-        SetAudioSettings();
-        SetScreenSettings();
-        SetControlsSettings();
 
         gameSettingsSO.SaveSettings();
     }
 
-    public void PlayButtonClick()
-    {
-        DAM.One.PlayUISFX(DAM.UISFX.ButtonClick1);
-    }
-
-    public void PlayToggleSFX(bool _)
-    {
-        DAM.One.PlayUISFX(DAM.UISFX.Toggle1);
-    }
-
-    private void AddPointerClickTrigger(GameObject target, UnityEngine.Events.UnityAction<BaseEventData> action)
-    {
-        EventTrigger trigger = target.AddComponent<EventTrigger>();
-        EventTrigger.Entry entry = new EventTrigger.Entry();
-        entry.eventID = EventTriggerType.PointerClick;
-        entry.callback.AddListener(action);
-        trigger.triggers.Add(entry);
-    }
-
-    public void PlayDropdownSFX(BaseEventData _)
-    {
-        DAM.One.PlayUISFX(DAM.UISFX.DropdownOpened);
-    }
-
-    public void PlayDropdownSelect(int _)
-    {
-        DAM.One.PlayUISFX(DAM.UISFX.Select);
-    }
-
-    public void PlaySliderSelect(float _)
+    private void PlaySliderSelect()
     {
         float currentTime = Time.time;
-        if (currentTime - lastSoundTime > debounceTime)
+        if (currentTime - lastSoundTime > DEBOUNCE_TIME)
         {
             DAM.One.PlayUISFX(DAM.UISFX.SliderSelect);
             lastSoundTime = currentTime;
+        }
+    }
+
+
+    private void OnFullscreenToggleClicked(bool _)
+    {
+        settingsChanged = true;
+        applyButton.interactable = true;
+
+        DAM.One.PlayUISFX(DAM.UISFX.Toggle1);
+        gameSettingsSO.isFullscreen = fullscreenToggle.isOn;
+    }
+
+    private void OnGamepadToggleClicked(bool _)
+    {
+        settingsChanged = true;
+        applyButton.interactable = true;
+
+        DAM.One.PlayUISFX(DAM.UISFX.Toggle1);
+        gameSettingsSO.isGamepadEnabled = gameControlsToggle.isOn;
+    }
+
+    private void OnResolutionDropdownClicked(int _)
+    {
+        settingsChanged = true;
+        applyButton.interactable = true;
+
+        DAM.One.PlayUISFX(DAM.UISFX.Select);
+        SetResolutionSettings();
+    }
+
+
+    private void OnMasterVolumeClicked(float _)
+    {
+        settingsChanged = true;
+        applyButton.interactable = true;
+
+        PlaySliderSelect();
+
+        // Set the master volume setting to the latest slider volume value
+        gameSettingsSO.masterVolume = masterVolumeSlider.value;
+    }
+
+    private void OnGameMusicVolumeClicked(float _)
+    {
+        settingsChanged = true;
+        applyButton.interactable = true;
+
+        PlaySliderSelect();
+
+        // Set the game music volume setting to the latest slider volume value
+        gameSettingsSO.gameMusicVolume = gameMusicSlider.value;
+    }
+
+    private void OnAmbienceMusicVolumeClicked(float _)
+    {
+        settingsChanged = true;
+        applyButton.interactable = true;
+
+        PlaySliderSelect();
+
+        // Set the ambience music volume setting to the latest slider volume value
+        gameSettingsSO.ambienceMusicVolume = ambienceMusicSlider.value;
+    }
+
+    private void OnSfxVolumeClicked(float _)
+    {
+        settingsChanged = true;
+        applyButton.interactable = true;
+
+        PlaySliderSelect();
+
+        // Set the SFX volume setting to the latest slider volume value
+        gameSettingsSO.sfxVolume = sfxSlider.value;
+    }
+
+    private void OnUiVolumeClicked(float _)
+    {
+        settingsChanged = true;
+        applyButton.interactable = true;
+
+        PlaySliderSelect();
+
+        // Set the UI volume setting to the latest slider volume value
+        gameSettingsSO.uiSfxVolume = uiSlider.value;
+    }
+
+
+    public void OnBackButtonClicked()
+    {
+        DAM.One.PlayUISFX(DAM.UISFX.ButtonClick1);
+        GameManager.One.LoadMainMenu();
+    }
+
+    public void OnApplyButtonClicked()
+    {
+        if (settingsChanged)
+        {
+            DAM.One.PlayUISFX(DAM.UISFX.ButtonClick1);
+            
+            settingsChanged = false;
+            applyButton.interactable = false;
+
+            ApplySettings();
         }
     }
 }

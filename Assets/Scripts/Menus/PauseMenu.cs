@@ -9,7 +9,6 @@ public class PauseMenu : MonoBehaviour
     private bool isPaused = false;
     
     [SerializeField] private GameManagerSO gameManagerSO;
-    [SerializeField] private SceneManagerSO sceneManagerSO;
     [SerializeField] private PlayerDataSO playerDataSO;
 
     [SerializeField] private GameObject pausePanel;
@@ -18,7 +17,6 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private InputField saveGameNameInputField;
     [SerializeField] private Button saveButton;
     [SerializeField] private Text warningText;
-    [SerializeField] private SaveLoadManager saveLoadManager;
     [SerializeField] private EnemyManager enemyManager;
 
 
@@ -74,7 +72,7 @@ public class PauseMenu : MonoBehaviour
         saveGamePanel.SetActive(true);
         buttonPanel.SetActive(false);
 
-        if (saveLoadManager.GetSavedGameCount() >= MaxSaves)
+        if (GameManager.One.GetSavedGameCount() >= MaxSaves)
         {
             warningText.text = "Maximum number of saved games reached (20).";
             warningText.gameObject.SetActive(true);
@@ -100,7 +98,7 @@ public class PauseMenu : MonoBehaviour
     {
         string saveName = string.IsNullOrEmpty(saveGameNameInputField.text) ? "Default Name" : saveGameNameInputField.text;
         string saveDateTime = DateTime.Now.ToString();
-        int currentLevel = sceneManagerSO.CurrentLevelIndex;
+        int currentLevel = GameManager.One.GetCurrentLevelIndex();
 
         //////////////////////////////////////////////////////////////////////////////////////////////
         //                                      SAVE PLAYER                                         //
@@ -145,66 +143,7 @@ public class PauseMenu : MonoBehaviour
                                   enemyDataList);
 
 
-        saveLoadManager.SaveGame(savedGame);
-
-
-
-        //string saveName = string.IsNullOrEmpty(saveGameNameInputField.text) ? "Default Name" : saveGameNameInputField.text;
-        //string saveDateTime = DateTime.Now.ToString();
-        //int currentLevel = sceneManagerSO.CurrentLevelIndex;
-
-        //// Get the player's position
-        //GameObject player = GameObject.FindGameObjectWithTag("Player");
-        //playerDataSO.PositionX = player.transform.position.x;
-        //playerDataSO.PositionY = player.transform.position.y;
-        //playerDataSO.PositionZ = player.transform.position.z;
-
-        //SerializablePlayerData serializablePlayerData = new SerializablePlayerData
-        //{
-        //    PositionX = playerDataSO.PositionX,
-        //    PositionY = playerDataSO.PositionY,
-        //    PositionZ = playerDataSO.PositionZ,
-        //    Health = playerDataSO.Health,
-        //};
-
-
-        //// Get enemy data
-        //List<EnemyDataSO> enemyDataListSO = new List<EnemyDataSO>();
-        //foreach (GameObject enemy in enemyManager.ActiveEnemies)
-        //{
-        //    EnemyDataSO enemyData = enemy.GetComponent<Enemy>().GetEnemyData();
-        //    enemyData.PositionX = enemy.transform.position.x;
-        //    enemyData.PositionY = enemy.transform.position.y;
-        //    enemyData.PositionZ = enemy.transform.position.z;
-
-        //    enemyDataListSO.Add(enemyData);
-        //}
-
-        //List<SerializableEnemyData> serializableEnemyDataList = new List<SerializableEnemyData>();
-        //foreach (EnemyDataSO enemyData in enemyDataListSO)
-        //{
-        //    SerializableEnemyData serializableEnemyData = new SerializableEnemyData
-        //    {
-        //        PositionX = enemyData.PositionX,
-        //        PositionY = enemyData.PositionY,
-        //        PositionZ = enemyData.PositionZ,
-        //        Health = enemyData.Health,
-        //        EnemyType = enemyData.EnemyType,
-        //    };
-        //    serializableEnemyDataList.Add(serializableEnemyData);
-        //}
-
-
-        //SavedGame savedGame = new(saveName,
-        //                          saveDateTime,
-        //                          currentLevel,
-        //                          serializablePlayerData,
-        //                          serializableEnemyDataList);
-
-
-        //saveLoadManager.SaveGame(savedGame);
-
-        //Debug.Log("Game Saved !!!");
+        GameManager.One.SaveGame(savedGame);
     }
 
     // *Used by all the 'PauseCanvas' buttons 'OnClick' event in the editor

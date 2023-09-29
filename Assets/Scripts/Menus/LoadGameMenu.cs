@@ -9,7 +9,6 @@ public class LoadGameMenu : MonoBehaviour
     private List<SavedGame> savedGames;
     private SavedGame selectedGame;
 
-    [SerializeField] private SceneManagerSO sceneManagerSO;
     [SerializeField] private GameSettingsDataSO gameSettingsSO;
     [SerializeField] private PlayerDataSO playerDataSO;
     [SerializeField] private EnemyDataListSO enemyDataListSO;
@@ -19,8 +18,6 @@ public class LoadGameMenu : MonoBehaviour
     [SerializeField] private Button loadButton;
     [SerializeField] private Button deleteButton;
     [SerializeField] private Button backButton;
-
-    [SerializeField] private SaveLoadManager saveLoadManager;
 
 
     private void Start()
@@ -82,11 +79,7 @@ public class LoadGameMenu : MonoBehaviour
     {
         if (selectedGame != null)
         {
-            // Save the unique id in a player pref string of the file to be loaded in the next scene
-            PlayerPrefs.SetString("GameToLoad" ,selectedGame.UniqueID);
-
-            // Load the level
-            sceneManagerSO.LoadLevelWithIndex(selectedGame.level);
+            GameManager.One.LoadGame(selectedGame);
 
             DeselectSavedGame();
         }
@@ -96,7 +89,7 @@ public class LoadGameMenu : MonoBehaviour
     {
         if (selectedGame != null)
         {
-            saveLoadManager.DeleteGame(selectedGame.UniqueID);
+            GameManager.One.DeleteGame(selectedGame.UniqueID);
             savedGames.Remove(selectedGame);
 
             // Destroy the GameObject
@@ -119,7 +112,7 @@ public class LoadGameMenu : MonoBehaviour
 
     private List<SavedGame> FetchSavedGames()
     {   
-        return saveLoadManager.FetchAllSavedGames();   
+        return GameManager.One.FetchAllSavedGames();   
     }
 
     public void PlayButtonClick()

@@ -15,7 +15,6 @@ public class Enemy : MonoBehaviour
     [SerializeField] protected float chaseSpeed = 1.5f;
     [SerializeField] protected int health = 100; 
 
-
     protected IMovementBehaviour movementBehaviour;
     
     public static Transform PlayerTransform;
@@ -74,22 +73,8 @@ public class Enemy : MonoBehaviour
                 break;
 
             case EnemyState.ChasePlayer:
-
+                
                 // Transition logic
-                //if (!PlayerIsInRangeAndVisible())
-                //{
-                //    if (movementBehaviour is ChasePlayerByRay chaseBehaviour)
-                //    {
-                //        currentState = EnemyState.SearchingForPlayer;
-                //        SetMovementBehaviour(new SearchLastKnownLocation(chaseBehaviour.LastKnownPlayerPosition, walkSpeed));
-                //    }
-                //    else
-                //    {
-                //        TransitionToRandomMovement();
-                //    }
-                //}
-
-                // Update lastKnownPlayerPosition when chasing
                 if (PlayerIsInRangeAndVisible())
                 {
                     lastKnownPlayerPosition = PlayerTransform.position;

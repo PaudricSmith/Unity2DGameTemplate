@@ -2,20 +2,19 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+
 public class EnemyManager : MonoBehaviour
 {
-    // List to hold spawn points and active enemies
+
     private List<Transform> spawnPoints = new List<Transform>();
     private List<Enemy> activeEnemies = new List<Enemy>();  // Using Enemy type for better type safety
 
-    // Serialized fields for Unity Editor
-    [SerializeField] private SaveLoadManager saveLoadManager;
     [SerializeField] private Transform spawnPointsParent;
     [SerializeField] private List<Enemy> enemyPrefabs;  // Using Enemy prefabs
 
 
-    // Property to get or set active enemies
     public List<Enemy> ActiveEnemies { get => activeEnemies; set => activeEnemies = value; }
+
 
     void Start()
     {
@@ -28,32 +27,23 @@ public class EnemyManager : MonoBehaviour
             spawnPoints.Add(child);
         }
 
-        // Check if there's a game to load
-        string gameToLoad = PlayerPrefs.GetString("GameToLoad");
+       
+        // Get the cached SavedGame object from the GameManager 
+        SavedGame loadedGame = GameManager.One.LoadedGame;
 
-        if (!string.IsNullOrEmpty(gameToLoad))
+        if (loadedGame != null)
         {
-            // Load the saved game
-            SavedGame loadedGame = saveLoadManager.LoadGame(gameToLoad);
-            if (loadedGame != null)
-            {
-                // Load enemies from the saved game
-                LoadEnemies(loadedGame);
-            }
-            else
-            {
-                Debug.LogError("Failed to load the game.");
-            }
+            // Load enemies from the saved game
+            LoadEnemies(loadedGame);
         }
         else
         {
-            // Spawn initial set of enemies
             SpawnInitialEnemies(2);
         }
+        
     }
 
 
-    // Function to load enemies from a saved game
     private void LoadEnemies(SavedGame loadedGame)
     {
         foreach (var enemyData in loadedGame.enemyList)
@@ -75,7 +65,6 @@ public class EnemyManager : MonoBehaviour
     }
 
 
-    // Function to spawn an enemy at a specific spawn point
     public void SpawnEnemy(int spawnPointIndex, Enemy enemyPrefab)
     {
         // Instantiate the enemy and add it to the active enemies list
@@ -84,7 +73,6 @@ public class EnemyManager : MonoBehaviour
     }
 
 
-    // Function to spawn an initial set of enemies
     private void SpawnInitialEnemies(int count)
     {
         for (int i = 0; i < count; i++)
@@ -97,7 +85,6 @@ public class EnemyManager : MonoBehaviour
     }
 
 
-    // Function to delete a specific enemy
     public void DeleteEnemy(Enemy enemy)
     {
         if (activeEnemies.Contains(enemy))
@@ -109,7 +96,6 @@ public class EnemyManager : MonoBehaviour
     }
 
 
-    // Function to delete all active enemies
     public void DeleteAllEnemies()
     {
         foreach (Enemy enemy in activeEnemies)

@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.UI;
+
 
 public class MainMenu : MonoBehaviour
 {
@@ -9,11 +9,6 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private CursorMode cursorMode = CursorMode.Auto;
 
     [SerializeField] private GameSettingsDataSO gameSettingsSO;
-
-    [SerializeField] private Button settingsButton;
-    [SerializeField] private Button newGameButton;
-    [SerializeField] private Button loadGameButton;
-    [SerializeField] private Button quitButton;
 
 
     private void Start()
@@ -33,23 +28,30 @@ public class MainMenu : MonoBehaviour
             DAM.One.PlayGameMusic(DAM.GameMusic.MenuTrack1);
         }
 
-
-        // Add listeners for each button so they can play their sfx when clicked
-        settingsButton.onClick.AddListener(PlayButtonClick);
-        newGameButton.onClick.AddListener(PlayButtonClick);
-        newGameButton.onClick.AddListener(ClearSaveStringPlayerPrefs);
-        loadGameButton.onClick.AddListener(PlayButtonClick);
-        quitButton.onClick.AddListener(PlayButtonClick);
     }
 
 
-    public void ClearSaveStringPlayerPrefs()
-    {
-        PlayerPrefs.DeleteKey("GameToLoad");
-    }
-
-    public void PlayButtonClick()
+    public void OnNewGameButtonClicked()
     {
         DAM.One.PlayUISFX(DAM.UISFX.ButtonClick1);
+        GameManager.One.NewGame();
+    }
+
+    public void OnLoadGameButtonClicked()
+    {
+        DAM.One.PlayUISFX(DAM.UISFX.ButtonClick1);
+        GameManager.One.LoadLoadGameMenu();
+    }
+
+    public void OnSettingsButtonClicked()
+    {
+        DAM.One.PlayUISFX(DAM.UISFX.ButtonClick1);
+        GameManager.One.LoadSettingsMenu();
+    }
+
+    public void OnQuitButtonClicked()
+    {
+        DAM.One.PlayUISFX(DAM.UISFX.ButtonClick1);
+        GameManager.One.QuitGame();
     }
 }
