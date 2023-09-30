@@ -97,15 +97,15 @@ public class SettingsMenu : MonoBehaviour
 
     private void RemoveUIListeners()
     {
-        gameControlsToggle.onValueChanged.RemoveAllListeners();
-        fullscreenToggle.onValueChanged.RemoveAllListeners();
-        resolutionDropdown.onValueChanged.RemoveAllListeners();
+        gameControlsToggle.onValueChanged.RemoveListener(OnGamepadToggleClicked);
+        fullscreenToggle.onValueChanged.RemoveListener(OnFullscreenToggleClicked);
+        resolutionDropdown.onValueChanged.RemoveListener(OnResolutionDropdownClicked);
 
-        masterVolumeSlider.onValueChanged.RemoveAllListeners();
-        gameMusicSlider.onValueChanged.RemoveAllListeners();
-        ambienceMusicSlider.onValueChanged.RemoveAllListeners();
-        sfxSlider.onValueChanged.RemoveAllListeners();
-        uiSlider.onValueChanged.RemoveAllListeners();
+        masterVolumeSlider.onValueChanged.RemoveListener(OnMasterVolumeClicked);
+        gameMusicSlider.onValueChanged.RemoveListener(OnGameMusicVolumeClicked);
+        ambienceMusicSlider.onValueChanged.RemoveListener(OnAmbienceMusicVolumeClicked);
+        sfxSlider.onValueChanged.RemoveListener(OnSfxVolumeClicked);
+        uiSlider.onValueChanged.RemoveListener(OnUiVolumeClicked);
     }
 
 
