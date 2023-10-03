@@ -3,21 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
+
 public class PauseMenu : MonoBehaviour
 {
+
     private const int MaxSaves = 20;
     private bool isPaused = false;
     
-    [SerializeField] private GameManagerSO gameManagerSO;
     [SerializeField] private PlayerDataSO playerDataSO;
+    [SerializeField] private EnemyManager enemyManager;
 
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private GameObject saveGamePanel;
     [SerializeField] private GameObject buttonPanel;
     [SerializeField] private InputField saveGameNameInputField;
-    [SerializeField] private Button saveButton;
     [SerializeField] private Text warningText;
-    [SerializeField] private EnemyManager enemyManager;
+
+    [SerializeField] private Button resumeButton;
+    [SerializeField] private Button settingsButton;
+    [SerializeField] private Button mainMenuButton;
+    [SerializeField] private Button saveMenuButton;
+    [SerializeField] private Button backButton;
+    [SerializeField] private Button saveButton;
+    
 
 
     private void Start()
@@ -27,21 +36,61 @@ public class PauseMenu : MonoBehaviour
         pausePanel.SetActive(false);
         buttonPanel.SetActive(false);
         saveGamePanel.SetActive(false);
+
+
+        // Add listeners for all buttons
+        resumeButton.onClick.AddListener(OnResumeButtonClicked);
+        settingsButton.onClick.AddListener(OnSettingsButtonClicked);
+        mainMenuButton.onClick.AddListener(OnMainMenuButtonClicked);
+        saveMenuButton.onClick.AddListener(OnSaveMenuButtonClicked);
+        backButton.onClick.AddListener(OnBackButtonClicked);
+        saveButton.onClick.AddListener(OnSaveButtonClicked);
     }
 
-    public void TogglePause()
+
+    private void OnResumeButtonClicked()
     {
-        if (isPaused)
-        {
-            Resume();
-        }
-        else
-        {
-            Pause();
-        }
+        DAM.One.PlayUISFX(DAM.UISFX.ButtonClick1);
+        Resume();
     }
 
-    public void Pause()
+    private void OnSettingsButtonClicked()
+    {
+        Debug.Log("In OnSettingsButtonClicked method!!!!!!!");
+
+        DAM.One.PlayUISFX(DAM.UISFX.ButtonClick1);
+        GameManager.One.LoadSettingsMenu();
+    }
+
+    private void OnMainMenuButtonClicked()
+    {
+        DAM.One.PlayUISFX(DAM.UISFX.ButtonClick1);
+        GameManager.One.LoadMainMenu();
+    }
+
+    private void OnSaveMenuButtonClicked()
+    {
+        Debug.Log("In OnSaveMenuButtonClicked method!!!!!!!");
+
+        DAM.One.PlayUISFX(DAM.UISFX.ButtonClick1);
+        ShowSaveMenuPanel();
+    }
+
+    private void OnBackButtonClicked()
+    {
+        DAM.One.PlayUISFX(DAM.UISFX.ButtonClick1);
+        HideSaveMenuPanel();
+    }
+
+    private void OnSaveButtonClicked()
+    {
+        DAM.One.PlayUISFX(DAM.UISFX.ButtonClick1);
+        SaveGame();
+        HideSaveMenuPanel();
+    }
+
+
+    private void Pause()
     {
         Time.timeScale = 0f;
         isPaused = true;
@@ -51,7 +100,7 @@ public class PauseMenu : MonoBehaviour
         saveGamePanel.SetActive(false);
     }
 
-    public void Resume()
+    private void Resume()
     {
         if (saveGamePanel.activeSelf)
         {
@@ -66,8 +115,8 @@ public class PauseMenu : MonoBehaviour
         }
     }
 
-    // *Used by the 'SaveGame' button OnClick event in the editor
-    public void ShowSaveGamePanel()
+
+    private void ShowSaveMenuPanel()
     {
         saveGamePanel.SetActive(true);
         buttonPanel.SetActive(false);
@@ -85,16 +134,16 @@ public class PauseMenu : MonoBehaviour
         saveButton.interactable = true;
     }
 
-    // *Used by the 'SaveGamePanel' 'Back' button OnClick event in the editor
-    public void HideSaveGamePanel()
+
+    private void HideSaveMenuPanel()
     {
         saveGamePanel.SetActive(false);
         buttonPanel.SetActive(true);
         warningText.gameObject.SetActive(false);
     }
 
-    // *Used by the 'SaveGamePanel' 'Save' button OnClick event in the editor
-    public void SaveGame()
+
+    private void SaveGame()
     {
         string saveName = string.IsNullOrEmpty(saveGameNameInputField.text) ? "Default Name" : saveGameNameInputField.text;
         string saveDateTime = DateTime.Now.ToString();
@@ -117,8 +166,6 @@ public class PauseMenu : MonoBehaviour
             PositionZ = playerDataSO.PositionZ,
             Health = playerDataSO.Health,
         };
-
-        //////////////////////////////////////////////////////////////////////////////////////////////
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////
@@ -146,9 +193,33 @@ public class PauseMenu : MonoBehaviour
         GameManager.One.SaveGame(savedGame);
     }
 
-    // *Used by all the 'PauseCanvas' buttons 'OnClick' event in the editor
-    public void PlayButtonClick()
+
+    private void OnDestroy()
     {
-        DAM.One.PlayUISFX(DAM.UISFX.ButtonClick1);
+        RemoveUIListeners();
+    }
+
+    private void RemoveUIListeners()
+    {
+        resumeButton.onClick.RemoveListener(OnResumeButtonClicked);
+        settingsButton.onClick.RemoveListener(OnSettingsButtonClicked);
+        mainMenuButton.onClick.RemoveListener(OnMainMenuButtonClicked);
+        saveMenuButton.onClick.RemoveListener(OnSaveMenuButtonClicked);
+        backButton.onClick.RemoveListener(OnBackButtonClicked);
+        saveButton.onClick.RemoveListener(OnSaveButtonClicked);
+    }
+
+
+    // Used by Unity's New Input System key and gamepad
+    public void TogglePause()
+    {
+        if (isPaused)
+        {
+            Resume();
+        }
+        else
+        {
+            Pause();
+        }
     }
 }
