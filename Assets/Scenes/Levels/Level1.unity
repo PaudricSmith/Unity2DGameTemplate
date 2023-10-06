@@ -1282,6 +1282,7 @@ MonoBehaviour:
   ambienceMusicSource2: {fileID: 20861192}
   sfxSource: {fileID: 1852287069}
   uiSource: {fileID: 750480179}
+  gameMusicSources: []
 --- !u!4 &157698595
 Transform:
   m_ObjectHideFlags: 0
@@ -1543,9 +1544,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 10
+  m_SortingLayerID: 1169105311
+  m_SortingLayer: 1
+  m_SortingOrder: 0
   m_Sprite: {fileID: 1661255340, guid: 567cde9f329822c4ab320421747fc2fc, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -6179,7 +6180,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7128878733178503351, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7128878733178503351, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
@@ -6188,7 +6189,7 @@ PrefabInstance:
     - target: {fileID: 7128878733178503351, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 898759947}
+      objectReference: {fileID: 1522100058}
     - target: {fileID: 7128878733178503351, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
@@ -6203,7 +6204,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7128878733178503351, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: PlayButtonClick
+      value: set_name
       objectReference: {fileID: 0}
     - target: {fileID: 7128878733178503351, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
@@ -6211,7 +6212,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7128878733178503351, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: PauseMenu, Assembly-CSharp
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 7128878733178503351, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
@@ -6908,6 +6909,9 @@ GameObject:
   - component: {fileID: 898759942}
   - component: {fileID: 898759947}
   - component: {fileID: 898759946}
+  - component: {fileID: 898759949}
+  - component: {fileID: 898759948}
+  - component: {fileID: 898759950}
   m_Layer: 5
   m_Name: PauseCanvas
   m_TagString: Untagged
@@ -7034,6 +7038,93 @@ MonoBehaviour:
   saveMenuButton: {fileID: 780452549}
   backButton: {fileID: 421895548}
   saveButton: {fileID: 1413986469}
+--- !u!114 &898759948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 898759941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b71049caba196249877c74bf35bc92c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  description: Called when the game is resumed
+  Event: {fileID: 11400000, guid: 2e9cddc1dc0eacc4ea94cbcd27d66134, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 898759947}
+        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
+        m_MethodName: HandleGameResumed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &898759949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 898759941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b71049caba196249877c74bf35bc92c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  description: Called when the game is paused
+  Event: {fileID: 11400000, guid: ddb8849821c57ff4bada12f26412f338, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 898759947}
+        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
+        m_MethodName: HandleGamePaused
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &898759950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 898759941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b71049caba196249877c74bf35bc92c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  description: Called when exiting the pause menu settings to enable the button panel.
+  Event: {fileID: 11400000, guid: b8987fea99ba5384ca037d07e2946814, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 898759947}
+        m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
+        m_MethodName: HandleExitingPauseSettings
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1001 &902008288
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10067,7 +10158,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7128878733178503351, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7128878733178503351, guid: fb307cc3c7f015e4baf52eb86fe50bec, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
@@ -10811,7 +10902,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6698113, g: 0.6698113, b: 0.6698113, a: 0.39607844}
+  m_Color: {r: 0.6698113, g: 0.6698113, b: 0.6698113, a: 0.49019608}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

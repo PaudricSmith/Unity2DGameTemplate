@@ -32,11 +32,11 @@ public class MainMenu : MonoBehaviour
         Cursor.SetCursor(cursorTexture, hotSpot, cursorMode);
 
 
-        // Start playing menu theme if not 
-        if (!DAM.One.IsGameMusicSource1Playing && !DAM.One.IsGameMusicSource2Playing)
-        {
-            DAM.One.PlayGameMusic(DAM.GameMusic.MenuTrack1);
-        }
+        //// Start playing menu theme if not 
+        //if (!DAM.One.IsGameMusicSource1Playing && !DAM.One.IsGameMusicSource2Playing)
+        //{
+        //    DAM.One.PlayGameMusic(DAM.GameMusic.MenuTrack1);
+        //}
 
 
         // Add button listeners
@@ -62,7 +62,7 @@ public class MainMenu : MonoBehaviour
     private void OnSettingsButtonClicked()
     {
         DAM.One.PlayUISFX(DAM.UISFX.ButtonClick1);
-        GameManager.One.LoadSettingsMenu();
+        GameManager.One.LoadMainMenuSettings();
     }
 
     private void OnQuitButtonClicked()

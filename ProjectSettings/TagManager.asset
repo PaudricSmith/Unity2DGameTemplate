@@ -41,3 +41,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Player
+    uniqueID: 1169105311
+    locked: 0
+  - name: MenuBG
+    uniqueID: 4079906467
+    locked: 0

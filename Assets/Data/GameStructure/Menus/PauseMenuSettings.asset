@@ -10,8 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c83cfc9f523ff8f42899ca4bb42f0e0b, type: 3}
-  m_Name: LoadGameMenu
+  m_Name: PauseMenuSettings
   m_EditorClassIdentifier: 
-  sceneName: LoadGameMenu
-  shortDescription: Menu with all the saved games to chose from to load.
-  type: 2
+  sceneName: PauseMenuSettings
+  shortDescription: Menu that shows when the user selects the Settings option in
+    the Pause menu.
+  track: 0
+  menuType: 4

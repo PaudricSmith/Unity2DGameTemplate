@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 [CreateAssetMenu(fileName = "NewSceneManager", menuName = "Scriptable Objects/Game Data/Scene Manager")]
 public class SceneManagerSO : ScriptableObject
 {
+
     [Tooltip("Make sure that the element of each menu in this list is the same as their enum value")]
     [SerializeField] private List<MenuSceneSO> menus = new List<MenuSceneSO>();
     [SerializeField] private List<LevelSO> levels = new List<LevelSO>();
@@ -14,12 +15,33 @@ public class SceneManagerSO : ScriptableObject
     [SerializeField] private int currentLevelIndex = 0;
 
 
-    public int CurrentLevelIndex { get => currentLevelIndex; }
     public List<LevelSO> Levels { get => levels; set => levels = value; }
+    public LevelSO CurrentLevel { get => Levels[CurrentLevelIndex]; }
+    public int CurrentLevelIndex { get => currentLevelIndex; }
+    public List<MenuSceneSO> Menus { get => menus; set => menus = value; }
+
+
+    public MenuSceneSO GetMenuScene(MenuType menuType)
+    {
+        foreach (MenuSceneSO menu in Menus)
+        {
+            if (menu.MenuType == menuType)
+            {
+                return menu;
+            }
+        }
+
+        return Menus[0];
+    }
 
 
 
     #region LEVELS
+
+    public LevelSO GetLevelWithIndex(int index)
+    {
+        return Levels[index];
+    }
 
     // Load a scene with a given index   
     public void LoadLevelWithIndex(int index)
@@ -27,21 +49,19 @@ public class SceneManagerSO : ScriptableObject
         if (index <= levels.Count)
         {
             currentLevelIndex = index;
-            SceneManager.LoadSceneAsync(levels[currentLevelIndex - 1].SceneName);
+            SceneManager.LoadSceneAsync(levels[currentLevelIndex].SceneName);
         }
         // reset the index if we have no more levels or overflows during testing
         else
         {
-            currentLevelIndex = 1;
+            currentLevelIndex = 0;
         }
     }
 
     // Main Menu = 0, New game = 1, so load level 1
     public void NewGame()
     {
-        DAM.One.TransitionGameMusicTracks(DAM.GameMusic.MenuTrack1, DAM.GameMusic.Level1Track1, 2f);
-
-        currentLevelIndex = 1;
+        currentLevelIndex = 0;
         LoadLevelWithIndex(currentLevelIndex);
     }
 
@@ -117,10 +137,22 @@ public class SceneManagerSO : ScriptableObject
 
     #region SETTINGS MENU
 
-    // Load Settings Menu when Settings button is clicked in the Main Menu
-    public void LoadSettingsMenu()
+    // Load Main Menu Settings when the Settings button is clicked in the Main Menu
+    public void LoadMainMenuSettings()
     {
-        SceneManager.LoadSceneAsync(menus[(int)MenuType.Settings_Menu].SceneName);
+        SceneManager.LoadSceneAsync(menus[(int)MenuType.Main_Menu_Settings].SceneName);
+    }
+
+    // Load Pause Menu Settings when Settings button is clicked in the Pause Menu
+    public void LoadPauseMenuSettings()
+    {
+        SceneManager.LoadSceneAsync(menus[(int)MenuType.Pause_Menu_Settings].SceneName, LoadSceneMode.Additive);
+    }
+
+    // Unload Pause Menu Settings when Back button is clicked in the Settings Menu of the Pause Menu
+    public void UnloadPauseMenuSettings()
+    {
+        SceneManager.UnloadSceneAsync(menus[(int)MenuType.Pause_Menu_Settings].SceneName);
     }
 
     #endregion SETTINGS MENU

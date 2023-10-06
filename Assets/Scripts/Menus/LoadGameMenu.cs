@@ -59,7 +59,7 @@ public class LoadGameMenu : MonoBehaviour
     private void OnBackButtonClicked()
     {
         DAM.One.PlayUISFX(DAM.UISFX.ButtonClick1);
-        GameManager.One.LoadMainMenu();
+        GameManager.One.LoadMainMenuFromOtherMenu();
     }
 
     private void OnDeleteButtonClicked()

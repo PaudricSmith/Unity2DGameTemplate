@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -10,7 +11,7 @@ public class DAM : MonoBehaviour
 {
     private bool isFadingGameMusic = false;
     private bool isFadingAmbienceMusic = false;
-    
+
     [SerializeField] private AudioClipsSO audioClipsSO;
     [SerializeField] private AudioSource gameMusicSource1;
     [SerializeField] private AudioSource gameMusicSource2;
@@ -18,6 +19,9 @@ public class DAM : MonoBehaviour
     [SerializeField] private AudioSource ambienceMusicSource2;
     [SerializeField] private AudioSource sfxSource;
     [SerializeField] private AudioSource uiSource;
+
+    [SerializeField] private AudioSource[] gameMusicSources;
+
 
 
     /// <summary>
@@ -71,6 +75,18 @@ public class DAM : MonoBehaviour
 
 
     #region Playback Control
+
+    public void PlayGameMusic(GameMusic track, int sourceIndex)
+    {
+        AudioClip clip = audioClipsSO.GetGameMusicClip(track);
+        if (clip != null)
+        {
+            gameMusicSources[sourceIndex].clip = clip;
+            gameMusicSources[sourceIndex].Play();
+        }
+    }
+
+
 
     /// <summary>
     /// Plays a game music track based on the provided track enumeration.
@@ -779,6 +795,18 @@ public class DAM : MonoBehaviour
         StartCoroutine(CrossFadeGameMusicProcess(newClip, duration));
     }
 
+
+    public void CrossFadeGameMusic(GameMusic gameTrack, float duration)
+    {
+        if (isFadingGameMusic) return; // Prevent overlapping fades
+
+        AudioClip newClip = audioClipsSO.GetGameMusicClip(gameTrack);
+        StartCoroutine(CrossFadeGameMusicProcess(newClip, duration));
+    }
+
+
+
+
     /// <summary>
     /// Initiates a crossfade between the currently playing ambience music AudioClip and a new AudioClip.
     /// </summary>
@@ -791,6 +819,22 @@ public class DAM : MonoBehaviour
         StartCoroutine(CrossFadeAmbienceMusicProcess(newClip, duration));
     }
 
+
+
+    public void TransitionGameMusicTracks(GameMusic fromTrack, GameMusic toTrack, float duration, int fromSourceIndex, int toSourceIndex)
+    {
+        Debug.Log("Fade Out Audio Source Index: " + fromSourceIndex);
+
+        StartCoroutine(FadeOutProcess(gameMusicSources[fromSourceIndex], duration, () =>
+        {
+            Debug.Log("Fade In Audio Source Index: " + toSourceIndex);
+            FadeInGameMusic(toTrack, duration, gameMusicSources[toSourceIndex]);
+        }));
+    }
+
+
+
+
     /// <summary>
     /// Transitions between two game music tracks with a fade-out and fade-in effect.
     /// </summary>
@@ -799,9 +843,11 @@ public class DAM : MonoBehaviour
     /// <param name="duration">Duration of the transition.</param>
     public void TransitionGameMusicTracks(GameMusic fromTrack, GameMusic toTrack, float duration)
     {
+        // Fade out the current track using gameMusicSource1
         StartCoroutine(FadeOutProcess(gameMusicSource1, duration, () =>
         {
-            FadeInGameMusic(toTrack, duration);
+            // Fade in the new track using gameMusicSource2
+            FadeInGameMusic(toTrack, duration, gameMusicSource2);
         }));
     }
 
@@ -829,9 +875,15 @@ public class DAM : MonoBehaviour
         // Check if a new audio clip is provided
         if (newClip)
         {
+            // Explicitly stop any existing audio
+            audioSource.Stop();  
+
             // Set the new audio clip and start playing
             audioSource.clip = newClip;
             audioSource.Play();
+
+            //Debug.Log("Audio Source: " + audioSource.name);
+            Debug.Log("Fading in: " + newClip.name);
         }
 
         // Initialize volume to zero
@@ -844,8 +896,8 @@ public class DAM : MonoBehaviour
             // Incrementally increase the volume of the audio source based on the target volume, frame time, and duration
             audioSource.volume += targetVolume * Time.deltaTime / duration;
 
-            // Pause the coroutine and wait for the next frame before continuing
-            yield return null;
+            // Pause the coroutine and wait for the end of frame before continuing
+            yield return new WaitForEndOfFrame();
         }
     }
 
@@ -854,12 +906,15 @@ public class DAM : MonoBehaviour
         // Store the initial volume
         float startVolume = audioSource.volume;
 
+        Debug.Log("Fading out: " + audioSource.clip.name);
+
+
         // Gradually reduce the volume to zero
         while (audioSource.volume > 0)
         {
             audioSource.volume -= startVolume * Time.deltaTime / duration;
 
-            yield return null;
+            yield return new WaitForEndOfFrame();
         }
 
         audioSource.Stop();
@@ -890,7 +945,7 @@ public class DAM : MonoBehaviour
             activeSource.volume = Mathf.Lerp(1, 0, t / halfDuration);
             inactiveSource.volume = Mathf.Lerp(0, 1, t / halfDuration);
 
-            yield return null;
+            yield return new WaitForEndOfFrame();
         }
 
         // Stop the active source and make the inactive source the new active source
@@ -919,7 +974,7 @@ public class DAM : MonoBehaviour
             activeSource.volume = Mathf.Lerp(1, 0, t / halfDuration);
             inactiveSource.volume = Mathf.Lerp(0, 1, t / halfDuration);
 
-            yield return null;
+            yield return new WaitForEndOfFrame();
         }
 
         // Stop the active source and make the inactive source the new active source

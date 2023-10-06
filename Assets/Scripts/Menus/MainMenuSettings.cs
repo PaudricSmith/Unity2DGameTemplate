@@ -1,9 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using System;
 
-public class SettingsMenu : MonoBehaviour
+
+
+public class MainMenuSettings : MonoBehaviour
 {
     private Resolution[] customResolutions = new Resolution[]
     {
@@ -14,7 +15,6 @@ public class SettingsMenu : MonoBehaviour
     private const float DEBOUNCE_TIME = 0.2f; // 200 milliseconds
     private float lastSoundTime = 0f;
     private bool settingsChanged = false;
-
 
 
     [SerializeField] private GameSettingsDataSO gameSettingsSO;
@@ -29,6 +29,7 @@ public class SettingsMenu : MonoBehaviour
     [SerializeField] private Slider sfxSlider;
     [SerializeField] private Slider uiSlider;
 
+    [SerializeField] private Button backButton;
     [SerializeField] private Button applyButton;
 
 
@@ -88,6 +89,9 @@ public class SettingsMenu : MonoBehaviour
         ambienceMusicSlider.onValueChanged.AddListener(OnAmbienceMusicVolumeClicked);
         sfxSlider.onValueChanged.AddListener(OnSfxVolumeClicked);
         uiSlider.onValueChanged.AddListener(OnUiVolumeClicked);
+
+        backButton.onClick.AddListener(OnBackButtonClicked);
+        applyButton.onClick.AddListener(OnApplyButtonClicked);
     }
 
     private void OnDestroy()
@@ -106,6 +110,9 @@ public class SettingsMenu : MonoBehaviour
         ambienceMusicSlider.onValueChanged.RemoveListener(OnAmbienceMusicVolumeClicked);
         sfxSlider.onValueChanged.RemoveListener(OnSfxVolumeClicked);
         uiSlider.onValueChanged.RemoveListener(OnUiVolumeClicked);
+
+        backButton.onClick.RemoveListener(OnBackButtonClicked);
+        applyButton.onClick.RemoveListener(OnApplyButtonClicked);
     }
 
 
@@ -162,7 +169,7 @@ public class SettingsMenu : MonoBehaviour
 
     private void PlaySliderSelect()
     {
-        float currentTime = Time.time;
+        float currentTime = Time.unscaledTime;
         if (currentTime - lastSoundTime > DEBOUNCE_TIME)
         {
             DAM.One.PlayUISFX(DAM.UISFX.SliderSelect);
@@ -255,13 +262,13 @@ public class SettingsMenu : MonoBehaviour
     }
 
 
-    public void OnBackButtonClicked()
+    private void OnBackButtonClicked()
     {
         DAM.One.PlayUISFX(DAM.UISFX.ButtonClick1);
-        GameManager.One.LoadMainMenu();
+        GameManager.One.LoadMainMenuFromOtherMenu();
     }
 
-    public void OnApplyButtonClicked()
+    private void OnApplyButtonClicked()
     {
         if (settingsChanged)
         {

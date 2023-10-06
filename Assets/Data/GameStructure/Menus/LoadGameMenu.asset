@@ -10,8 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c83cfc9f523ff8f42899ca4bb42f0e0b, type: 3}
-  m_Name: MainMenu
+  m_Name: LoadGameMenu
   m_EditorClassIdentifier: 
-  sceneName: MainMenu
-  shortDescription: First Menu to show when game starts.
-  type: 0
+  sceneName: LoadGameMenu
+  shortDescription: Menu with all the saved games to chose from to load.
+  levelTrack: 0
+  menuType: 2

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+
 /// <summary>
 /// Represents a custom game event.
 /// </summary>

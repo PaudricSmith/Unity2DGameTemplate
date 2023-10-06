@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
+
 public class GameEventListenerSO : MonoBehaviour
 {
     [SerializeField, Tooltip("Description of this listener.")]

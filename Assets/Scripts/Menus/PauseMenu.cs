@@ -10,7 +10,7 @@ public class PauseMenu : MonoBehaviour
 
     private const int MaxSaves = 20;
     private bool isPaused = false;
-    
+
     [SerializeField] private PlayerDataSO playerDataSO;
     [SerializeField] private EnemyManager enemyManager;
 
@@ -26,13 +26,11 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private Button saveMenuButton;
     [SerializeField] private Button backButton;
     [SerializeField] private Button saveButton;
-    
 
+    
 
     private void Start()
     {
-        Time.timeScale = 1f;
-
         pausePanel.SetActive(false);
         buttonPanel.SetActive(false);
         saveGamePanel.SetActive(false);
@@ -56,22 +54,20 @@ public class PauseMenu : MonoBehaviour
 
     private void OnSettingsButtonClicked()
     {
-        Debug.Log("In OnSettingsButtonClicked method!!!!!!!");
-
         DAM.One.PlayUISFX(DAM.UISFX.ButtonClick1);
-        GameManager.One.LoadSettingsMenu();
+        buttonPanel.SetActive(false);
+
+        GameManager.One.LoadPauseMenuSettings();
     }
 
     private void OnMainMenuButtonClicked()
     {
         DAM.One.PlayUISFX(DAM.UISFX.ButtonClick1);
-        GameManager.One.LoadMainMenu();
+        GameManager.One.LoadMainMenuFromPauseMenu();
     }
 
     private void OnSaveMenuButtonClicked()
     {
-        Debug.Log("In OnSaveMenuButtonClicked method!!!!!!!");
-
         DAM.One.PlayUISFX(DAM.UISFX.ButtonClick1);
         ShowSaveMenuPanel();
     }
@@ -87,32 +83,6 @@ public class PauseMenu : MonoBehaviour
         DAM.One.PlayUISFX(DAM.UISFX.ButtonClick1);
         SaveGame();
         HideSaveMenuPanel();
-    }
-
-
-    private void Pause()
-    {
-        Time.timeScale = 0f;
-        isPaused = true;
-
-        pausePanel.SetActive(true);
-        buttonPanel.SetActive(true);
-        saveGamePanel.SetActive(false);
-    }
-
-    private void Resume()
-    {
-        if (saveGamePanel.activeSelf)
-        {
-            saveGamePanel.SetActive(false);
-            buttonPanel.SetActive(true);
-        }
-        else
-        {
-            Time.timeScale = 1f;
-            isPaused = false;
-            pausePanel.SetActive(false);
-        }
     }
 
 
@@ -146,8 +116,12 @@ public class PauseMenu : MonoBehaviour
     private void SaveGame()
     {
         string saveName = string.IsNullOrEmpty(saveGameNameInputField.text) ? "Default Name" : saveGameNameInputField.text;
+        
+        // Reset the name input field with an empty space
+        saveGameNameInputField.text = "";
+
         string saveDateTime = DateTime.Now.ToString();
-        int currentLevel = GameManager.One.GetCurrentLevelIndex();
+        int currentLevel = GameManager.One.GetCurrentLevel();
 
         //////////////////////////////////////////////////////////////////////////////////////////////
         //                                      SAVE PLAYER                                         //
@@ -209,6 +183,48 @@ public class PauseMenu : MonoBehaviour
         saveButton.onClick.RemoveListener(OnSaveButtonClicked);
     }
 
+
+    private void Pause()
+    {
+        GameManager.One.TransitionToState(GameManager.GameState.Paused);
+    }
+
+    private void Resume()
+    {
+
+        if (saveGamePanel.activeSelf)
+        {
+            saveGamePanel.SetActive(false);
+            buttonPanel.SetActive(true);
+        }
+        else
+        {
+            GameManager.One.TransitionToState(GameManager.GameState.Resumed);
+        }
+    }
+
+    // Called from the custom game event SO OnGamePaused
+    public void HandleGamePaused()
+    {
+        isPaused = true;
+
+        pausePanel.SetActive(true);
+        buttonPanel.SetActive(true);
+        saveGamePanel.SetActive(false);
+    }
+
+    // Called from the custom game event SO OnGameResumed
+    public void HandleGameResumed()
+    {
+        isPaused = false;
+        pausePanel.SetActive(false);
+    }
+
+    // Called from the custom game event SO OnExitPauseSettings
+    public void HandleExitingPauseSettings()
+    {
+        buttonPanel.SetActive(true);
+    }
 
     // Used by Unity's New Input System key and gamepad
     public void TogglePause()

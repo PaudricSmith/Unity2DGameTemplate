@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneName: PauseMenu
   shortDescription: Menu that shows when the user pauses the game.
-  type: 1
+  levelTrack: 0
+  menuType: 3
