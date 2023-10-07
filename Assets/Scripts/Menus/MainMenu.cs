@@ -23,21 +23,8 @@ public class MainMenu : MonoBehaviour
 
     private void Start()
     {
-        // Set the game settings
-        gameSettingsSO.LoadSettings();
-        gameSettingsSO.SetScreenSettings();
-        DAM.One.SetAudioSettings(gameSettingsSO);
-
         // Set the custom cursor
         Cursor.SetCursor(cursorTexture, hotSpot, cursorMode);
-
-
-        //// Start playing menu theme if not 
-        //if (!DAM.One.IsGameMusicSource1Playing && !DAM.One.IsGameMusicSource2Playing)
-        //{
-        //    DAM.One.PlayGameMusic(DAM.GameMusic.MenuTrack1);
-        //}
-
 
         // Add button listeners
         newGameButton.onClick.AddListener(OnNewGameButtonClicked);

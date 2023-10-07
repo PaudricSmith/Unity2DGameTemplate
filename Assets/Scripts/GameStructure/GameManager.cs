@@ -7,11 +7,11 @@ public class GameManager : MonoBehaviour
 {
     public enum GameState
     {
-        Playing,
+        InMainMenus,
+        InGame,
         Paused,
         Resumed,
         PauseSettings,
-        Menu,
         // Add more states as needed
     }
 
@@ -24,6 +24,9 @@ public class GameManager : MonoBehaviour
     [Header("Managers")]
     [SerializeField] private SaveLoadManager saveLoadManager;
     [SerializeField] private SceneManagerSO sceneManagerSO;
+
+    [Space]
+    [SerializeField] private GameSettingsDataSO gameSettingsSO;
 
 
     public static GameManager One;
@@ -48,10 +51,15 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        // Initialize to a default state
-        TransitionToState(GameState.Menu);
+        // Set the game settings
+        gameSettingsSO.LoadSettings();
+        gameSettingsSO.SetScreenSettings();
+        DAM.One.SetAudioSettings(gameSettingsSO);
 
-        DAM.One.FadeInGameMusic(GetMenuTrack(MenuType.Main_Menu), 1.0f);
+        // Initialize to a default state
+        TransitionToState(GameState.InMainMenus);
+
+        //DAM.One.FadeInGameMusic(GetMenuTrack(MenuType.Main_Menu), 0, 1.0f);
     }
 
 
@@ -60,7 +68,13 @@ public class GameManager : MonoBehaviour
         // Exit logic for the current state
         switch (CurrentState)
         {
-            case GameState.Playing:
+            case GameState.InMainMenus:
+
+                // Exit logic for MainMenu state
+
+                break;
+
+            case GameState.InGame:
 
                 // Exit logic for Playing state           
 
@@ -84,20 +98,40 @@ public class GameManager : MonoBehaviour
                 OnExitingPauseSettings.Raise();
 
                 break;
-
-            case GameState.Menu:
-
-                // Exit logic for MainMenu state
-
-                break;
         }
 
         // Enter logic for the new state
         switch (newState)
         {
-            case GameState.Playing:
+            case GameState.InMainMenus:
+
+                Time.timeScale = 1f;
+
+                if (!DAM.One.IsTransitionInProgress)
+                {
+                    DAM.One.TransitionGameMusicTracks(GetLevelTrack(), GetMenuTrack(MenuType.Main_Menu), 1, 0, 0.5f);
+                }
+                else
+                {
+                    DAM.One.StopGameMusic(1);
+                    DAM.One.FadeInGameMusic(GetMenuTrack(MenuType.Main_Menu), 0, 0.5f);
+                }
+
+                break;
+
+            case GameState.InGame:
 
                 Time.timeScale = 1.0f;
+
+                if (!DAM.One.IsTransitionInProgress)
+                {
+                    DAM.One.TransitionGameMusicTracks(GetMenuTrack(MenuType.Main_Menu), GetLevelTrack(), 0, 1, 0.5f);
+                }
+                else
+                {
+                    DAM.One.StopGameMusic(0);
+                    DAM.One.FadeInGameMusic(GetLevelTrack(), 1, 0.5f);
+                }
 
                 break;
 
@@ -118,12 +152,6 @@ public class GameManager : MonoBehaviour
             case GameState.PauseSettings:
 
                 // Logic for Pause Settings state
-
-                break;
-
-            case GameState.Menu:
-
-                Time.timeScale = 1f;
 
                 break;
         }
@@ -160,9 +188,7 @@ public class GameManager : MonoBehaviour
         LoadedGame = null;
 
         sceneManagerSO.NewGame();
-        TransitionToState(GameState.Playing);
-
-        DAM.One.TransitionGameMusicTracks(GetMenuTrack(MenuType.Main_Menu), GetLevelTrack(), 1.0f);
+        TransitionToState(GameState.InGame);
     }
 
     public void NextLevel()
@@ -199,40 +225,15 @@ public class GameManager : MonoBehaviour
     // Load Main Menu from the pause menu
     public void LoadMainMenuFromPauseMenu()
     {
-        DAM.One.TransitionGameMusicTracks(GetLevelTrack(), GetMenuTrack(MenuType.Main_Menu), 1.0f);
-        
         sceneManagerSO.LoadMainMenu();
-        TransitionToState(GameState.Menu);
+        TransitionToState(GameState.InMainMenus);
     }
 
     // Load Main Menu from other menus than the pause menu
-    public void LoadMainMenuFromOtherMenu()
+    public void LoadMainMenuFromOtherMainMenu()
     {
         sceneManagerSO.LoadMainMenu();
-        TransitionToState(GameState.Menu);
     }
-
-
-    //// Load Pause Menu additively on top of level scene
-    //public void LoadPauseMenu()
-    //{
-    //    sceneManagerSO.LoadPauseMenu();
-    //    TransitionToState(GameState.Paused);
-    //}
-
-    //// Unload Pause Menu when click 'Back' button
-    //public void UnloadPauseMenu()
-    //{
-    //    sceneManagerSO.UnloadPauseMenu();
-    //    TransitionToState(GameState.Playing);
-    //}
-
-    //// Unload Pause Menu when Pause key or gamepad button is pressed
-    //public void UnloadPauseMenuWithKey()
-    //{
-    //    sceneManagerSO.UnloadPauseMenuWithKey();
-    //    TransitionToState(GameState.Playing);
-    //}
 
 
     // Load Main Menu Settings when the Settings button is clicked in the Main Menu
@@ -277,11 +278,8 @@ public class GameManager : MonoBehaviour
     {        
         LoadedGame = saveLoadManager.LoadGame(savedGame.UniqueID);
         
-
         sceneManagerSO.LoadLevelWithIndex(savedGame.level);
-        TransitionToState(GameState.Playing);
-
-        DAM.One.TransitionGameMusicTracks(GetMenuTrack(MenuType.Main_Menu), GetLevelTrack(savedGame.level), 1.0f);
+        TransitionToState(GameState.InGame);        
     }
 
     public void DeleteGame(string uniqueID)

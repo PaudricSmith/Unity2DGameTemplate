@@ -292,6 +292,7 @@ MonoBehaviour:
   OnExitingPauseSettings: {fileID: 11400000, guid: b8987fea99ba5384ca037d07e2946814, type: 2}
   saveLoadManager: {fileID: 137417289}
   sceneManagerSO: {fileID: 11400000, guid: 1af9f4966d1e61b418d0ecc7d79e3c73, type: 2}
+  gameSettingsSO: {fileID: 11400000, guid: 5c3a0c3e2c98eaf4eb99d2ddb7fb89ca, type: 2}
 --- !u!4 &137417291
 Transform:
   m_ObjectHideFlags: 0
@@ -900,7 +901,7 @@ AudioSource:
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -1838,15 +1839,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioClipsSO: {fileID: 11400000, guid: f5e27c1e4fbb09247b71e8303e36176c, type: 2}
-  gameMusicSource1: {fileID: 2098840076}
-  gameMusicSource2: {fileID: 1703816854}
-  ambienceMusicSource1: {fileID: 2102057103}
-  ambienceMusicSource2: {fileID: 605291743}
-  sfxSource: {fileID: 460400644}
-  uiSource: {fileID: 578123437}
   gameMusicSources:
   - {fileID: 2098840076}
   - {fileID: 1703816854}
+  ambienceMusicSources:
+  - {fileID: 2102057103}
+  - {fileID: 605291743}
+  sfxSource: {fileID: 460400644}
+  uiSource: {fileID: 578123437}
 --- !u!4 &1429632772
 Transform:
   m_ObjectHideFlags: 0
@@ -2224,7 +2224,7 @@ AudioSource:
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
