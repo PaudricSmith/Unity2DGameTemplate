@@ -24,10 +24,6 @@ public class InputManager : MonoBehaviour
 
     void Awake()
     {
-        gameSettingsSO.LoadSettings();
-        DAM.One.SetAudioSettings(gameSettingsSO);
-
-
         // Initialize the PlayerControls class from the new Input System
         gameControls = new GameControls();
 

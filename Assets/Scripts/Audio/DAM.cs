@@ -9,15 +9,25 @@ using UnityEngine;
 /// </summary>
 public class DAM : MonoBehaviour
 {
-    private bool isFadingGameMusic = false;
-    private bool isFadingAmbienceMusic = false;
+    private Coroutine fadeInCoroutine;
+    private Coroutine fadeOutCoroutine;
 
+    private float masterVolume;
+    private float gameMusicVolume;
+    private float ambienceMusicVolume;
+    private float sfxVolume;
+    private float uiSfxVolume;
+
+    private bool isCrossFadingGameMusic = false;
+    private bool isCrossFadingAmbienceMusic = false;
+
+    [SerializeField] private GameSettingsDataSO gameSettingsSO;
     [SerializeField] private AudioClipsSO audioClipsSO;
+
     [SerializeField] private AudioSource[] gameMusicSources;
     [SerializeField] private AudioSource[] ambienceMusicSources;
     [SerializeField] private AudioSource sfxSource;
     [SerializeField] private AudioSource uiSource;
-
 
 
     /// <summary>
@@ -43,26 +53,20 @@ public class DAM : MonoBehaviour
         }
     }
 
-
-    #region Properties
-    
-    public bool IsTransitionInProgress { get; private set; }
-
-    #endregion Properties
-
-
-    #region Setters
-
-    public void SetAudioSettings(GameSettingsDataSO gameSettings)
+    public void SetAllVolumes()
     {
-        AudioListener.volume = gameSettings.masterVolume;
-        SetGameMusicVolume(gameSettings.gameMusicVolume);
-        SetAmbienceMusicVolume(gameSettings.ambienceMusicVolume);
-        SetSFXVolume(gameSettings.sfxVolume);
-        SetUISFXVolume(gameSettings.uiSfxVolume);
-    }
+        masterVolume = gameSettingsSO.masterVolume;
+        gameMusicVolume = gameSettingsSO.gameMusicVolume;
+        ambienceMusicVolume = gameSettingsSO.ambienceMusicVolume;
+        sfxVolume = gameSettingsSO.sfxVolume;
+        uiSfxVolume = gameSettingsSO.uiSfxVolume;
 
-    #endregion Setters
+        AudioListener.volume = masterVolume;
+        SetGameMusicVolume(gameMusicVolume);
+        SetAmbienceMusicVolume(ambienceMusicVolume);
+        SetSFXVolume(sfxVolume);
+        SetUISFXVolume(uiSfxVolume);
+    }
 
 
 
@@ -395,7 +399,7 @@ public class DAM : MonoBehaviour
     public void FadeInGameMusic(GameMusic track, int audioSourceIndex, float duration)
     {
         AudioClip clip = audioClipsSO.GetGameMusicClip(track);
-        if (clip) StartCoroutine(FadeInProcess(gameMusicSources[audioSourceIndex], clip, duration));
+        if (clip) fadeInCoroutine = StartCoroutine(FadeInProcess(gameMusicSources[audioSourceIndex], clip, duration));
     }
 
     /// <summary>
@@ -406,7 +410,7 @@ public class DAM : MonoBehaviour
     public void FadeOutGameMusic(int audioSourceIndex, float duration)
     {
         AudioSource targetSource = gameMusicSources[audioSourceIndex];
-        StartCoroutine(FadeOutProcess(targetSource, duration));
+        fadeOutCoroutine = StartCoroutine(FadeOutProcess(targetSource, duration));
     }
 
     /// <summary>
@@ -473,7 +477,7 @@ public class DAM : MonoBehaviour
     /// <param name="duration">The duration of the crossfade in seconds.</param>
     public void CrossFadeGameMusic(GameMusic gameTrack, float duration)
     {
-        if (isFadingGameMusic) return; // Prevent overlapping fades
+        if (isCrossFadingGameMusic) return; // Prevent overlapping fades
 
         AudioClip newClip = audioClipsSO.GetGameMusicClip(gameTrack);
         StartCoroutine(CrossFadeGameMusicProcess(newClip, duration));
@@ -486,45 +490,39 @@ public class DAM : MonoBehaviour
     /// <param name="duration">The duration of the crossfade in seconds.</param>
     public void CrossFadeAmbienceMusic(AmbienceMusic ambienceTrack, float duration)
     {
-        if (isFadingAmbienceMusic) return; // Prevent overlapping fades
+        if (isCrossFadingAmbienceMusic) return; // Prevent overlapping fades
 
         AudioClip newClip = audioClipsSO.GetAmbienceMusicClip(ambienceTrack);
         StartCoroutine(CrossFadeAmbienceMusicProcess(newClip, duration));
     }
 
     /// <summary>
-    /// Transitions between two game music tracks by fading out the current track and fading in the new track.
-    /// The AudioSource indices for both tracks must be specified.
+    /// Transitions between two game music tracks by first fading out the current track and then fading in the new track.
     /// </summary>
-    /// <param name="fromTrack">The track to fade out from.</param>
-    /// <param name="toTrack">The track to fade in to.</param>
-    /// <param name="fromSourceIndex">The AudioSource index for the track to fade out from.</param>
-    /// <param name="toSourceIndex">The AudioSource index for the track to fade in to.</param>
-    /// <param name="duration">The duration of the transition in seconds.</param>
-    public void TransitionGameMusicTracks(GameMusic fromTrack, GameMusic toTrack, int fromSourceIndex, int toSourceIndex, float duration)
+    /// <param name="toTrack">The GameMusic enum representing the track to fade in to.</param>
+    /// <param name="fromSourceIndex">The index of the AudioSource playing the track to fade out from.</param>
+    /// <param name="toSourceIndex">The index of the AudioSource that will play the track to fade in to.</param>
+    /// <param name="duration">The duration in seconds over which the fade-out and fade-in will occur.</param>
+    public void TransitionGameMusicTracks(GameMusic toTrack, int fromSourceIndex, int toSourceIndex, float duration)
     {
-        IsTransitionInProgress = true;
-
         StartCoroutine(FadeOutProcess(gameMusicSources[fromSourceIndex], duration, () =>
         {
             StartCoroutine(FadeInProcess(gameMusicSources[toSourceIndex], audioClipsSO.GetGameMusicClip(toTrack), duration));
-            IsTransitionInProgress = false;
         }));
     }
 
     /// <summary>
     /// Transitions between two ambience music tracks with a fade-out and fade-in effect.
     /// </summary>
-    /// <param name="fromTrack">Track to fade out.</param>
     /// <param name="toTrack">Track to fade in.</param>
     /// <param name="fromSourceIndex">The AudioSource index for the track to fade out from.</param>
     /// <param name="toSourceIndex">The AudioSource index for the track to fade in to.</param>
     /// <param name="duration">Duration of the transition.</param>
-    public void TransitionAmbienceMusicTracks(AmbienceMusic fromTrack, AmbienceMusic toTrack, int fromSourceIndex, int toSourceIndex, float duration)
+    public void TransitionAmbienceMusicTracks(AmbienceMusic toTrack, int fromSourceIndex, int toSourceIndex, float duration)
     {
         StartCoroutine(FadeOutProcess(ambienceMusicSources[fromSourceIndex], duration, () =>
         {
-            FadeInAmbienceMusic(toTrack, toSourceIndex, duration);
+            StartCoroutine(FadeInProcess(ambienceMusicSources[toSourceIndex], audioClipsSO.GetAmbienceMusicClip(toTrack), duration));
         }));
     }
 
@@ -535,6 +533,12 @@ public class DAM : MonoBehaviour
 
     private IEnumerator FadeInProcess(AudioSource audioSource, AudioClip newClip, float duration)
     {
+        if (fadeInCoroutine != null)
+        {
+            StopCoroutine(fadeInCoroutine);
+            fadeInCoroutine = null;
+        }
+
         // Check if a new audio clip is provided
         if (newClip)
         {
@@ -546,39 +550,47 @@ public class DAM : MonoBehaviour
             audioSource.Play();
         }
 
-        // Get the current volume before it was faded to know which volume value to fade in to
-        float targetVolume = audioSource.volume;
+        // Store the initial volume
+        float startVolume = audioSource.volume;
 
         // Initialize volume to zero
         audioSource.volume = 0;
 
         // Gradually increase volume to target volume
-        while (audioSource.volume < targetVolume)
+        while (audioSource.volume < startVolume)
         {
             // Incrementally increase the volume of the audio source based on the target volume, frame time, and duration
-            audioSource.volume = Mathf.MoveTowards(audioSource.volume, targetVolume, (targetVolume / duration) * Time.deltaTime);
+            audioSource.volume = Mathf.MoveTowards(audioSource.volume, startVolume, (startVolume / duration) * Time.deltaTime);
 
             // Pause the coroutine and wait for the end of frame before continuing
-            yield return new WaitForEndOfFrame();
+            yield return null;
         }
+
+        // Reset the volume to the initial value
+        audioSource.volume = startVolume;
     }
 
     private IEnumerator FadeOutProcess(AudioSource audioSource, float duration, Action onFinished = null)
     {
+        if (fadeOutCoroutine != null)
+        {
+            StopCoroutine(fadeOutCoroutine);
+            fadeOutCoroutine = null;
+        }
+
         // Store the initial volume
         float startVolume = audioSource.volume;
 
         // Gradually reduce the volume to zero
         while (audioSource.volume > 0)
         {
-            audioSource.volume -= startVolume * Time.deltaTime / duration;
+            audioSource.volume = Mathf.MoveTowards(audioSource.volume, 0, (startVolume / duration) * Time.deltaTime);
 
-            yield return new WaitForEndOfFrame();
+            yield return null;
         }
 
+        // Stop and reset the volume to the initial value
         audioSource.Stop();
-
-        // Reset the volume to the initial value
         audioSource.volume = startVolume;
 
         // Invoke any callback actions
@@ -587,7 +599,7 @@ public class DAM : MonoBehaviour
 
     private IEnumerator CrossFadeGameMusicProcess(AudioClip newClip, float duration)
     {
-        isFadingGameMusic = true;
+        isCrossFadingGameMusic = true;
 
         AudioSource activeSource = (gameMusicSources[0].isPlaying) ? gameMusicSources[0] : gameMusicSources[1];
         AudioSource inactiveSource = (activeSource == gameMusicSources[0]) ? gameMusicSources[1] : gameMusicSources[0];
@@ -607,7 +619,7 @@ public class DAM : MonoBehaviour
             activeSource.volume = Mathf.Lerp(currentVolume, 0, t / halfDuration);
             inactiveSource.volume = Mathf.Lerp(0, currentVolume, t / halfDuration);
 
-            yield return new WaitForEndOfFrame();
+            yield return null;
         }
 
         // Stop the active source and make the inactive source the new active source
@@ -615,12 +627,12 @@ public class DAM : MonoBehaviour
         activeSource.volume = currentVolume; 
         inactiveSource.volume = currentVolume;
 
-        isFadingGameMusic = false;
+        isCrossFadingGameMusic = false;
     }
 
     private IEnumerator CrossFadeAmbienceMusicProcess(AudioClip newClip, float duration)
     {
-        isFadingAmbienceMusic = true;
+        isCrossFadingAmbienceMusic = true;
 
         AudioSource activeSource = (ambienceMusicSources[0].isPlaying) ? ambienceMusicSources[0] : ambienceMusicSources[1];
         AudioSource inactiveSource = (activeSource == ambienceMusicSources[0]) ? ambienceMusicSources[1] : ambienceMusicSources[0];
@@ -640,7 +652,7 @@ public class DAM : MonoBehaviour
             activeSource.volume = Mathf.Lerp(currentVolume, 0, t / halfDuration);
             inactiveSource.volume = Mathf.Lerp(0, currentVolume, t / halfDuration);
 
-            yield return new WaitForEndOfFrame();
+            yield return null;
         }
 
         // Stop the active source and make the inactive source the new active source
@@ -648,7 +660,7 @@ public class DAM : MonoBehaviour
         activeSource.volume = currentVolume; 
         inactiveSource.volume = currentVolume;
 
-        isFadingAmbienceMusic = false;
+        isCrossFadingAmbienceMusic = false;
     }
 
     #endregion

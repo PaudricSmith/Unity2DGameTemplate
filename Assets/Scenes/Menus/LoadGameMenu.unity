@@ -2608,6 +2608,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameSettingsSO: {fileID: 11400000, guid: 5c3a0c3e2c98eaf4eb99d2ddb7fb89ca, type: 2}
+  backgroundSprite: {fileID: 669055344}
   confirmationDialog: {fileID: 1566349860}
   savedGamePrefab: {fileID: 1828945655375292037, guid: 0287cca2c8b81d84dbd5c53125b876bf, type: 3}
   savedGamesParent: {fileID: 2094511301}

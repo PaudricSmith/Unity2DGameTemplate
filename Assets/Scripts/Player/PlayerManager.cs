@@ -23,7 +23,6 @@ public class PlayerManager : MonoBehaviour
                 loadedGame.playerData.PositionY,
                 loadedGame.playerData.PositionZ);
         }
-
     }
 }
 

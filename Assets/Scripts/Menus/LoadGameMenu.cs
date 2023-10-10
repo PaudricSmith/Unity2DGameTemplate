@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Collections;
 
 
 
@@ -10,8 +11,10 @@ public class LoadGameMenu : MonoBehaviour
     private Dictionary<string, GameObject> savedGameItems = new Dictionary<string, GameObject>();
     private List<SavedGame> savedGames;
     private SavedGame selectedGame;
+    private float fadeInTime = 0.5f;
 
     [SerializeField] private GameSettingsDataSO gameSettingsSO;
+    [SerializeField] private SpriteRenderer backgroundSprite;
 
     [SerializeField] private GameObject confirmationDialog;
     [SerializeField] private GameObject savedGamePrefab;
@@ -28,9 +31,6 @@ public class LoadGameMenu : MonoBehaviour
 
     private void Start()
     {
-        gameSettingsSO.LoadSettings();
-        DAM.One.SetAudioSettings(gameSettingsSO);
-
         loadButton.onClick.AddListener(OnLoadButtonClicked);
         backButton.onClick.AddListener(OnBackButtonClicked);
         deleteButton.onClick.AddListener(OnDeleteButtonClicked);
@@ -38,9 +38,13 @@ public class LoadGameMenu : MonoBehaviour
         cancelDeleteButton.onClick.AddListener(OnCancelDeleteButtonClicked);
 
         loadButton.interactable = false;
+        backButton.interactable = false;
         deleteButton.interactable = false;
 
         confirmationDialog.gameObject.SetActive(false);
+
+        // Start the fade-in process
+        StartCoroutine(FadeInMainMenu(backgroundSprite, fadeInTime));
 
         PopulateSavedGamesList();
     }
@@ -174,5 +178,23 @@ public class LoadGameMenu : MonoBehaviour
         deleteButton.onClick.RemoveListener(OnDeleteButtonClicked);
         confirmDeleteButton.onClick.RemoveListener(OnDeleteButtonClicked);
         cancelDeleteButton.onClick.RemoveListener(OnDeleteButtonClicked);
+    }
+
+
+    private IEnumerator FadeInMainMenu(SpriteRenderer backgroundSprite, float duration)
+    {
+        Color tempColor = backgroundSprite.color;
+
+        for (float t = 0.0f; t < 1.0f; t += Time.deltaTime / duration)
+        {
+            tempColor.a = Mathf.Lerp(0f, 1f, t);
+            backgroundSprite.color = tempColor;
+            yield return null;
+        }
+
+        tempColor.a = 1f;
+        backgroundSprite.color = tempColor;
+
+        backButton.interactable = true;
     }
 }

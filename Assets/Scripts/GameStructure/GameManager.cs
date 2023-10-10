@@ -54,12 +54,12 @@ public class GameManager : MonoBehaviour
         // Set the game settings
         gameSettingsSO.LoadSettings();
         gameSettingsSO.SetScreenSettings();
-        DAM.One.SetAudioSettings(gameSettingsSO);
+        DAM.One.SetAllVolumes();
 
         // Initialize to a default state
-        TransitionToState(GameState.InMainMenus);
+        CurrentState = GameState.InMainMenus;
 
-        //DAM.One.FadeInGameMusic(GetMenuTrack(MenuType.Main_Menu), 0, 1.0f);
+        DAM.One.FadeInGameMusic(GetMenuTrack(MenuType.Main_Menu), 0, 0.5f);
     }
 
 
@@ -69,29 +69,17 @@ public class GameManager : MonoBehaviour
         switch (CurrentState)
         {
             case GameState.InMainMenus:
-
                 // Exit logic for MainMenu state
-
                 break;
-
             case GameState.InGame:
-
-                // Exit logic for Playing state           
-
+                // Exit logic for Playing state
                 break;
-
             case GameState.Paused:
-
-                // Exit logic for Paused state
-                
+                // Exit logic for Paused state               
                 break;
-
             case GameState.Resumed:
-
                 // Exit logic for Paused state
-
                 break;
-
             case GameState.PauseSettings:
 
                 // Exit logic for Pause Settings state
@@ -107,15 +95,7 @@ public class GameManager : MonoBehaviour
 
                 Time.timeScale = 1f;
 
-                if (!DAM.One.IsTransitionInProgress)
-                {
-                    DAM.One.TransitionGameMusicTracks(GetLevelTrack(), GetMenuTrack(MenuType.Main_Menu), 1, 0, 0.5f);
-                }
-                else
-                {
-                    DAM.One.StopGameMusic(1);
-                    DAM.One.FadeInGameMusic(GetMenuTrack(MenuType.Main_Menu), 0, 0.5f);
-                }
+                DAM.One.TransitionGameMusicTracks(GetMenuTrack(MenuType.Main_Menu), 0, 1, 0.5f);
 
                 break;
 
@@ -123,21 +103,14 @@ public class GameManager : MonoBehaviour
 
                 Time.timeScale = 1.0f;
 
-                if (!DAM.One.IsTransitionInProgress)
-                {
-                    DAM.One.TransitionGameMusicTracks(GetMenuTrack(MenuType.Main_Menu), GetLevelTrack(), 0, 1, 0.5f);
-                }
-                else
-                {
-                    DAM.One.StopGameMusic(0);
-                    DAM.One.FadeInGameMusic(GetLevelTrack(), 1, 0.5f);
-                }
+                DAM.One.TransitionGameMusicTracks(GetLevelTrack(), 0, 1, 0.5f);
 
                 break;
 
             case GameState.Paused:
 
                 Time.timeScale = 0f;
+
                 OnGamePaused.Raise();
 
                 break;
@@ -145,14 +118,13 @@ public class GameManager : MonoBehaviour
             case GameState.Resumed:
 
                 Time.timeScale = 1.0f;
+
                 OnGameResumed.Raise();
 
                 break;
 
             case GameState.PauseSettings:
-
                 // Logic for Pause Settings state
-
                 break;
         }
 
@@ -170,11 +142,6 @@ public class GameManager : MonoBehaviour
     private DAM.GameMusic GetLevelTrack()
     {
         return sceneManagerSO.CurrentLevel.Track;
-    }
-
-    private DAM.GameMusic GetLevelTrack(int index)
-    {
-        return sceneManagerSO.GetLevelWithIndex(index).Track;
     }
 
     public int GetCurrentLevel()

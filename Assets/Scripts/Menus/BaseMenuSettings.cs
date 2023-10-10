@@ -35,7 +35,7 @@ public class BaseMenuSettings : MonoBehaviour
 
 
 
-    private void Start()
+    protected virtual void Start()
     {
         // Populate the resolution dropdown with available options
         PopulateResolutionDropdown();
@@ -70,8 +70,6 @@ public class BaseMenuSettings : MonoBehaviour
         // When the scene first loads get all the settings from the GameSettingsSO and set their UI and audio sources
         SetAudioUI();
         SetResolutionUI();
-
-        DAM.One.SetAudioSettings(gameSettingsSO);
 
         // Set the fullscreen toggle UI based on the saved fullscreen state
         fullscreenToggle.isOn = gameSettingsSO.isFullscreen;
@@ -162,7 +160,7 @@ public class BaseMenuSettings : MonoBehaviour
     private void ApplySettings()
     {
         // Set the audio sources in the DAM with the latest slider volume values
-        DAM.One.SetAudioSettings(gameSettingsSO);
+        DAM.One.SetAllVolumes();
 
         // Set the new screen settings
         gameSettingsSO.SetScreenSettings();
