@@ -560,7 +560,7 @@ public class DAM : MonoBehaviour
         while (audioSource.volume < startVolume)
         {
             // Incrementally increase the volume of the audio source based on the target volume, frame time, and duration
-            audioSource.volume = Mathf.MoveTowards(audioSource.volume, startVolume, (startVolume / duration) * Time.deltaTime);
+            audioSource.volume = Mathf.MoveTowards(audioSource.volume, startVolume, (startVolume / duration) * Time.unscaledDeltaTime);
 
             // Pause the coroutine and wait for the end of frame before continuing
             yield return null;
@@ -584,7 +584,7 @@ public class DAM : MonoBehaviour
         // Gradually reduce the volume to zero
         while (audioSource.volume > 0)
         {
-            audioSource.volume = Mathf.MoveTowards(audioSource.volume, 0, (startVolume / duration) * Time.deltaTime);
+            audioSource.volume = Mathf.MoveTowards(audioSource.volume, 0, (startVolume / duration) * Time.unscaledDeltaTime);
 
             yield return null;
         }
@@ -614,7 +614,7 @@ public class DAM : MonoBehaviour
         float halfDuration = duration / 2.0f;
 
         // Fade out the active source and fade in the inactive source
-        for (float t = 0; t < halfDuration; t += Time.deltaTime)
+        for (float t = 0; t < halfDuration; t += Time.unscaledDeltaTime)
         {
             activeSource.volume = Mathf.Lerp(currentVolume, 0, t / halfDuration);
             inactiveSource.volume = Mathf.Lerp(0, currentVolume, t / halfDuration);
@@ -647,7 +647,7 @@ public class DAM : MonoBehaviour
         float halfDuration = duration / 2.0f;
 
         // Fade out the active source and fade in the inactive source
-        for (float t = 0; t < halfDuration; t += Time.deltaTime)
+        for (float t = 0; t < halfDuration; t += Time.unscaledDeltaTime)
         {
             activeSource.volume = Mathf.Lerp(currentVolume, 0, t / halfDuration);
             inactiveSource.volume = Mathf.Lerp(0, currentVolume, t / halfDuration);

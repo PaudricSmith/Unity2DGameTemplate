@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,6 +8,7 @@ using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour
 {
+    private float fadeInTime = 0.5f;
 
     private const int MaxSaves = 20;
     private bool isPaused = false;
@@ -35,7 +37,6 @@ public class PauseMenu : MonoBehaviour
         buttonPanel.SetActive(false);
         saveGamePanel.SetActive(false);
 
-
         // Add listeners for all buttons
         resumeButton.onClick.AddListener(OnResumeButtonClicked);
         settingsButton.onClick.AddListener(OnSettingsButtonClicked);
@@ -45,6 +46,15 @@ public class PauseMenu : MonoBehaviour
         saveButton.onClick.AddListener(OnSaveButtonClicked);
     }
 
+    private void SetButtonsInteractable(bool interactable)
+    {
+        //resumeButton.interactable = interactable;
+        //settingsButton.interactable = interactable;
+        //mainMenuButton.interactable = interactable;
+        //saveMenuButton.interactable = interactable;
+
+        buttonPanel.SetActive(interactable);
+    }
 
     private void OnResumeButtonClicked()
     {
@@ -209,8 +219,10 @@ public class PauseMenu : MonoBehaviour
         isPaused = true;
 
         pausePanel.SetActive(true);
-        buttonPanel.SetActive(true);
         saveGamePanel.SetActive(false);
+
+        // Start the UI fade-in process
+        StartCoroutine(ActivateButtonPanelAfterDelay(fadeInTime));
     }
 
     // Called from the custom game event SO OnGameResumed
@@ -237,5 +249,15 @@ public class PauseMenu : MonoBehaviour
         {
             Pause();
         }
+    }
+
+
+    private IEnumerator ActivateButtonPanelAfterDelay(float fadeInTime)
+    {
+        buttonPanel.SetActive(false);
+
+        yield return new WaitForSecondsRealtime(fadeInTime);
+
+        buttonPanel.SetActive(true);
     }
 }
